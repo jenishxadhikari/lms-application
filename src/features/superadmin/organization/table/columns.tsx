@@ -24,7 +24,7 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import type { DataTableFeatures } from "@/components/table/data-table-features"
 
 import { DeleteOrganization } from "../components/delete-organization"
-import type { Organization } from "./data"
+import type { Organization } from "./type"
 
 const columnHelper = createColumnHelper<DataTableFeatures, Organization>()
 
@@ -182,7 +182,7 @@ export const organizationColumns = columnHelper.columns([
                   Edit organization
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DeleteOrganization />
+                <DeleteOrganization id={organization.id} />
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>

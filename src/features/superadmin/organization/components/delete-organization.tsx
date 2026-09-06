@@ -1,6 +1,6 @@
-import { useState } from "react"
-
+import { useMutation } from "@tanstack/react-query"
 import { Trash2Icon } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,13 +15,26 @@ import {
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
 
-export function DeleteOrganization() {
-  const [pending, setPending] = useState(false)
+import { deleteOrganization } from "../api"
 
-  async function onSubmit() {
-    setPending(true)
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setPending(false)
+interface DeleteOrganizationProps {
+  id: string
+}
+
+export function DeleteOrganization({ id }: DeleteOrganizationProps) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteOrganization,
+  })
+
+  async function onDelete() {
+    mutate(id, {
+      onSuccess: (data) => {
+        toast.success(data.message ?? "Organization deleted successfully")
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    })
   }
 
   return (
@@ -49,13 +62,13 @@ export function DeleteOrganization() {
         <DialogFooter>
           <DialogClose
             render={
-              <Button variant="outline" disabled={pending}>
+              <Button variant="outline" disabled={isPending}>
                 Cancel
               </Button>
             }
           />
-          <Button variant="destructive" onClick={onSubmit} disabled={pending}>
-            {pending && <Spinner />} Delete
+          <Button variant="destructive" onClick={onDelete} disabled={isPending}>
+            {isPending && <Spinner />} Delete
           </Button>
         </DialogFooter>
       </DialogContent>

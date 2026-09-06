@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
-import { RefreshCwIcon } from "lucide-react"
+import { Eye, EyeOff, RefreshCwIcon } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 import * as z from "zod"
@@ -19,6 +19,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
 import {
   InputOTP,
   InputOTPGroup,
@@ -27,39 +28,38 @@ import {
 import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
-import { verifyOtp } from "../api"
-import { verifyOtpSchema } from "../schema"
+import { resetPassword } from "../api"
+import { resetPasswordSchema } from "../schema"
 
-export function VerifyOtpForm({
+export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<z.infer<typeof verifyOtpSchema>>({
-    resolver: zodResolver(verifyOtpSchema),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       verificationCode: "",
+      password: "",
     },
   })
 
   const { mutate, isPending } = useMutation({
-    mutationFn: verifyOtp,
+    mutationFn: resetPassword,
   })
 
-  async function onSubmit(data: z.infer<typeof verifyOtpSchema>) {
+  async function onSubmit(data: z.infer<typeof resetPasswordSchema>) {
     mutate(data, {
       onSuccess: (data) => {
-        toast.success(
-          data.message ?? "Verification successful. You can now log in."
-        )
+        toast.success(data.message ?? "Password reset successfully")
       },
       onError: (error) => {
         setError(error.message)
       },
     })
   }
-
   return (
     <form
       id="forgot-password-form"
@@ -69,10 +69,10 @@ export function VerifyOtpForm({
     >
       <FieldGroup className="gap-6">
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Verify Email</h1>
+          <h1 className="text-2xl font-bold">Reset password</h1>
           <p className="text-sm text-pretty text-muted-foreground">
-            Enter the verification code sent to your email address to verify
-            your email.
+            Enter the verification code sent to your email address to reset your
+            password.
           </p>
         </div>
         <Controller
@@ -110,9 +110,42 @@ export function VerifyOtpForm({
             </Field>
           )}
         />
+        <Controller
+          name="password"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>New Password</FieldLabel>
+              <div className="relative">
+                <Input
+                  {...field}
+                  id={field.name}
+                  placeholder="********"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
         {error && <ErrorAlert message={error} />}
         <Field>
-          <SubmitButton label="Verify OTP" pending={isPending} />
+          <SubmitButton label="Reset Password" pending={isPending} />
         </Field>
         <Field>
           <FieldDescription className="text-center">

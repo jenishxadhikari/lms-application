@@ -1,11 +1,12 @@
+import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/header"
 
+import { getOrganizations } from "@/features/superadmin/organization/api"
 import { AddOrganization } from "@/features/superadmin/organization/components/add-organization"
 import { organizationColumns } from "@/features/superadmin/organization/table/columns"
-import { organizations } from "@/features/superadmin/organization/table/data"
 import { OrganizationDataTable } from "@/features/superadmin/organization/table/data-table"
 
 export const Route = createFileRoute("/superadmin/organization")({
@@ -13,6 +14,15 @@ export const Route = createFileRoute("/superadmin/organization")({
 })
 
 function RouteComponent() {
+  const { data, isPending } = useQuery({
+    queryKey: ["organizations"],
+    queryFn: getOrganizations,
+  })
+
+  if (isPending) {
+    return <div>Loading organizations...</div>
+  }
+
   return (
     <div className="space-y-6">
       <Header
@@ -26,7 +36,7 @@ function RouteComponent() {
         <CardContent className="gap-0 px-0">
           <OrganizationDataTable
             columns={organizationColumns}
-            data={organizations}
+            data={data.tenants}
           />
         </CardContent>
       </Card>

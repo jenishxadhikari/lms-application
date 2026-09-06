@@ -1,6 +1,10 @@
+import { useState } from "react"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import * as z from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -29,12 +33,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 import { TimezoneSelect } from "@/components/timezone"
 
 import { createOrganizationSchema } from "@/features/superadmin/organization/schema"
 
+import { createOrganization } from "../api"
+
 export function AddOrganization() {
+  const [error, setError] = useState<string | null>(null)
+
   const form = useForm<z.infer<typeof createOrganizationSchema>>({
     resolver: zodResolver(createOrganizationSchema),
     defaultValues: {
@@ -50,11 +59,19 @@ export function AddOrganization() {
     },
   })
 
-  const pending = form.formState.isSubmitting
+  const { mutate, isPending } = useMutation({
+    mutationFn: createOrganization,
+  })
 
   async function onSubmit(data: z.infer<typeof createOrganizationSchema>) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(data)
+    mutate(data, {
+      onSuccess: (data) => {
+        toast.success(data.message ?? "Organization created successfully")
+      },
+      onError: (error) => {
+        setError(error.message)
+      },
+    })
   }
 
   return (
@@ -190,7 +207,7 @@ export function AddOrganization() {
 
                         <SelectContent>
                           <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="NRP">NRP</SelectItem>
+                          <SelectItem value="NPR">NPR</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -319,19 +336,20 @@ export function AddOrganization() {
                   )}
                 />
               </div>
+              {error && <ErrorAlert message={error} />}
             </FieldGroup>
           </div>
           <DialogFooter className="shrink-0 border-t px-6 py-4">
             <DialogClose
               render={
-                <Button type="button" variant="outline" disabled={pending}>
+                <Button type="button" variant="outline" disabled={isPending}>
                   Cancel
                 </Button>
               }
             />
             <SubmitButton
               label="Add Organization"
-              pending={pending}
+              pending={isPending}
               className="md:w-fit"
             />
           </DialogFooter>

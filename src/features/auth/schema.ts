@@ -39,5 +39,15 @@ export const verifyOtpSchema = z.object({
   verificationCode: z
     .string()
     .length(6, { error: "Verification code must be 6 digits." }),
+})
+
+export const resendOtpSchema = z.object({
+  email: emailSchema,
+})
+
+export const resetPasswordSchema = z.object({
+  verificationCode: z
+    .string()
+    .length(6, { error: "Verification code must be 6 digits." }),
   password: passwordSchema,
 })
