@@ -1,9 +1,12 @@
 import { useState } from "react"
 
+import { useAuth } from "@/auth"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from "@tanstack/react-router"
+import { useMutation } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -18,6 +21,7 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
 import { signinSchema } from "../schema"
@@ -26,7 +30,11 @@ export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+
+  const navigate = useNavigate()
+  const { login } = useAuth()
 
   const form = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
@@ -36,11 +44,22 @@ export function SigninForm({
     },
   })
 
-  const pending = form.formState.isSubmitting
+  const { mutate, isPending } = useMutation({
+    mutationFn: login,
+  })
 
-  async function onSubmit(data: z.infer<typeof signinSchema>) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(data)
+  async function onSubmit(formData: z.infer<typeof signinSchema>) {
+    mutate(formData, {
+      onSuccess: (data) => {
+        toast.success(data.message ?? "Successfully logged in.")
+        navigate({
+          to: "/",
+        })
+      },
+      onError: (error) => {
+        setError(error.message)
+      },
+    })
   }
 
   return (
@@ -115,8 +134,9 @@ export function SigninForm({
             </Field>
           )}
         />
+        {error && <ErrorAlert message={error} />}
         <Field>
-          <SubmitButton label="Login" pending={pending} />
+          <SubmitButton label="Login" pending={isPending} />
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>

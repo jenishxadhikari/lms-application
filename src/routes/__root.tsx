@@ -1,19 +1,26 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router"
+import type { AuthState } from "@/auth"
+import type { QueryClient } from "@tanstack/react-query"
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
+import { Toaster } from "sonner"
 
-import { Toaster } from "@/components/ui/toast"
 import { NotFound } from "@/components/not-found"
 import { ThemeProvider } from "@/components/theme-provider"
 
+interface MyRouterContext {
+  queryClient: QueryClient
+  auth: AuthState
+}
+
 const RootLayout = () => (
   <ThemeProvider storageKey="vite-ui-theme">
-    <Toaster />
+    <Toaster richColors />
     <Outlet />
-    <TanStackRouterDevtools position="bottom-left" />
+    <TanStackRouterDevtools />
   </ThemeProvider>
 )
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: RootLayout,
   notFoundComponent: () => <NotFound />,
 })

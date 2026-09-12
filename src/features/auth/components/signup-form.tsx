@@ -1,9 +1,11 @@
 import { useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from "@tanstack/react-router"
+import { useMutation } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -18,32 +20,57 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
+import { signup } from "../api"
 import { signupSchema } from "../schema"
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
   })
 
-  const pending = form.formState.isSubmitting
+  const { mutate, isPending } = useMutation({
+    mutationFn: signup,
+  })
 
-  async function onSubmit(data: z.infer<typeof signupSchema>) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(data)
+  async function onSubmit(formData: z.infer<typeof signupSchema>) {
+    mutate(formData, {
+      onSuccess: (data) => {
+        ;(console.log("Signup data:", data),
+          toast.success(
+            data.message ??
+              "Signup successful. Please check your email for verification."
+          ))
+        navigate({
+          to: "/verify-otp",
+          state: {
+            email: formData.email,
+            password: formData.password,
+          },
+        })
+      },
+      onError: (error) => {
+        setError(error.message)
+      },
+    })
   }
 
   return (
@@ -61,16 +88,33 @@ export function SignupForm({
           </p>
         </div>
         <Controller
-          name="fullName"
+          name="firstName"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
+              <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 type="text"
-                placeholder="John Doe"
+                placeholder="John"
+                aria-invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="lastName"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                type="text"
+                placeholder="Doe"
                 aria-invalid={fieldState.invalid}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -160,8 +204,9 @@ export function SignupForm({
             </Field>
           )}
         />
+        {error && <ErrorAlert message={error} />}
         <Field>
-          <SubmitButton label="Create Account" pending={pending} />
+          <SubmitButton label="Create Account" pending={isPending} />
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>

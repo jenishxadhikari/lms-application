@@ -1,6 +1,10 @@
+import { useState } from "react"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from "@tanstack/react-router"
+import { useMutation } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { Controller, useForm } from "react-hook-form"
+import { toast } from "sonner"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -13,14 +17,20 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
+import { forgotPassword } from "../api"
 import { forgotPasswordSchema } from "../schema"
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [error, setError] = useState<string | null>(null)
+
+  const navigate = useNavigate()
+
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -28,11 +38,23 @@ export function ForgotPasswordForm({
     },
   })
 
-  const pending = form.formState.isSubmitting
+  const { mutate, isPending } = useMutation({
+    mutationFn: forgotPassword,
+  })
 
-  async function onSubmit(data: z.infer<typeof forgotPasswordSchema>) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(data)
+  async function onSubmit(formData: z.infer<typeof forgotPasswordSchema>) {
+    mutate(formData, {
+      onSuccess: (data) => {
+        toast.success(data.message ?? "OTP code sent to your email address.")
+        navigate({
+          to: "/reset-password",
+          state: { email: formData.email },
+        })
+      },
+      onError: (error) => {
+        setError(error.message)
+      },
+    })
   }
 
   return (
@@ -67,8 +89,9 @@ export function ForgotPasswordForm({
             </Field>
           )}
         />
+        {error && <ErrorAlert message={error} />}
         <Field>
-          <SubmitButton label="Send Verification Code" pending={pending} />
+          <SubmitButton label="Send Verification Code" pending={isPending} />
         </Field>
         <Field>
           <FieldDescription className="text-center">

@@ -14,7 +14,8 @@ const passwordSchema = z
 
 export const signupSchema = z
   .object({
-    fullName: z.string().nonempty({ error: "Please enter your full name." }),
+    firstName: z.string().nonempty({ error: "Please enter your full name." }),
+    lastName: z.string().nonempty({ error: "Please enter your full name." }),
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z
@@ -28,7 +29,7 @@ export const signupSchema = z
 
 export const signinSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: z.string().nonempty({ error: "Confirm password is required." }),
 })
 
 export const forgotPasswordSchema = z.object({
@@ -36,8 +37,19 @@ export const forgotPasswordSchema = z.object({
 })
 
 export const verifyOtpSchema = z.object({
+  email: emailSchema,
+  password: z.string().nonempty({ error: "Confirm password is required." }),
+  otp: z.string().length(6, { error: "Verification code must be 6 digits." }),
+})
+
+export const resetPasswordSchema = z.object({
+  email: emailSchema,
   verificationCode: z
     .string()
     .length(6, { error: "Verification code must be 6 digits." }),
-  password: passwordSchema,
+  newPassword: passwordSchema,
+})
+
+export const resendOtpSchema = z.object({
+  email: emailSchema,
 })

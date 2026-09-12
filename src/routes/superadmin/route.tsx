@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
 
 import {
   SidebarInset,
@@ -10,6 +10,17 @@ import { ModeToggle } from "@/components/mode-toggle"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 
 export const Route = createFileRoute("/superadmin")({
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth.isAuthenticated || context.auth.user?.role !== "ADMIN") {
+      throw redirect({
+        to: "/sign-in",
+        search: {
+          // Save current location for redirect after login
+          redirect: location.href,
+        },
+      })
+    }
+  },
   component: DashboardLayout,
 })
 
