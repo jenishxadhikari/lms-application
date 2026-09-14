@@ -7,6 +7,8 @@ import { config } from "@/lib/config"
 
 import type { signinSchema } from "@/features/auth/schema"
 
+import { queryClient } from "./router"
+
 interface User {
   id: string
   firstName: string
@@ -20,6 +22,7 @@ export interface AuthState {
   isAuthenticated: boolean
   user: User | null
   login: (data: z.infer<typeof signinSchema>) => Promise<any>
+  googleLogin: (token: string) => Promise<any>
   logout: () => void
 }
 
@@ -51,13 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!res.ok) {
           throw new Error("Token validation failed")
         }
+
         setUser({
           id: result.id,
           firstName: result.firstName,
           lastName: result.lastName,
           email: result.email,
           avatarUrl: result.avatarUrl,
-          role: result.designation.toUpperCase(),
+          role: (result.designation ?? result.tenantUser.role).toUpperCase(),
         })
         setIsAuthenticated(true)
       } catch {
@@ -79,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
   }
 
-  const login = async (data: z.infer<typeof signinSchema>) => {
+  async function login(data: z.infer<typeof signinSchema>) {
     const options = {
       method: "POST",
       headers: {
@@ -99,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       lastName: result.lastName,
       email: result.email,
       avatarUrl: result.avatarUrl,
-      role: result.designation,
+      role: result.designation.toUpperCase(),
     })
     setIsAuthenticated(true)
     // Store token for persistence
@@ -108,14 +112,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return result
   }
 
-  const logout = () => {
+  const googleLogin = async (token: string) => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken: token }),
+    }
+    const res = await fetch(`${config.apiUrl}/auth/google`, options)
+    const result = await res.json()
+    if (!res.ok) {
+      throw new Error(result.message ?? "Google login failed")
+    }
+
+    setUser({
+      id: result.user.id,
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
+      email: result.user.email,
+      avatarUrl: result.user.avatarUrl,
+      role: result.user.designation.toUpperCase(),
+    })
+    setIsAuthenticated(true)
+    // Store token for persistence
+    setAuthToken(result.accessToken)
+
+    return result
+  }
+
+  function logout() {
+    queryClient.clear()
     setUser(null)
     setIsAuthenticated(false)
     removeAuthToken()
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, login, logout, googleLogin }}
+    >
       {children}
     </AuthContext.Provider>
   )
