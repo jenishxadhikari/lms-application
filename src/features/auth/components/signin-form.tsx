@@ -7,7 +7,6 @@ import { Link, useNavigate } from "@tanstack/react-router"
 import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 
@@ -24,7 +23,7 @@ import { Input } from "@/components/ui/input"
 import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
-import { signinSchema } from "../schema"
+import { signinSchema, type SigninData } from "../schema"
 import { GoogleAuthButton } from "./google-auth-button"
 
 export function SigninForm({
@@ -37,7 +36,7 @@ export function SigninForm({
   const navigate = useNavigate()
   const { login } = useAuth()
 
-  const form = useForm<z.infer<typeof signinSchema>>({
+  const form = useForm<SigninData>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
       email: "",
@@ -49,10 +48,10 @@ export function SigninForm({
     mutationFn: login,
   })
 
-  async function onSubmit(formData: z.infer<typeof signinSchema>) {
+  async function onSubmit(formData: SigninData) {
     mutate(formData, {
-      onSuccess: (data) => {
-        toast.success(data.message ?? "Successfully logged in.")
+      onSuccess: () => {
+        toast.success("Successfully logged in.")
         navigate({
           to: "/",
         })

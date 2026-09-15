@@ -11,7 +11,10 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar"
 
 export const Route = createFileRoute("/superadmin")({
   beforeLoad: ({ context, location }) => {
-    if (!context.auth.isAuthenticated || context.auth.user?.role !== "ADMIN") {
+    if (
+      !context.auth.isAuthenticated ||
+      context.auth.user?.role !== "SUPERADMIN"
+    ) {
       throw redirect({
         to: "/sign-in",
         search: {

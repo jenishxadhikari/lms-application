@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 
-import type z from "zod"
-
+import { api, getApiErrorMessage } from "@/lib/api"
 import { getAuthToken, removeAuthToken, setAuthToken } from "@/lib/auth-token"
-import { config } from "@/lib/config"
 
-import type { signinSchema } from "@/features/auth/schema"
+import { Spinner } from "@/components/ui/spinner"
+
+import type {
+  LoginResponse,
+  SigninData,
+  UserResponse,
+  UserRole,
+} from "@/features/auth/schema"
 
 import { queryClient } from "./router"
 
@@ -14,15 +19,15 @@ interface User {
   firstName: string
   lastName: string
   email: string
-  avatarUrl: string
-  role: "SUPERADMIN" | "ADMIN" | "OWNER" | "MENTOR" | "STUDENT"
+  avatarUrl?: string
+  role: UserRole
 }
 
 export interface AuthState {
   isAuthenticated: boolean
   user: User | null
-  login: (data: z.infer<typeof signinSchema>) => Promise<any>
-  googleLogin: (token: string) => Promise<any>
+  login: (data: SigninData) => Promise<LoginResponse>
+  googleLogin: (token: string) => Promise<LoginResponse>
   logout: () => void
 }
 
@@ -30,7 +35,7 @@ const AuthContext = createContext<AuthState | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const isAuthenticated = user !== null
   const [isLoading, setIsLoading] = useState(true)
 
   // Restore auth state on app load
@@ -43,17 +48,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       // Validate token with your API
       try {
-        const options = {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-        const res = await fetch(`${config.apiUrl}/user/me`, options)
-        const result = await res.json()
-        if (!res.ok) {
-          throw new Error("Token validation failed")
-        }
+        const res = await api.get<UserResponse>("/user/me")
+        const result = res.data
 
         setUser({
           id: result.id,
@@ -61,11 +57,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           lastName: result.lastName,
           email: result.email,
           avatarUrl: result.avatarUrl,
-          role: (result.designation ?? result.tenantUser.role).toUpperCase(),
+          role: result.tenantUser.role,
         })
-        setIsAuthenticated(true)
-      } catch {
+      } catch (error) {
         removeAuthToken()
+        throw new Error(getApiErrorMessage(error, "Token validation failed"))
       } finally {
         setIsLoading(false)
       }
@@ -78,73 +74,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        Loading...
+        <Spinner />
       </div>
     )
   }
 
-  async function login(data: z.infer<typeof signinSchema>) {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }
-    const res = await fetch(`${config.apiUrl}/auth/login`, options)
-    const result = await res.json()
-    if (!res.ok) {
-      throw new Error(result.message ?? "Login failed")
-    }
+  async function login(data: SigninData) {
+    try {
+      const res = await api.post<LoginResponse>("/auth/login", data)
+      const result = res.data
 
-    setUser({
-      id: result.id,
-      firstName: result.firstName,
-      lastName: result.lastName,
-      email: result.email,
-      avatarUrl: result.avatarUrl,
-      role: result.designation.toUpperCase(),
-    })
-    setIsAuthenticated(true)
-    // Store token for persistence
-    setAuthToken(result.accessToken)
+      // Store token for persistence
+      setAuthToken(result.accessToken)
+      setUser({
+        id: result.user.id,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email,
+        avatarUrl: result.user.avatarUrl,
+        role: result.user.tenantUser.role,
+      })
 
-    return result
+      return result
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Login failed"))
+    }
   }
 
-  const googleLogin = async (token: string) => {
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken: token }),
-    }
-    const res = await fetch(`${config.apiUrl}/auth/google`, options)
-    const result = await res.json()
-    if (!res.ok) {
-      throw new Error(result.message ?? "Google login failed")
-    }
+  async function googleLogin(token: string) {
+    try {
+      const res = await api.post<LoginResponse>("/auth/google", {
+        idToken: token,
+      })
+      const result = res.data
 
-    setUser({
-      id: result.user.id,
-      firstName: result.user.firstName,
-      lastName: result.user.lastName,
-      email: result.user.email,
-      avatarUrl: result.user.avatarUrl,
-      role: result.user.designation.toUpperCase(),
-    })
-    setIsAuthenticated(true)
-    // Store token for persistence
-    setAuthToken(result.accessToken)
+      // Store token for persistence
+      setAuthToken(result.accessToken)
+      setUser({
+        id: result.user.id,
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email,
+        avatarUrl: result.user.avatarUrl,
+        role: result.user.tenantUser.role,
+      })
 
-    return result
+      return result
+    } catch (error) {
+      throw new Error(getApiErrorMessage(error, "Google login failed"))
+    }
   }
 
   function logout() {
     queryClient.clear()
     setUser(null)
-    setIsAuthenticated(false)
     removeAuthToken()
   }
 

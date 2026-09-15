@@ -6,7 +6,6 @@ import { Link, useNavigate } from "@tanstack/react-router"
 import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 
@@ -24,7 +23,7 @@ import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
 import { signup } from "../api"
-import { signupSchema } from "../schema"
+import { signupSchema, type SignupData } from "../schema"
 import { GoogleAuthButton } from "./google-auth-button"
 
 export function SignupForm({
@@ -37,7 +36,7 @@ export function SignupForm({
 
   const navigate = useNavigate()
 
-  const form = useForm<z.infer<typeof signupSchema>>({
+  const form = useForm<SignupData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       firstName: "",
@@ -52,14 +51,13 @@ export function SignupForm({
     mutationFn: signup,
   })
 
-  async function onSubmit(formData: z.infer<typeof signupSchema>) {
+  async function onSubmit(formData: SignupData) {
     mutate(formData, {
       onSuccess: (data) => {
-        ;(console.log("Signup data:", data),
-          toast.success(
-            data.message ??
-              "Signup successful. Please check your email for verification."
-          ))
+        toast.success(
+          data.message ??
+            "Signup successful. Please check your email for verification."
+        )
         navigate({
           to: "/verify-otp",
           state: {

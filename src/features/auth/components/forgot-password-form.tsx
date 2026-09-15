@@ -5,7 +5,6 @@ import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 
@@ -21,7 +20,7 @@ import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
 import { forgotPassword } from "../api"
-import { forgotPasswordSchema } from "../schema"
+import { forgotPasswordSchema, type ForgotPasswordData } from "../schema"
 
 export function ForgotPasswordForm({
   className,
@@ -31,7 +30,7 @@ export function ForgotPasswordForm({
 
   const navigate = useNavigate()
 
-  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+  const form = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
@@ -42,7 +41,7 @@ export function ForgotPasswordForm({
     mutationFn: forgotPassword,
   })
 
-  async function onSubmit(formData: z.infer<typeof forgotPasswordSchema>) {
+  async function onSubmit(formData: ForgotPasswordData) {
     mutate(formData, {
       onSuccess: (data) => {
         toast.success(data.message ?? "OTP code sent to your email address.")

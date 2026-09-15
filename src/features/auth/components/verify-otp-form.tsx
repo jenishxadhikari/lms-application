@@ -6,7 +6,6 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router"
 import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 
@@ -28,7 +27,7 @@ import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
 import { verifyOtp } from "../api"
-import { verifyOtpSchema } from "../schema"
+import { verifyOtpSchema, type VerifyOtpData } from "../schema"
 import { ResendOTPButton } from "./resend-otp-button"
 
 export function VerifyOtpForm({
@@ -42,7 +41,7 @@ export function VerifyOtpForm({
   const email = state.email
   const password = state.password
 
-  const form = useForm<z.infer<typeof verifyOtpSchema>>({
+  const form = useForm<VerifyOtpData>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: {
       email: email,
@@ -55,12 +54,12 @@ export function VerifyOtpForm({
     mutationFn: verifyOtp,
   })
 
-  async function onSubmit(formData: z.infer<typeof verifyOtpSchema>) {
+  async function onSubmit(formData: VerifyOtpData) {
     mutate(formData, {
-      onSuccess: (data) => {
-        toast.success(data.message ?? "Verification successful.")
+      onSuccess: () => {
+        toast.success("Verification successful.")
         navigate({
-          to: "/",
+          to: "/sign-in",
         })
       },
       onError: (error) => {
@@ -114,7 +113,7 @@ export function VerifyOtpForm({
                     <FieldLabel htmlFor={field.name}>
                       Verification Code
                     </FieldLabel>
-                    <ResendOTPButton email={email} />
+                    <ResendOTPButton email={email} otpType="REGISTRATION" />
                   </div>
                   <InputOTP
                     {...field}

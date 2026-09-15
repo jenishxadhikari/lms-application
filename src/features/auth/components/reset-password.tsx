@@ -7,7 +7,6 @@ import { REGEXP_ONLY_DIGITS } from "input-otp"
 import { Eye, EyeOff } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
-import * as z from "zod"
 
 import { cn } from "@/lib/utils"
 
@@ -29,7 +28,7 @@ import { ErrorAlert } from "@/components/error-alert"
 import { SubmitButton } from "@/components/submit-button"
 
 import { resetPassword } from "../api"
-import { resetPasswordSchema } from "../schema"
+import { resetPasswordSchema, type ResetPasswordData } from "../schema"
 import { ResendOTPButton } from "./resend-otp-button"
 
 export function ResetPasswordForm({
@@ -43,11 +42,11 @@ export function ResetPasswordForm({
   const { state } = useLocation()
   const email = state.email
 
-  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+  const form = useForm<ResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: email,
-      verificationCode: "",
+      otp: "",
       newPassword: "",
     },
   })
@@ -56,7 +55,7 @@ export function ResetPasswordForm({
     mutationFn: resetPassword,
   })
 
-  async function onSubmit(formData: z.infer<typeof resetPasswordSchema>) {
+  async function onSubmit(formData: ResetPasswordData) {
     mutate(formData, {
       onSuccess: (data) => {
         toast.success(data.message ?? "Password reset successful.")
@@ -105,7 +104,7 @@ export function ResetPasswordForm({
               )}
             />
             <Controller
-              name="verificationCode"
+              name="otp"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
@@ -113,7 +112,7 @@ export function ResetPasswordForm({
                     <FieldLabel htmlFor={field.name}>
                       Verification Code
                     </FieldLabel>
-                    <ResendOTPButton email={email} />
+                    <ResendOTPButton email={email} otpType="PASSWORD_RESET" />
                   </div>
                   <InputOTP
                     {...field}

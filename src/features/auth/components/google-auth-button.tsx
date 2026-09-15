@@ -14,8 +14,8 @@ export function GoogleAuthButton() {
 
   async function handleGoogleLogin(token: string) {
     mutate(token, {
-      onSuccess: (data) => {
-        toast.success(data.message ?? "Successfully logged in.")
+      onSuccess: () => {
+        toast.success("Successfully logged in.")
         navigate({
           to: "/",
         })
