@@ -37,6 +37,7 @@ export function DeleteOrganization({
       onSuccess: () => {
         toast.success("Organization deleted successfully.")
         queryClient.invalidateQueries({ queryKey: ["organizations"] })
+        onOpenChange(false)
       },
       onError: (error) => {
         toast.error(error.message)

@@ -6,9 +6,20 @@ import type {
   UpdateOrganizationInput,
 } from "./schema"
 
-export async function getOrganizations() {
+export async function getOrganizations({
+  page,
+  size,
+}: {
+  page: number
+  size: number
+}) {
   try {
-    const res = await api.get<OrganizationsResponse>("/admin/tenants")
+    const res = await api.get<OrganizationsResponse>("/admin/tenants", {
+      params: {
+        page,
+        size,
+      },
+    })
     return res.data
   } catch (error) {
     throw new Error(getApiErrorMessage(error, "Failed to fetch organizations"))

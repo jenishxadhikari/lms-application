@@ -5,6 +5,7 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type ColumnVisibilityState,
+  type OnChangeFn,
   type PaginationState,
   type RowData,
   type SortingState,
@@ -35,11 +36,17 @@ import {
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<typeof features, TData>[]
   data: TData[]
+  pagination: PaginationState
+  onPaginationChange: OnChangeFn<PaginationState>
+  rowCount: number
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  pagination,
+  onPaginationChange,
+  rowCount,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -49,19 +56,19 @@ export function DataTable<TData extends RowData>({
     React.useState<ColumnVisibilityState>({
       description: false,
     })
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
 
   const table = useTable({
     features,
     data,
     columns,
+    manualPagination: true,
+    rowCount,
+
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
+    onPaginationChange,
+
     state: {
       sorting,
       columnFilters,

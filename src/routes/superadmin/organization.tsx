@@ -1,15 +1,18 @@
+import { useState } from "react"
+
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import type { PaginationState } from "@tanstack/react-table"
 import { OctagonAlert } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/header"
-import { DataTable } from "@/components/table/data-table"
 import { OrganizationDataTableSkeleton } from "@/components/table/data-table-skeleton"
 
 import { getOrganizations } from "@/features/superadmin/organization/api"
 import { AddOrganization } from "@/features/superadmin/organization/components/add-organization"
+import { DataTable } from "@/features/superadmin/organization/components/data-table"
 import { organizationColumns } from "@/features/superadmin/organization/table/columns"
 
 export const Route = createFileRoute("/superadmin/organization")({
@@ -17,9 +20,18 @@ export const Route = createFileRoute("/superadmin/organization")({
 })
 
 function RouteComponent() {
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  })
+
   const { data, isPending, isError, error, refetch } = useQuery({
-    queryKey: ["organizations"],
-    queryFn: getOrganizations,
+    queryKey: ["organizations", pagination.pageIndex, pagination.pageSize],
+    queryFn: () =>
+      getOrganizations({
+        page: pagination.pageIndex,
+        size: pagination.pageSize,
+      }),
   })
 
   return (
@@ -55,7 +67,13 @@ function RouteComponent() {
               </Button>
             </div>
           ) : (
-            <DataTable columns={organizationColumns} data={data.tenants} />
+            <DataTable
+              columns={organizationColumns}
+              data={data.tenants}
+              pagination={pagination}
+              onPaginationChange={setPagination}
+              rowCount={data?.paginationInfo.total ?? 0}
+            />
           )}
         </CardContent>
       </Card>

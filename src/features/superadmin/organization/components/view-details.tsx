@@ -4,7 +4,10 @@ import {
   Globe2Icon,
   ImageIcon,
   PaletteIcon,
+  ShieldCheckIcon,
 } from "lucide-react"
+
+import { cn } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
 import {
@@ -72,6 +75,9 @@ export function ViewDetails({
         createdDate
       )
 
+  const system = organization.type === "SYSTEM"
+  const active = organization.status === "ACTIVE"
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full gap-0 transition-[transform,opacity] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:duration-150 motion-reduce:transition-opacity motion-reduce:data-ending-style:translate-x-0 motion-reduce:data-starting-style:translate-x-0 md:min-w-2xl">
@@ -103,27 +109,28 @@ export function ViewDetails({
           <div className="flex flex-wrap gap-2 pt-4">
             <Badge
               variant="outline"
-              className={
-                organization.status === "ACTIVE"
+              className={cn(
+                "gap-1.5 font-normal",
+                active
                   ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-400"
-                  : "bg-background text-muted-foreground"
-              }
+                  : "bg-muted/50 text-muted-foreground"
+              )}
             >
               <span
                 aria-hidden="true"
-                className={
-                  organization.status === "ACTIVE"
-                    ? "size-1.5 rounded-full bg-emerald-500"
-                    : "size-1.5 rounded-full bg-muted-foreground"
-                }
+                className={cn(
+                  "size-1.5 rounded-full",
+                  active ? "bg-emerald-500" : "bg-muted-foreground"
+                )}
               />
-              {organization.status === "ACTIVE" ? "Active" : "Inactive"}
+              {active ? "Active" : "Inactive"}
             </Badge>
             <Badge
               variant="outline"
-              className="bg-background text-muted-foreground"
+              className="gap-1.5 bg-muted/30 font-normal text-muted-foreground"
             >
-              {organization.type === "SYSTEM" ? "System" : "Organization"}
+              {system ? <ShieldCheckIcon /> : <Building2Icon />}
+              {system ? "System" : "Organization"}
             </Badge>
           </div>
         </SheetHeader>
