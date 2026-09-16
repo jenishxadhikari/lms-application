@@ -1,30 +1,14 @@
 import { createColumnHelper } from "@tanstack/react-table"
-import {
-  Building2Icon,
-  EyeIcon,
-  MoreHorizontalIcon,
-  PencilIcon,
-  ShieldCheckIcon,
-} from "lucide-react"
+import { Building2Icon, ShieldCheckIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
 import type { DataTableFeatures } from "@/components/table/data-table-features"
 
-import { DeleteOrganization } from "../components/delete-organization"
-import type { Organization } from "./data"
+import type { Organization } from "../schema"
+import { OrganizationActions } from "./organization-actions"
 
 const columnHelper = createColumnHelper<DataTableFeatures, Organization>()
 
@@ -42,10 +26,18 @@ export const organizationColumns = columnHelper.columns([
         const organization = row.original
 
         return (
-          <div className="flex min-w-60 items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/10">
-              <Building2Icon className="size-4" />
-            </div>
+          <div className="flex min-w-52 items-center gap-3">
+            {organization.logoUrl ? (
+              <img
+                src={organization.logoUrl}
+                alt=""
+                className="size-9 shrink-0 rounded-lg bg-muted object-contain outline -outline-offset-1 outline-black/10 dark:outline-white/10"
+              />
+            ) : (
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/10">
+                <Building2Icon className="size-4" />
+              </div>
+            )}
             <div className="min-w-0">
               <div className="truncate font-medium text-foreground">
                 {organization.name}
@@ -133,7 +125,7 @@ export const organizationColumns = columnHelper.columns([
       <DataTableColumnHeader column={column} title="Currency" />
     ),
     cell: ({ row }) => (
-      <span className="text-sm font-medium tabular-nums">
+      <span className="text-sm font-medium uppercase tabular-nums">
         {row.original.currency}
       </span>
     ),
@@ -147,47 +139,6 @@ export const organizationColumns = columnHelper.columns([
     id: "actions",
     enableHiding: false,
     enableSorting: false,
-    cell: ({ row }) => {
-      const organization = row.original
-
-      return (
-        <div className="flex justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  className="text-muted-foreground data-popup-open:bg-muted"
-                />
-              }
-            >
-              <MoreHorizontalIcon />
-              <span className="sr-only">
-                Open actions for {organization.name}
-              </span>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="truncate">
-                  {organization.name}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <EyeIcon />
-                  View details
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <PencilIcon />
-                  Edit organization
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DeleteOrganization />
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )
-    },
+    cell: ({ row }) => <OrganizationActions organization={row.original} />,
   }),
 ])

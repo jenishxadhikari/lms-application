@@ -1,8 +1,6 @@
-import { useState } from "react"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { Building2Icon, ImageIcon, PaletteIcon, PlusIcon } from "lucide-react"
+import { Building2Icon, ImageIcon, PaletteIcon } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -15,7 +13,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Field,
@@ -32,29 +29,48 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { FormSection } from "@/components/form-section"
 import { SubmitButton } from "@/components/submit-button"
 import { TimezoneSelect } from "@/components/timezone"
 
 import {
-  createOrganizationSchema,
-  type CreateOrganizationInput,
+  updateOrganizationSchema,
+  type UpdateOrganizationInput,
 } from "@/features/superadmin/organization/schema"
 
-import { createOrganization } from "../api"
+import { updateOrganization } from "../api"
 
-export function AddOrganization() {
-  const [open, setOpen] = useState(false)
+interface EditOrganizationProps {
+  data: {
+    id: string
+    name: string
+    slug: string
+    description: string
+    timezone: string
+    currency: "NPR" | "USD"
+    primaryColor: string
+    secondaryColor: string
+  }
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
 
-  const form = useForm<CreateOrganizationInput>({
-    resolver: zodResolver(createOrganizationSchema),
+export function EditOrganization({
+  data,
+  open,
+  onOpenChange,
+}: EditOrganizationProps) {
+  const form = useForm<UpdateOrganizationInput>({
+    resolver: zodResolver(updateOrganizationSchema),
     defaultValues: {
-      name: "",
-      slug: "",
-      description: "",
-      timezone: "",
-      currency: "NPR",
-      primaryColor: "#436CEB",
-      secondaryColor: "#0A0A0A",
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      description: data.description,
+      timezone: data.timezone,
+      currency: data.currency,
+      primaryColor: data.primaryColor,
+      secondaryColor: data.secondaryColor,
       logo: undefined,
       favicon: undefined,
     },
@@ -63,16 +79,15 @@ export function AddOrganization() {
   const queryClient = useQueryClient()
 
   const { mutate, isPending } = useMutation({
-    mutationFn: createOrganization,
+    mutationFn: updateOrganization,
   })
 
-  async function onSubmit(formData: CreateOrganizationInput) {
+  async function onSubmit(formData: UpdateOrganizationInput) {
     mutate(formData, {
       onSuccess: () => {
-        toast.success("Successfully created organization.")
+        toast.success("Successfully updated organization.")
         queryClient.invalidateQueries({ queryKey: ["organizations"] })
-        form.reset()
-        setOpen(false)
+        onOpenChange(false)
       },
       onError: (error) => {
         toast.error(error.message)
@@ -81,15 +96,7 @@ export function AddOrganization() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button type="button">
-            <PlusIcon />
-            Add Organization
-          </Button>
-        }
-      />
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[calc(100vh-2rem)] flex-col gap-0 overflow-hidden p-0 shadow-xl duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:duration-0 sm:max-w-sm md:max-h-[min(82vh,48rem)] md:max-w-2xl data-closed:duration-150">
         <form
           id="add-organization-form"
@@ -102,9 +109,9 @@ export function AddOrganization() {
                 <Building2Icon className="size-5" />
               </div>
               <div className="space-y-1.5">
-                <DialogTitle className="text-xl">Add organization</DialogTitle>
+                <DialogTitle className="text-xl">Edit organization</DialogTitle>
                 <DialogDescription>
-                  Create a workspace and set its regional and brand defaults.
+                  Edit a workspace and set its regional and brand defaults.
                 </DialogDescription>
               </div>
             </div>
@@ -385,7 +392,7 @@ export function AddOrganization() {
               }
             />
             <SubmitButton
-              label="Add Organization"
+              label="Save Organization"
               pending={isPending}
               className="md:w-fit"
             />
@@ -393,30 +400,5 @@ export function AddOrganization() {
         </form>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function FormSection({
-  icon: Icon,
-  title,
-  description,
-  children,
-}: {
-  icon: typeof Building2Icon
-  title: string
-  description: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="space-y-5">
-      <div className="flex items-start gap-2.5">
-        <Icon className="mt-0.5 size-4 text-muted-foreground" />
-        <div>
-          <h3 className="text-sm font-medium">{title}</h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
-        </div>
-      </div>
-      <div className="space-y-6 pl-6.5">{children}</div>
-    </section>
   )
 }

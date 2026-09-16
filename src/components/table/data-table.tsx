@@ -27,14 +27,17 @@ import { DataTableFilter } from "@/components/table/data-table-filter"
 import { DataTablePagination } from "@/components/table/data-table-pagination"
 import { DataTableViewOptions } from "@/components/table/data-table-view-options"
 
-import { statusFilterOptions, typeFilterOptions } from "./data"
+import {
+  statusFilterOptions,
+  typeFilterOptions,
+} from "@/features/superadmin/organization/table/type"
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<typeof features, TData>[]
   data: TData[]
 }
 
-export function OrganizationDataTable<TData extends RowData>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
 }: DataTableProps<TData>) {
