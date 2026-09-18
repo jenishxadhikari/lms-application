@@ -24,18 +24,21 @@ export function DataTablePagination<TData extends RowData>({
   const { pageIndex, pageSize } = table.state.pagination
   const visibleRowCount = table.getRowModel().rows.length
   const filteredRowCount = table.getFilteredRowModel().rows.length
+  const totalCount = table.options.manualPagination
+    ? (table.options.rowCount ?? 0)
+    : filteredRowCount
   const firstVisibleRow = visibleRowCount ? pageIndex * pageSize + 1 : 0
   const lastVisibleRow = visibleRowCount
-    ? Math.min(firstVisibleRow + visibleRowCount - 1, filteredRowCount)
+    ? Math.min(firstVisibleRow + visibleRowCount - 1, totalCount)
     : 0
   const displayedItemLabel =
-    filteredRowCount === 1 ? itemLabel.singular : itemLabel.plural
+    totalCount === 1 ? itemLabel.singular : itemLabel.plural
 
   return (
     <div className="flex flex-col gap-3 border-t bg-muted/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="flex-1 text-sm text-muted-foreground" aria-live="polite">
-        Showing {firstVisibleRow}–{lastVisibleRow} of{" "}
-        {table.getFilteredRowModel().rows.length} {displayedItemLabel}
+        Showing {firstVisibleRow}–{lastVisibleRow} of {totalCount}{" "}
+        {displayedItemLabel}
       </p>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex w-25 items-center justify-center text-sm font-medium">

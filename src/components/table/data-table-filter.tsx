@@ -20,7 +20,7 @@ const ALL_OPTIONS = "__all__"
 
 type FilterOption = {
   label: string
-  value: string
+  value: string | boolean
 }
 
 export function DataTableFilter<TData extends RowData>({
@@ -35,11 +35,7 @@ export function DataTableFilter<TData extends RowData>({
   options: readonly FilterOption[]
 }) {
   const filterValue = column?.getFilterValue()
-  const selectedValue =
-    typeof filterValue === "string" ? filterValue : undefined
-  const selectedOption = options.find(
-    (option) => option.value === selectedValue
-  )
+  const selectedOption = options.find((option) => option.value === filterValue)
 
   return (
     <DropdownMenu>
@@ -67,9 +63,14 @@ export function DataTableFilter<TData extends RowData>({
           <DropdownMenuLabel>Filter by {label.toLowerCase()}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup
-            value={selectedValue ?? ALL_OPTIONS}
+            value={selectedOption ? String(selectedOption.value) : ALL_OPTIONS}
             onValueChange={(value) =>
-              column?.setFilterValue(value === ALL_OPTIONS ? undefined : value)
+              column?.setFilterValue(
+                value === ALL_OPTIONS
+                  ? undefined
+                  : options.find((option) => String(option.value) === value)
+                      ?.value
+              )
             }
           >
             <DropdownMenuRadioItem value={ALL_OPTIONS} closeOnClick>
@@ -77,8 +78,8 @@ export function DataTableFilter<TData extends RowData>({
             </DropdownMenuRadioItem>
             {options.map((option) => (
               <DropdownMenuRadioItem
-                key={option.value}
-                value={option.value}
+                key={String(option.value)}
+                value={String(option.value)}
                 closeOnClick
               >
                 {option.label}

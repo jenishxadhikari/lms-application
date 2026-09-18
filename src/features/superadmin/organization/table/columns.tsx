@@ -8,7 +8,7 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import type { DataTableFeatures } from "@/components/table/data-table-features"
 
 import type { Organization } from "../schema"
-import { OrganizationActions } from "./organization-actions"
+import { OrganizationActions } from "./actions"
 
 const columnHelper = createColumnHelper<DataTableFeatures, Organization>()
 

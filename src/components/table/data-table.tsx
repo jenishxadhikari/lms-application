@@ -28,56 +28,83 @@ import { DataTableFilter } from "@/components/table/data-table-filter"
 import { DataTablePagination } from "@/components/table/data-table-pagination"
 import { DataTableViewOptions } from "@/components/table/data-table-view-options"
 
-import {
-  statusFilterOptions,
-  typeFilterOptions,
-} from "@/features/superadmin/organization/table/type"
+type FilterOption = { label: string; value: string | boolean }
+
+export interface DataTableFilterConfig {
+  columnId: string
+  label: string
+  allLabel: string
+  options: readonly FilterOption[]
+}
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<typeof features, TData>[]
   data: TData[]
-  pagination: PaginationState
-  onPaginationChange: OnChangeFn<PaginationState>
-  rowCount: number
+  caption: string
+  itemLabel: { singular: string; plural: string }
+  search?: { columnId: string; label: string; placeholder: string }
+  filters?: readonly DataTableFilterConfig[]
+  emptyState: {
+    title: string
+    description: string
+    filteredTitle: string
+    filteredDescription: string
+  }
+  initialColumnVisibility?: ColumnVisibilityState
+  tableClassName?: string
+  pagination?: {
+    state: PaginationState
+    onChange: OnChangeFn<PaginationState>
+    rowCount: number
+  }
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
+  caption,
+  itemLabel,
+  search,
+  filters = [],
+  emptyState,
+  initialColumnVisibility = {},
+  tableClassName,
   pagination,
-  onPaginationChange,
-  rowCount,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<ColumnVisibilityState>({
-      description: false,
-    })
+    React.useState<ColumnVisibilityState>(initialColumnVisibility)
+  const [localPagination, setLocalPagination] = React.useState<PaginationState>(
+    {
+      pageIndex: 0,
+      pageSize: 10,
+    }
+  )
 
   const table = useTable({
     features,
     data,
     columns,
-    manualPagination: true,
-    rowCount,
+    manualPagination: !!pagination,
+    rowCount: pagination?.rowCount,
 
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange,
+    onPaginationChange: pagination?.onChange ?? setLocalPagination,
 
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      pagination,
+      pagination: pagination?.state ?? localPagination,
     },
   })
 
-  const searchColumn = table.getColumn("name")
+  const searchColumn = search ? table.getColumn(search.columnId) : undefined
   const searchValue = (searchColumn?.getFilterValue() as string) ?? ""
   const rows = table.getRowModel().rows
   const hasFilters = columnFilters.length > 0
@@ -88,44 +115,45 @@ export function DataTable<TData extends RowData>({
     <div className="min-w-0">
       <div className="flex flex-col gap-3 border-b bg-muted/10 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="relative w-full sm:max-w-sm">
-            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              aria-label="Search organizations"
-              placeholder="Search by name..."
-              value={searchValue}
-              onChange={(event) =>
-                searchColumn?.setFilterValue(event.target.value)
-              }
-              className="h-9 pr-9 pl-9"
-            />
-            {searchValue && (
-              <Button
-                aria-label="Clear organization search"
-                variant="ghost"
-                size="icon-sm"
-                className="absolute top-1/2 right-0.5 -translate-y-1/2 text-muted-foreground"
-                onClick={() => searchColumn?.setFilterValue(undefined)}
-              >
-                <XIcon />
-              </Button>
-            )}
-          </div>
+          {search && (
+            <div className="relative w-full sm:max-w-sm">
+              <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                aria-label={search.label}
+                placeholder={search.placeholder}
+                value={searchValue}
+                onChange={(event) =>
+                  searchColumn?.setFilterValue(event.target.value)
+                }
+                className="h-9 pr-9 pl-9"
+              />
+              {searchValue && (
+                <Button
+                  aria-label={`Clear ${search.label.toLowerCase()}`}
+                  variant="ghost"
+                  size="icon-sm"
+                  className="absolute top-1/2 right-0.5 -translate-y-1/2 text-muted-foreground"
+                  onClick={() => searchColumn?.setFilterValue(undefined)}
+                >
+                  <XIcon />
+                </Button>
+              )}
+            </div>
+          )}
 
-          <div className="grid grid-cols-2 gap-2 sm:flex">
-            <DataTableFilter
-              label="Type"
-              allLabel="All types"
-              column={table.getColumn("type")}
-              options={typeFilterOptions}
-            />
-            <DataTableFilter
-              label="Status"
-              allLabel="All statuses"
-              column={table.getColumn("status")}
-              options={statusFilterOptions}
-            />
-          </div>
+          {filters.length > 0 && (
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              {filters.map((filter) => (
+                <DataTableFilter
+                  key={filter.columnId}
+                  label={filter.label}
+                  allLabel={filter.allLabel}
+                  column={table.getColumn(filter.columnId)}
+                  options={filter.options}
+                />
+              ))}
+            </div>
+          )}
 
           {hasFilters && (
             <Button
@@ -144,11 +172,8 @@ export function DataTable<TData extends RowData>({
       </div>
 
       <div className="overflow-hidden">
-        <Table>
-          <TableCaption className="sr-only">
-            Organizations, their status, type, location, currency, and available
-            actions.
-          </TableCaption>
+        <Table className={tableClassName}>
+          <TableCaption className="sr-only">{caption}</TableCaption>
           <TableHeader className="bg-muted/35">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
@@ -212,13 +237,13 @@ export function DataTable<TData extends RowData>({
                     </div>
                     <p className="font-medium text-foreground">
                       {data.length === 0
-                        ? "No organizations yet"
-                        : "No matching organizations"}
+                        ? emptyState.title
+                        : emptyState.filteredTitle}
                     </p>
                     <p className="mt-1 text-sm whitespace-normal text-muted-foreground">
                       {data.length === 0
-                        ? "Organizations will appear here after they are added."
-                        : "Try changing or clearing your search and filters."}
+                        ? emptyState.description
+                        : emptyState.filteredDescription}
                     </p>
                     {hasFilters && (
                       <Button
@@ -237,10 +262,7 @@ export function DataTable<TData extends RowData>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination
-        table={table}
-        itemLabel={{ singular: "organization", plural: "organizations" }}
-      />
+      <DataTablePagination table={table} itemLabel={itemLabel} />
     </div>
   )
 }

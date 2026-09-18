@@ -8,12 +8,12 @@ import { OctagonAlert } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Header } from "@/components/header"
-import { OrganizationDataTableSkeleton } from "@/components/table/data-table-skeleton"
+import { DataTableSkeleton } from "@/components/table/data-table-skeleton"
 
 import { getOrganizations } from "@/features/superadmin/organization/api"
 import { AddOrganization } from "@/features/superadmin/organization/components/add-organization"
-import { DataTable } from "@/features/superadmin/organization/components/data-table"
 import { organizationColumns } from "@/features/superadmin/organization/table/columns"
+import { DataTable } from "@/features/superadmin/organization/table/data-table"
 
 export const Route = createFileRoute("/superadmin/organization")({
   component: RouteComponent,
@@ -46,7 +46,7 @@ function RouteComponent() {
       <Card className="gap-0 overflow-hidden py-0 shadow-sm">
         <CardContent className="gap-0 px-0">
           {isPending ? (
-            <OrganizationDataTableSkeleton />
+            <DataTableSkeleton />
           ) : isError ? (
             <div className="flex min-h-48 flex-col items-center justify-center px-6 py-10 text-center">
               <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-destructive/10 text-destructive ring-1 ring-destructive/10">

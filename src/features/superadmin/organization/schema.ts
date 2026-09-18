@@ -30,24 +30,8 @@ export const createOrganizationSchema = z.object({
 
 export type CreateOrganizationInput = z.infer<typeof createOrganizationSchema>
 
-export const updateOrganizationSchema = z.object({
-  id: z.uuid("Invalid organization ID").nonempty(),
-  name: z.string().trim().min(1, "Organization name is required"),
-  slug: z
-    .string()
-    .trim()
-    .min(1, "Slug is required")
-    .regex(
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      "Slug can only contain lowercase letters, numbers, and hyphens"
-    ),
-  description: z.string().trim().min(1, "Description is required"),
-  primaryColor: hexColorSchema,
-  secondaryColor: hexColorSchema,
-  timezone: z.string().min(1, "Timezone is required"),
-  currency: z.enum(["NPR", "USD"]),
-  logo: imageSchema.optional(),
-  favicon: imageSchema.optional(),
+export const updateOrganizationSchema = createOrganizationSchema.extend({
+  id: z.uuid("ID is required"),
 })
 
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-export function OrganizationDataTableSkeleton() {
+export function DataTableSkeleton() {
   return (
     <div className="min-w-0">
       <div className="flex flex-col gap-3 border-b px-4 py-4 sm:px-5 lg:flex-row lg:items-center lg:justify-between">

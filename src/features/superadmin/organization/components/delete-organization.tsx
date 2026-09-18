@@ -1,17 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Spinner } from "@/components/ui/spinner"
+import { DeleteDialog } from "@/components/dialog/delete-dialog"
 
 import { deleteOrganization } from "../api"
 
@@ -46,26 +36,14 @@ export function DeleteOrganization({
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Organization</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            organization and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            variant="destructive"
-            onClick={onSubmit}
-            disabled={isPending}
-          >
-            {isPending && <Spinner />} Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <DeleteDialog
+      title="Delete Organization"
+      description="This action cannot be undone. This will permanently delete the organization and remove your data from our servers."
+      buttonLabel="Delete Organization"
+      isPending={isPending}
+      onSubmit={onSubmit}
+      open={open}
+      onOpenChange={onOpenChange}
+    />
   )
 }
