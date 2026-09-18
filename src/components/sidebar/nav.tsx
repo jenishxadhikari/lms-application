@@ -59,17 +59,17 @@ export const data = {
         },
         {
           title: "Add Domain",
-          url: "/superadmin/add-domain",
+          url: "/superadmin/domain",
           icon: <GlobeIcon />,
         },
         {
           title: "Plans",
-          url: "/superadmin/plans",
+          url: "/superadmin/plan",
           icon: <CreditCardIcon />,
         },
         {
           title: "Invites",
-          url: "/superadmin/invites",
+          url: "/superadmin/invite",
           icon: <MailPlusIcon />,
         },
       ],

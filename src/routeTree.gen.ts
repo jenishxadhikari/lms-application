@@ -20,6 +20,7 @@ import { Route as authVerifyOtpRouteImport } from './routes/(auth)/verify-otp'
 import { Route as SuperadminIndexRouteImport } from './routes/superadmin/index'
 import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/dashboard'
 import { Route as SuperadminOrganizationRouteImport } from './routes/superadmin/organization'
+import { Route as SuperadminPlanRouteImport } from './routes/superadmin/plan'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -75,6 +76,11 @@ const SuperadminOrganizationRoute = SuperadminOrganizationRouteImport.update({
   path: '/organization',
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
+const SuperadminPlanRoute = SuperadminPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
+  '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin/': typeof SuperadminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
+  '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin': typeof SuperadminIndexRoute
 }
 export interface FileRoutesById {
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/(auth)/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
+  '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin/': typeof SuperadminIndexRoute
 }
 export interface FileRouteTypes {
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/superadmin/dashboard'
     | '/superadmin/organization'
+    | '/superadmin/plan'
     | '/superadmin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/verify-otp'
     | '/superadmin/dashboard'
     | '/superadmin/organization'
+    | '/superadmin/plan'
     | '/superadmin'
   id:
     | '__root__'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/(auth)/verify-otp'
     | '/superadmin/dashboard'
     | '/superadmin/organization'
+    | '/superadmin/plan'
     | '/superadmin/'
   fileRoutesById: FileRoutesById
 }
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperadminOrganizationRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
+    '/superadmin/plan': {
+      id: '/superadmin/plan'
+      path: '/plan'
+      fullPath: '/superadmin/plan'
+      preLoaderRoute: typeof SuperadminPlanRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
   }
 }
 
@@ -263,12 +282,14 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 interface SuperadminRouteRouteChildren {
   SuperadminDashboardRoute: typeof SuperadminDashboardRoute
   SuperadminOrganizationRoute: typeof SuperadminOrganizationRoute
+  SuperadminPlanRoute: typeof SuperadminPlanRoute
   SuperadminIndexRoute: typeof SuperadminIndexRoute
 }
 
 const SuperadminRouteRouteChildren: SuperadminRouteRouteChildren = {
   SuperadminDashboardRoute: SuperadminDashboardRoute,
   SuperadminOrganizationRoute: SuperadminOrganizationRoute,
+  SuperadminPlanRoute: SuperadminPlanRoute,
   SuperadminIndexRoute: SuperadminIndexRoute,
 }
 
