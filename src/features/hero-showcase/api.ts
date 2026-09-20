@@ -23,6 +23,9 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-01.webp",
       role: "Lead Cinematographer",
     },
+    price: "Rs. 2,999",
+    totalLessons: "28 Lessons",
+    duration: "14.5 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-01.webp",
@@ -49,6 +52,9 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-02.webp",
       role: "Staff Product Designer",
     },
+    price: "Rs. 1,999",
+    totalLessons: "8 Modules",
+    duration: "6.0 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-02.webp",
@@ -75,6 +81,9 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-03.webp",
       role: "Principal Engineer",
     },
+    price: "Rs. 3,499",
+    totalLessons: "42 Lessons",
+    duration: "24.0 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-03.webp",
@@ -101,6 +110,9 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-04.webp",
       role: "Creative Director",
     },
+    price: "Rs. 2,499",
+    totalLessons: "12 Modules",
+    duration: "8.5 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-04.webp",
@@ -127,6 +139,9 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-5-img-1.webp",
       role: "AI Research Lead",
     },
+    price: "Rs. 4,999",
+    totalLessons: "36 Lessons",
+    duration: "18.0 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-5-img-1.webp",
@@ -153,12 +168,131 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
       avatarUrl: "/creators/team-5-img-2.webp",
       role: "Lead Mobile Architect",
     },
+    price: "Rs. 2,799",
+    totalLessons: "16 Modules",
+    duration: "10.0 Hours",
     enrollUrl: "/sign-up",
     avatars: [
       "/creators/team-5-img-2.webp",
       "/creators/team-5-img-3.webp",
       "/creators/team-01.webp",
       "/creators/team-02.webp",
+    ],
+  },
+  {
+    id: "course-4",
+    type: "course",
+    title: "Cloud Architecture & DevOps Systems",
+    highlightWord: "Resilience,",
+    description:
+      "Architect resilient cloud infrastructure with Docker, Kubernetes, CI/CD pipelines, and zero-downtime deployments.",
+    thumbnailUrl: "/creators/team-5-img-3.webp",
+    trailerVideoUrl: "/videos/bheda-ko-oon.mp4",
+    rating: 5.0,
+    reviewsCount: 780,
+    enrolledCount: 3100,
+    badge: "DevOps Course",
+    instructor: {
+      name: "Kiran Shrestha",
+      avatarUrl: "/creators/team-03.webp",
+      role: "Principal Systems Architect",
+    },
+    price: "Rs. 3,999",
+    totalLessons: "32 Lessons",
+    duration: "16.5 Hours",
+    enrollUrl: "/sign-up",
+    avatars: [
+      "/creators/team-5-img-3.webp",
+      "/creators/team-01.webp",
+      "/creators/team-02.webp",
+      "/creators/team-04.webp",
+    ],
+  },
+  {
+    id: "workshop-4",
+    type: "workshop",
+    title: "Next.js & Serverless Architecture",
+    highlightWord: "Velocity,",
+    description:
+      "Master edge rendering, streaming SSR, server actions, and serverless database caching at global scale.",
+    thumbnailUrl: "/creators/team-02.webp",
+    trailerVideoUrl: "/videos/bheda-ko-oon.mp4",
+    rating: 4.9,
+    reviewsCount: 810,
+    enrolledCount: 2450,
+    badge: "Specialized Workshop",
+    instructor: {
+      name: "Rohan Tamang",
+      avatarUrl: "/creators/team-02.webp",
+      role: "Staff Platform Engineer",
+    },
+    price: "Rs. 2,299",
+    totalLessons: "10 Modules",
+    duration: "7.0 Hours",
+    enrollUrl: "/sign-up",
+    avatars: [
+      "/creators/team-02.webp",
+      "/creators/team-03.webp",
+      "/creators/team-04.webp",
+      "/creators/team-5-img-1.webp",
+    ],
+  },
+  {
+    id: "course-5",
+    type: "course",
+    title: "Cybersecurity & Defense Systems",
+    highlightWord: "Fortitude,",
+    description:
+      "Learn offensive penetration testing, defensive hardening, web exploits, and incident response architecture.",
+    thumbnailUrl: "/creators/team-04.webp",
+    trailerVideoUrl: "/videos/bheda-ko-oon.mp4",
+    rating: 5.0,
+    reviewsCount: 690,
+    enrolledCount: 1980,
+    badge: "Security Course",
+    instructor: {
+      name: "Samir Karki",
+      avatarUrl: "/creators/team-04.webp",
+      role: "Security Principal",
+    },
+    price: "Rs. 4,499",
+    totalLessons: "38 Lessons",
+    duration: "20.0 Hours",
+    enrollUrl: "/sign-up",
+    avatars: [
+      "/creators/team-04.webp",
+      "/creators/team-5-img-1.webp",
+      "/creators/team-5-img-2.webp",
+      "/creators/team-01.webp",
+    ],
+  },
+  {
+    id: "workshop-5",
+    type: "workshop",
+    title: "3D Motion Graphics & Unreal Engine",
+    highlightWord: "Dimension,",
+    description:
+      "Create real-time cinematic 3D worlds, procedural lighting, and immersive visual effects in Unreal Engine 5.",
+    thumbnailUrl: "/creators/team-5-img-1.webp",
+    trailerVideoUrl: "/videos/bheda-ko-oon.mp4",
+    rating: 5.0,
+    reviewsCount: 920,
+    enrolledCount: 2680,
+    badge: "3D Workshop",
+    instructor: {
+      name: "Ritesh Shrestha",
+      avatarUrl: "/creators/team-5-img-1.webp",
+      role: "Lead 3D & VFX Artist",
+    },
+    price: "Rs. 3,199",
+    totalLessons: "14 Modules",
+    duration: "9.5 Hours",
+    enrollUrl: "/sign-up",
+    avatars: [
+      "/creators/team-5-img-1.webp",
+      "/creators/team-5-img-2.webp",
+      "/creators/team-5-img-3.webp",
+      "/creators/team-01.webp",
     ],
   },
 ]
@@ -213,14 +347,99 @@ export function useHeroShowcase() {
           ),
         ])
 
+        const DUMMY_COURSE_PRICES = [
+          "Rs. 2,999",
+          "Rs. 3,499",
+          "Rs. 4,999",
+          "Rs. 3,999",
+          "Rs. 4,499",
+        ]
+        const DUMMY_COURSE_LESSONS = [
+          "28 Lessons",
+          "36 Lessons",
+          "42 Lessons",
+          "32 Lessons",
+          "24 Lessons",
+        ]
+        const DUMMY_COURSE_DURATIONS = [
+          "14.5 Hours",
+          "18.0 Hours",
+          "24.0 Hours",
+          "16.5 Hours",
+          "12.0 Hours",
+        ]
+        const DUMMY_COURSE_MENTORS = [
+          { name: "Aayush Sharma", avatarUrl: "/creators/team-01.webp" },
+          { name: "Suman Shrestha", avatarUrl: "/creators/team-03.webp" },
+          { name: "Bikash Gurung", avatarUrl: "/creators/team-5-img-1.webp" },
+          { name: "Kiran Shrestha", avatarUrl: "/creators/team-03.webp" },
+          { name: "Samir Karki", avatarUrl: "/creators/team-04.webp" },
+        ]
+
+        const DUMMY_WORKSHOP_PRICES = [
+          "Rs. 1,999",
+          "Rs. 2,499",
+          "Rs. 2,799",
+          "Rs. 2,299",
+          "Rs. 3,199",
+        ]
+        const DUMMY_WORKSHOP_LESSONS = [
+          "8 Modules",
+          "12 Modules",
+          "16 Modules",
+          "10 Modules",
+          "14 Modules",
+        ]
+        const DUMMY_WORKSHOP_DURATIONS = [
+          "6.0 Hours",
+          "8.5 Hours",
+          "10.0 Hours",
+          "7.0 Hours",
+          "9.5 Hours",
+        ]
+        const DUMMY_WORKSHOP_MENTORS = [
+          { name: "Prashant Rai", avatarUrl: "/creators/team-02.webp" },
+          { name: "Anjali Thapa", avatarUrl: "/creators/team-04.webp" },
+          { name: "Sunil Joshi", avatarUrl: "/creators/team-5-img-2.webp" },
+          { name: "Rohan Tamang", avatarUrl: "/creators/team-02.webp" },
+          { name: "Ritesh Shrestha", avatarUrl: "/creators/team-5-img-1.webp" },
+        ]
+
         const fetchedItems: HeroItem[] = []
 
         if (
           coursesRes.status === "fulfilled" &&
           coursesRes.value.data?.courses
         ) {
-          coursesRes.value.data.courses.forEach((c) => {
+          coursesRes.value.data.courses.forEach((c, idx) => {
             const rawDesc = stripHtml(c.description || c.subtitle || "")
+            const mentorFallback =
+              DUMMY_COURSE_MENTORS[idx % DUMMY_COURSE_MENTORS.length]
+            const instructorName =
+              c.mentor?.fullName?.trim() || mentorFallback.name
+            const instructorAvatar =
+              c.mentor?.avatarUrl || mentorFallback.avatarUrl
+
+            const priceStr =
+              typeof (c as any).price === "number"
+                ? (c as any).price === 0
+                  ? "Free"
+                  : `Rs. ${(c as any).price.toLocaleString()}`
+                : (c as any).price ||
+                  DUMMY_COURSE_PRICES[idx % DUMMY_COURSE_PRICES.length]
+
+            const lessonsStr = (c as any).totalLessons
+              ? `${(c as any).totalLessons} Lessons`
+              : (c as any).lessonCount
+                ? `${(c as any).lessonCount} Lessons`
+                : DUMMY_COURSE_LESSONS[idx % DUMMY_COURSE_LESSONS.length]
+
+            const durationStr = (c as any).duration
+              ? `${(c as any).duration}`
+              : (c as any).totalDuration
+                ? `${(c as any).totalDuration}`
+                : DUMMY_COURSE_DURATIONS[idx % DUMMY_COURSE_DURATIONS.length]
+
             fetchedItems.push({
               id: c.id,
               type: "course",
@@ -242,13 +461,16 @@ export function useHeroShowcase() {
                 ? `${c.categories[0].name} Course`
                 : "Featured Course",
               instructor: {
-                name: c.mentor?.fullName || "Nepali Mentor",
-                avatarUrl: c.mentor?.avatarUrl || "/creators/team-01.webp",
+                name: instructorName,
+                avatarUrl: instructorAvatar,
                 role: "Instructor",
               },
+              price: priceStr,
+              totalLessons: lessonsStr,
+              duration: durationStr,
               enrollUrl: `/sign-up`,
               avatars: [
-                c.mentor?.avatarUrl || "/creators/team-01.webp",
+                instructorAvatar,
                 "/creators/team-02.webp",
                 "/creators/team-03.webp",
                 "/creators/team-04.webp",
@@ -261,8 +483,31 @@ export function useHeroShowcase() {
           workshopsRes.status === "fulfilled" &&
           workshopsRes.value.data?.workshops
         ) {
-          workshopsRes.value.data.workshops.forEach((w) => {
+          workshopsRes.value.data.workshops.forEach((w, idx) => {
             const rawDesc = stripHtml(w.description || w.subtitle || "")
+            const mentorFallback =
+              DUMMY_WORKSHOP_MENTORS[idx % DUMMY_WORKSHOP_MENTORS.length]
+            const instructorName =
+              w.mentor?.fullName?.trim() || mentorFallback.name
+            const instructorAvatar =
+              w.mentor?.avatarUrl || mentorFallback.avatarUrl
+
+            const priceStr =
+              typeof (w as any).price === "number"
+                ? (w as any).price === 0
+                  ? "Free"
+                  : `Rs. ${(w as any).price.toLocaleString()}`
+                : (w as any).price ||
+                  DUMMY_WORKSHOP_PRICES[idx % DUMMY_WORKSHOP_PRICES.length]
+
+            const lessonsStr = (w as any).totalLessons
+              ? `${(w as any).totalLessons} Modules`
+              : DUMMY_WORKSHOP_LESSONS[idx % DUMMY_WORKSHOP_LESSONS.length]
+
+            const durationStr = (w as any).duration
+              ? `${(w as any).duration}`
+              : DUMMY_WORKSHOP_DURATIONS[idx % DUMMY_WORKSHOP_DURATIONS.length]
+
             fetchedItems.push({
               id: w.id,
               type: "workshop",
@@ -282,13 +527,16 @@ export function useHeroShowcase() {
               enrolledCount: w.enrolledStudents || 280,
               badge: "Live Workshop",
               instructor: {
-                name: w.mentor?.fullName || "Industry Specialist",
-                avatarUrl: w.mentor?.avatarUrl || "/creators/team-02.webp",
+                name: instructorName,
+                avatarUrl: instructorAvatar,
                 role: "Workshop Leader",
               },
+              price: priceStr,
+              totalLessons: lessonsStr,
+              duration: durationStr,
               enrollUrl: `/sign-up`,
               avatars: [
-                w.mentor?.avatarUrl || "/creators/team-02.webp",
+                instructorAvatar,
                 "/creators/team-03.webp",
                 "/creators/team-04.webp",
                 "/creators/team-5-img-1.webp",
@@ -297,12 +545,12 @@ export function useHeroShowcase() {
           })
         }
 
-        // If API returned items, append fallbacks if needed so the 3D ring has at least 6 cards
+        // If API returned items, append fallbacks if needed so the 3D ring has at least 10 cards
         if (fetchedItems.length > 0) {
-          if (fetchedItems.length < 6) {
+          if (fetchedItems.length < 10) {
             return [
               ...fetchedItems,
-              ...DEFAULT_HERO_ITEMS.slice(fetchedItems.length, 6),
+              ...DEFAULT_HERO_ITEMS.slice(fetchedItems.length, 10),
             ]
           }
           return fetchedItems

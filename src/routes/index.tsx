@@ -4,12 +4,15 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 import {
   ArrowRight,
   ArrowUpRight,
+  BookOpen,
   ChevronDown,
+  Clock,
   Menu,
   Play,
   Search,
   Sparkles,
   Star,
+  Tag,
   Volume2,
   VolumeX,
   X,
@@ -72,20 +75,20 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   const dragDistanceRef = useRef(0)
   const [radius, setRadius] = useState(720)
 
-  // Render 3 full cycles of items around the loop for a continuous, seamless circular ribbon
-  const renderedCount = Math.max(items.length * 3, 18)
+  // Exactly 10 cards in the circular carousel loop
+  const renderedCount = 10
 
   useEffect(() => {
     const updateRadius = () => {
       const w = window.innerWidth
       if (w < 640) {
-        setRadius(420)
+        setRadius(400)
       } else if (w < 1024) {
-        setRadius(540)
+        setRadius(550)
       } else if (w < 1440) {
-        setRadius(640)
+        setRadius(700)
       } else {
-        setRadius(720)
+        setRadius(800)
       }
     }
 
@@ -105,9 +108,9 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
     ).matches
 
     const stepAngle = (Math.PI * 2) / renderedCount
-    // Symmetrical fade window in angular space (68 deg to 99 deg)
-    const fadeAngle = Math.PI * 0.38
-    const maxAngle = Math.PI * 0.55
+    // Symmetrical fade window in angular space (79 deg to 130 deg for 10-card track)
+    const fadeAngle = Math.PI * 0.44
+    const maxAngle = Math.PI * 0.72
 
     const renderCards = () => {
       cardsRef.current.forEach((card, index) => {
@@ -137,7 +140,8 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         let edgeScale = 1
         if (absAngle > fadeAngle) {
           const fadeProgress = (absAngle - fadeAngle) / (maxAngle - fadeAngle)
-          opacity = Math.max(0, Math.min(1, 1 - fadeProgress))
+          // Smooth cosine curve for natural edge dissolve without empty gap voids
+          opacity = Math.cos(fadeProgress * (Math.PI / 2))
           edgeScale = 1 - fadeProgress * 0.12
         }
 
@@ -147,11 +151,12 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
 
         // Hybrid circular projection: maintains circular 3D feel while preserving card spacing
         const normAngle = deltaAngle / (Math.PI * 0.5)
-        const x = radius * (0.45 * Math.sin(deltaAngle) + 0.55 * normAngle)
+        const x = radius * (0.42 * Math.sin(deltaAngle) + 0.58 * normAngle)
 
-        // Authentic 3D circular cylinder depth and inward facing rotation
-        const z = -radius * Math.cos(deltaAngle)
-        const rotateY = -normAngle * 52
+        // Authentic 3D circular cylinder depth: center is closest (z = 0), sides curve backward
+        const depthRadius = radius * 0.5
+        const z = -depthRadius * (1 - Math.cos(deltaAngle))
+        const rotateY = -normAngle * 42
         const zIndex = Math.round(50 - Math.abs(normAngle) * 20)
         const isActive = index % items.length === activeIndex % items.length
         const scale = (isActive ? 1.05 : 1) * edgeScale
@@ -262,10 +267,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   return (
     <div
       ref={viewportRef}
-      className="hero-collage relative mt-auto -mb-[110px] h-[520px] w-full cursor-grab touch-none select-none active:cursor-grabbing"
+      className="hero-collage relative mt-auto -mb-[120px] h-[520px] w-full cursor-grab touch-none select-none active:cursor-grabbing sm:-mb-[135px] sm:h-[550px]"
       aria-label="Courses and workshops showcase carousel"
     >
-      <div className="absolute inset-0 -translate-y-[215px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d]">
+      <div className="absolute inset-0 -translate-y-[215px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d] sm:-translate-y-[240px]">
         {Array.from({ length: renderedCount }, (_, index) => {
           const item = items[index % items.length]
           const isActive = index % items.length === activeIndex % items.length
@@ -278,7 +283,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
               }}
               onClick={() => handleCardClick(index)}
               className={cn(
-                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[130px] h-[330px] w-[260px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden]",
+                "creator-card group pointer-events-auto absolute bottom-4 left-1/2 -ml-[125px] h-[315px] w-[250px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden] sm:bottom-6 sm:-ml-[145px] sm:h-[350px] sm:w-[290px]",
                 isActive
                   ? "shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
                   : "hover:ring-1 hover:ring-white/40"
@@ -418,7 +423,7 @@ function Index() {
   }, [menuOpen])
 
   return (
-    <main className="min-h-svh bg-[#f4f4f6] pt-[68px] text-[#101218] transition-colors duration-500 sm:pt-[72px] dark:bg-[#030711] dark:text-[#f2f3f7]">
+    <main className="min-h-svh bg-[#030711] pt-[68px] text-[#f2f3f7] transition-colors duration-500 sm:pt-[72px]">
       <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-white/[0.08] bg-[#030711]/55 text-white shadow-[0_10px_35px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300">
         {/* Subtle top edge specular reflection */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -614,17 +619,17 @@ function Index() {
               type="video/mp4"
             />
           </video>
-          <div className="absolute inset-0 bg-white/50 dark:bg-black/40" />
+          <div className="absolute inset-0 bg-black/45" />
 
           {/* Readability gradient fade behind text area */}
           <div
-            className="absolute inset-x-0 top-0 h-[70%] bg-gradient-to-b from-[#f4f4f6]/85 via-[#f4f4f6]/55 to-transparent dark:from-[#030711]/85 dark:via-[#030711]/60 dark:to-transparent"
+            className="absolute inset-x-0 top-0 h-[70%] bg-gradient-to-b from-[#030711]/90 via-[#030711]/60 to-transparent"
             aria-hidden="true"
           />
 
           {/* Bottom gradient fade on video ONLY (stays strictly behind the cards slider) */}
           <div
-            className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#f4f4f6] via-[#f4f4f6]/80 to-transparent sm:h-80 lg:h-96 dark:from-[#030711] dark:via-[#030711]/85 dark:to-transparent"
+            className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#030711] via-[#030711]/85 to-transparent sm:h-80 lg:h-96"
             aria-hidden="true"
           />
         </div>
@@ -633,7 +638,7 @@ function Index() {
         <button
           type="button"
           onClick={toggleAudio}
-          className="absolute right-6 bottom-6 z-30 flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-3.5 py-2 text-xs font-medium text-[#101218] shadow-lg backdrop-blur-md transition-all hover:scale-105 hover:bg-white active:scale-95 sm:right-8 sm:bottom-8 dark:border-white/15 dark:bg-[#030711]/80 dark:text-white dark:hover:bg-[#030711]"
+          className="absolute right-6 bottom-6 z-30 flex items-center gap-2 rounded-full border border-white/15 bg-[#030711]/80 px-3.5 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-md transition-all hover:scale-105 hover:bg-[#030711] active:scale-95 sm:right-8 sm:bottom-8"
           aria-label={
             isMuted ? "Unmute background audio" : "Mute background audio"
           }
@@ -652,7 +657,7 @@ function Index() {
         </button>
 
         {/* Dynamic Center Hero Information */}
-        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 pt-[5vh] text-center sm:pt-[7vh]">
+        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 pt-3 text-center sm:pt-5 lg:pt-6">
           {/* Top Rating & Enrollment Badge */}
           <div className="hero-reveal flex items-center gap-3 transition-all duration-300">
             <div className="flex -space-x-2.5">
@@ -661,7 +666,7 @@ function Index() {
                   key={`${activeItem.id}-av-${index}`}
                   src={src}
                   alt={`Student ${index + 1}`}
-                  className="size-9 rounded-full border-2 border-[#030711] object-cover shadow-md transition-transform duration-200 hover:z-10 hover:scale-110 sm:size-10"
+                  className="size-8 rounded-full border-2 border-[#030711] object-cover shadow-md transition-transform duration-200 hover:z-10 hover:scale-110 sm:size-9"
                 />
               ))}
             </div>
@@ -676,24 +681,75 @@ function Index() {
             </div>
           </div>
 
-          {/* Dynamic Headline */}
-          <h1
-            key={activeItem.id}
-            className="hero-reveal mt-3 max-w-[740px] text-[clamp(2.4rem,4.5vw,4.1rem)] leading-[0.98] font-medium tracking-[-0.05em] drop-shadow-sm transition-all duration-300 dark:drop-shadow-[0_2px_18px_rgba(0,0,0,0.8)]"
-          >
-            {renderHighlightedTitle(activeItem.title, activeItem.highlightWord)}
-          </h1>
+          {/* Dynamic Headline: Strictly 1 line with locked height so button never shifts */}
+          <div className="mt-2 flex h-[1.25em] max-w-[850px] items-center justify-center text-[clamp(1.85rem,3.4vw,2.95rem)] leading-[1.15] font-medium tracking-[-0.04em] drop-shadow-sm sm:mt-2.5 dark:drop-shadow-[0_2px_18px_rgba(0,0,0,0.8)]">
+            <h1
+              key={activeItem.id}
+              className="hero-reveal truncate text-center"
+            >
+              {renderHighlightedTitle(
+                activeItem.title,
+                activeItem.highlightWord
+              )}
+            </h1>
+          </div>
 
-          {/* Dynamic Synopsis */}
-          <p
-            key={`${activeItem.id}-desc`}
-            className="hero-reveal mt-4 line-clamp-3 max-w-lg text-xs leading-[1.6] text-black/75 drop-shadow-sm transition-opacity duration-300 sm:text-sm dark:text-white/80"
+          {/* Course Meta: Mentor Name, Price, Total Lessons, Duration - above description */}
+          <div
+            key={`${activeItem.id}-meta`}
+            className="hero-reveal mt-3 flex flex-wrap items-center justify-center gap-2 text-xs transition-all duration-300 sm:gap-2.5"
           >
-            {activeItem.description}
-          </p>
+            {/* Mentor */}
+            <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] py-1 pr-3 pl-1.5 text-white shadow-sm backdrop-blur-md">
+              <img
+                src={
+                  activeItem.instructor?.avatarUrl || "/creators/team-01.webp"
+                }
+                alt={activeItem.instructor?.name || "Nepali Mentor"}
+                className="size-4.5 rounded-full border border-white/30 object-cover"
+              />
+              <span className="text-[11px] font-semibold sm:text-xs">
+                {activeItem.instructor?.name || "Nepali Mentor"}
+              </span>
+            </div>
 
-          {/* Dynamic Interactive CTA Button */}
-          <div className="hero-reveal mt-6 inline-block">
+            {/* Course Price */}
+            <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-[11px] font-bold text-emerald-300 shadow-sm backdrop-blur-md sm:text-xs">
+              <Tag className="size-3 text-emerald-400" />
+              <span>{activeItem.price || "Rs. 2,999"}</span>
+            </div>
+
+            {/* Total Lessons */}
+            <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-[11px] font-medium text-white/90 shadow-sm backdrop-blur-md sm:text-xs">
+              <BookOpen className="size-3 text-cyan-400" />
+              <span>
+                {activeItem.totalLessons ||
+                  (activeItem.type === "workshop" ? "8 Modules" : "24 Lessons")}
+              </span>
+            </div>
+
+            {/* Course Duration */}
+            <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-[11px] font-medium text-white/90 shadow-sm backdrop-blur-md sm:text-xs">
+              <Clock className="size-3 text-amber-400" />
+              <span>
+                {activeItem.duration ||
+                  (activeItem.type === "workshop" ? "6.0 Hours" : "14.5 Hours")}
+              </span>
+            </div>
+          </div>
+
+          {/* Dynamic Synopsis: Strictly 2 lines with locked height so button never shifts */}
+          <div className="mt-2.5 flex h-[2.85em] max-w-lg items-center justify-center text-xs leading-[1.42] text-black/75 drop-shadow-sm sm:text-sm sm:leading-[1.42] dark:text-white/80">
+            <p
+              key={`${activeItem.id}-desc`}
+              className="hero-reveal line-clamp-2 text-center"
+            >
+              {activeItem.description}
+            </p>
+          </div>
+
+          {/* Dynamic Interactive CTA Button: Stationary position, never moves or jumps */}
+          <div className="hero-reveal mt-4 inline-block sm:mt-4.5">
             <Link
               to={activeItem.enrollUrl || "/sign-up"}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-[1.5px] font-semibold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(192,132,252,0.6)] active:scale-95"
@@ -701,8 +757,8 @@ function Index() {
               {/* Continuously Rotating Conic Gradient Border Beam */}
               <span className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#38bdf8_0%,#c084fc_25%,#f43f5e_50%,#38bdf8_75%,#c084fc_100%)] opacity-95 transition-opacity duration-300 group-hover:opacity-100" />
 
-              {/* Inner Button Surface */}
-              <span className="relative inline-flex h-11 items-center gap-3 rounded-full bg-[#080b11]/92 px-6 text-[11px] font-semibold text-white backdrop-blur-2xl transition-colors duration-300 group-hover:bg-[#080b11]/80 sm:h-12 sm:px-7 sm:text-xs">
+              {/* Inner Button Surface - fixed min-width for stationary centering */}
+              <span className="relative inline-flex h-11 min-w-[215px] items-center justify-center gap-3 rounded-full bg-[#080b11]/92 px-6 text-[11px] font-semibold text-white backdrop-blur-2xl transition-colors duration-300 group-hover:bg-[#080b11]/80 sm:h-11.5 sm:min-w-[235px] sm:px-7 sm:text-xs">
                 {/* Surface Shimmer Reflection */}
                 <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full">
                   <span className="absolute inset-0 -translate-x-full animate-[shimmer-sweep_3.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -732,7 +788,7 @@ function Index() {
         {/* Animated "Browse more" button */}
         <Link
           to="/sign-up"
-          className="group absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1 rounded-full border border-white/20 bg-black/45 px-5 py-2 text-center text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/40 hover:bg-black/65 hover:shadow-2xl active:scale-95 sm:bottom-6 sm:px-6 sm:py-2.5 dark:border-white/15 dark:bg-[#030711]/75 dark:hover:bg-[#030711]/90"
+          className="group absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 flex-col items-center gap-1 rounded-full border border-white/20 bg-black/45 px-5 py-1.5 text-center text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/40 hover:bg-black/65 hover:shadow-2xl active:scale-95 sm:bottom-4 sm:px-6 sm:py-2 dark:border-white/15 dark:bg-[#030711]/75 dark:hover:bg-[#030711]/90"
           aria-label="Browse more"
         >
           <span className="text-[11px] font-bold tracking-wider text-white/90 transition-colors group-hover:text-white sm:text-xs">

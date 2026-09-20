@@ -17,6 +17,9 @@ export interface HeroItem {
     avatarUrl: string
     role: string
   }
+  price: string
+  totalLessons: string
+  duration: string
   enrollUrl: string
   avatars: string[]
 }
