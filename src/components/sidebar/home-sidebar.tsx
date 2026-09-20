@@ -30,28 +30,28 @@ import { NavUser } from "@/components/sidebar/nav-user"
 export const HOMEPAGE_SIDEBAR_ITEMS = [
   {
     title: "Courses",
-    url: "#courses",
+    url: "/#courses",
     icon: <BookOpenIcon className="size-4" />,
   },
   {
     title: "Workshop",
-    url: "#workshop",
+    url: "/#workshop",
     icon: <PresentationIcon className="size-4" />,
   },
   {
     title: "Mentorship",
-    url: "#mentorship",
+    url: "/#mentorship",
     icon: <UsersIcon className="size-4" />,
     badge: "1-on-1",
   },
   {
     title: "Marketplace",
-    url: "#marketplace",
+    url: "/#marketplace",
     icon: <StoreIcon className="size-4" />,
   },
   {
     title: "Blog",
-    url: "#blog",
+    url: "/#blog",
     icon: <NewspaperIcon className="size-4" />,
   },
   {
