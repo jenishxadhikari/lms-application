@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router"
 import {
   ArrowRight,
   BookOpen,
+  ChevronDown,
   Clock,
   LayoutGrid,
   List,
@@ -382,246 +383,286 @@ export function CoursesCatalogFiltered() {
     >
       <div className="mx-auto w-full max-w-7xl">
         {/* Section Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-zinc-100/90 px-3 py-1 text-[10px] font-bold tracking-widest text-zinc-900 uppercase shadow-2xs dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-              <BookOpen className="size-3" />
-              <span>COMPLETE CURRICULUM</span>
-            </div>
-            <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
-              All Courses Catalog
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              Explore hands-on programming, system design, and creative
-              disciplines.
-            </p>
+        <div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-zinc-100/90 px-3 py-1 text-[10px] font-bold tracking-widest text-zinc-900 uppercase shadow-2xs dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+            <BookOpen className="size-3" />
+            <span>COMPLETE CURRICULUM</span>
           </div>
-
-          {/* Desktop Controls: View Mode */}
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="flex items-center rounded-lg border border-border bg-card p-1 shadow-2xs">
-              <button
-                type="button"
-                onClick={() => setViewMode("grid")}
-                className={cn(
-                  "flex size-8 items-center justify-center rounded-md transition-colors",
-                  viewMode === "grid"
-                    ? "bg-zinc-900 text-white shadow-xs dark:bg-white dark:text-zinc-900"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                aria-label="Grid view"
-              >
-                <LayoutGrid className="size-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "flex size-8 items-center justify-center rounded-md transition-colors",
-                  viewMode === "list"
-                    ? "bg-zinc-900 text-white shadow-xs dark:bg-white dark:text-zinc-900"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                aria-label="List view"
-              >
-                <List className="size-4" />
-              </button>
-            </div>
-          </div>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
+            All Courses Catalog
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            Explore hands-on programming, system design, and creative
+            disciplines.
+          </p>
         </div>
 
-        {/* Filter Controls Bar (Desktop & Responsive) */}
-        <div className="mt-6 rounded-2xl border border-border/80 bg-card p-4 shadow-2xs">
-          <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:items-center">
-            {/* Search Input (spans 2 on large) */}
-            <div className="relative sm:col-span-2 md:col-span-3 lg:col-span-2">
-              <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+        {/* 1. Category Horizontal Pills Bar (Instant 1-Click Filtering) */}
+        {categories.length > 0 && (
+          <div className="mt-6 flex [scrollbar-width:none] items-center gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("all")}
+              className={cn(
+                "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+                selectedCategory === "all"
+                  ? "bg-zinc-950 text-white shadow-xs dark:bg-white dark:text-zinc-950"
+                  : "border border-border/80 bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground"
+              )}
+            >
+              All Topics
+            </button>
+            {categories.map((cat) => {
+              const isSelected =
+                selectedCategory.toLowerCase() === cat.toLowerCase()
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSelectedCategory(isSelected ? "all" : cat)}
+                  className={cn(
+                    "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all",
+                    isSelected
+                      ? "bg-zinc-950 text-white shadow-xs dark:bg-white dark:text-zinc-950"
+                      : "border border-border/80 bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground"
+                  )}
+                >
+                  {cat}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* 2. Compact Inline Toolbar (Search + Pill Selects + Sort + View Toggle) */}
+        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {/* Left Cluster: Search + Secondary Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-64 md:w-72">
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search courses or topics..."
-                className="h-9.5 w-full rounded-lg border border-border bg-background pr-8 pl-9 text-xs text-foreground placeholder:text-muted-foreground focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
+                className="h-8.5 w-full rounded-full border border-border/80 bg-background pr-7 pl-8.5 text-xs text-foreground transition-all placeholder:text-muted-foreground focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
                   className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="Clear search"
                 >
-                  <X className="size-3.5" />
+                  <X className="size-3" />
                 </button>
               )}
             </div>
 
-            {/* Category Select */}
-            <div>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="h-9.5 w-full rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground focus:border-foreground focus:outline-none"
-              >
-                <option value="all">All Categories</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Level Select */}
-            <div>
+            {/* Level Dropdown Pill */}
+            <div className="relative">
               <select
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value)}
-                className="h-9.5 w-full rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground focus:border-foreground focus:outline-none"
+                className={cn(
+                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
+                  selectedLevel !== "all" &&
+                    "border-foreground/60 bg-muted/60 font-semibold"
+                )}
               >
-                <option value="all">All Levels</option>
+                <option value="all">Level: All</option>
                 <option value="BEGINNER">Beginner</option>
                 <option value="INTERMEDIATE">Intermediate</option>
                 <option value="ADVANCED">Advanced</option>
               </select>
+              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
             </div>
 
-            {/* Language Select */}
-            <div>
+            {/* Language Dropdown Pill */}
+            <div className="relative">
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="h-9.5 w-full rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground focus:border-foreground focus:outline-none"
+                className={cn(
+                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
+                  selectedLanguage !== "all" &&
+                    "border-foreground/60 bg-muted/60 font-semibold"
+                )}
               >
-                <option value="all">All Languages</option>
+                <option value="all">Language: All</option>
                 {languages.map((lang) => (
                   <option key={lang} value={lang}>
                     {lang}
                   </option>
                 ))}
               </select>
+              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
             </div>
 
-            {/* Price Select */}
-            <div>
+            {/* Price Dropdown Pill */}
+            <div className="relative">
               <select
                 value={selectedPrice}
                 onChange={(e) => setSelectedPrice(e.target.value)}
-                className="h-9.5 w-full rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground focus:border-foreground focus:outline-none"
+                className={cn(
+                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
+                  selectedPrice !== "all" &&
+                    "border-foreground/60 bg-muted/60 font-semibold"
+                )}
               >
-                <option value="all">All Prices</option>
-                <option value="free">Free Courses</option>
-                <option value="paid">Paid Courses</option>
+                <option value="all">Price: All</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
               </select>
-            </div>
-
-            {/* Sort Select */}
-            <div className="sm:col-span-2 md:col-span-2 lg:col-span-1">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="h-9.5 w-full rounded-lg border border-border bg-background px-3 text-xs font-medium text-foreground focus:border-foreground focus:outline-none"
-              >
-                <option value="popular">Most Popular</option>
-                <option value="rating">Highest Rated</option>
-                <option value="newest">Newest First</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
+              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
 
-          {/* Active Filters Row */}
-          {activeFiltersCount > 0 && (
-            <div className="mt-3.5 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
-              <span className="text-[11px] font-bold text-muted-foreground uppercase">
-                Active:
-              </span>
+          {/* Right Cluster: Sort By + View Mode Toggle */}
+          <div className="flex items-center gap-2 self-end sm:self-auto">
+            {/* Sort Select */}
+            <div className="relative">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none"
+              >
+                <option value="popular">Sort: Most Popular</option>
+                <option value="rating">Sort: Highest Rated</option>
+                <option value="newest">Sort: Newest First</option>
+                <option value="price-asc">Sort: Price (Low-High)</option>
+                <option value="price-desc">Sort: Price (High-Low)</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
+            </div>
 
-              {search && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                  <span>"{search}"</span>
-                  <button
-                    type="button"
-                    onClick={() => setSearch("")}
-                    className="hover:text-destructive"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedCategory !== "all" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                  <span>{selectedCategory}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCategory("all")}
-                    className="hover:text-destructive"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedLevel !== "all" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                  <span>Level: {selectedLevel}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLevel("all")}
-                    className="hover:text-destructive"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedLanguage !== "all" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                  <span>Language: {selectedLanguage}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedLanguage("all")}
-                    className="hover:text-destructive"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
-
-              {selectedPrice !== "all" && (
-                <span className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/60 px-2 py-0.5 text-xs text-foreground">
-                  <span className="capitalize">{selectedPrice}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPrice("all")}
-                    className="hover:text-destructive"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </span>
-              )}
-
+            {/* View Mode Toggle */}
+            <div className="flex h-8.5 items-center rounded-full border border-border/80 bg-background p-0.5 shadow-2xs">
               <button
                 type="button"
-                onClick={clearAllFilters}
-                className="inline-flex items-center gap-1 text-xs font-bold text-zinc-900 underline hover:no-underline dark:text-zinc-100"
+                onClick={() => setViewMode("grid")}
+                className={cn(
+                  "flex size-7 items-center justify-center rounded-full transition-colors",
+                  viewMode === "grid"
+                    ? "bg-zinc-950 text-white shadow-xs dark:bg-white dark:text-zinc-950"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-label="Grid view"
               >
-                <RotateCcw className="size-3" />
-                <span>Reset all</span>
+                <LayoutGrid className="size-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "flex size-7 items-center justify-center rounded-full transition-colors",
+                  viewMode === "list"
+                    ? "bg-zinc-950 text-white shadow-xs dark:bg-white dark:text-zinc-950"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                aria-label="List view"
+              >
+                <List className="size-3.5" />
               </button>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
-          <span>
-            Showing{" "}
-            <strong className="text-foreground">
-              {filteredCourses.length}
-            </strong>{" "}
-            {filteredCourses.length === 1 ? "course" : "courses"}
-          </span>
+        {/* 3. Streamlined Status & Active Filter Chips Bar */}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-3 text-xs">
+          <div className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
+            <span>
+              Showing{" "}
+              <strong className="text-foreground">
+                {filteredCourses.length}
+              </strong>{" "}
+              {filteredCourses.length === 1 ? "course" : "courses"}
+            </span>
+
+            {activeFiltersCount > 0 && (
+              <>
+                <span className="text-zinc-300 dark:text-zinc-700">&bull;</span>
+                <span className="text-[11px] font-semibold text-muted-foreground">
+                  Filtered by:
+                </span>
+
+                {search && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
+                    <span>"{search}"</span>
+                    <button
+                      type="button"
+                      onClick={() => setSearch("")}
+                      className="hover:text-destructive"
+                    >
+                      <X className="size-2.5" />
+                    </button>
+                  </span>
+                )}
+
+                {selectedCategory !== "all" && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
+                    <span>{selectedCategory}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCategory("all")}
+                      className="hover:text-destructive"
+                    >
+                      <X className="size-2.5" />
+                    </button>
+                  </span>
+                )}
+
+                {selectedLevel !== "all" && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
+                    <span>Level: {selectedLevel}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLevel("all")}
+                      className="hover:text-destructive"
+                    >
+                      <X className="size-2.5" />
+                    </button>
+                  </span>
+                )}
+
+                {selectedLanguage !== "all" && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
+                    <span>Language: {selectedLanguage}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLanguage("all")}
+                      className="hover:text-destructive"
+                    >
+                      <X className="size-2.5" />
+                    </button>
+                  </span>
+                )}
+
+                {selectedPrice !== "all" && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
+                    <span className="capitalize">{selectedPrice}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPrice("all")}
+                      className="hover:text-destructive"
+                    >
+                      <X className="size-2.5" />
+                    </button>
+                  </span>
+                )}
+
+                <button
+                  type="button"
+                  onClick={clearAllFilters}
+                  className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold text-foreground underline hover:no-underline"
+                >
+                  <RotateCcw className="size-2.5" />
+                  <span>Reset all</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Loading Skeletons */}
