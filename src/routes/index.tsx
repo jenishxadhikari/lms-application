@@ -467,7 +467,9 @@ function Index() {
               {[
                 ["Courses", "#courses"],
                 ["Workshop", "#workshop"],
+                ["Mentorship", "#mentorship"],
                 ["Marketplace", "#marketplace"],
+                ["Blog", "#blog"],
                 ["Contact Us", "#contact"],
               ].map(([label, href]) => (
                 <a
@@ -529,7 +531,7 @@ function Index() {
             />
             <aside
               id="offcanvas-menu"
-              className="fixed top-0 right-0 z-50 flex h-svh w-[min(420px,92vw)] animate-in flex-col border-l border-white/10 bg-[#030711] p-6 text-white shadow-2xl duration-300 slide-in-from-right sm:p-8"
+              className="fixed top-0 right-0 z-50 flex h-svh w-[min(420px,92vw)] animate-in flex-col overflow-y-auto border-l border-white/10 bg-[#030711] p-6 text-white shadow-2xl duration-300 slide-in-from-right sm:p-8"
               aria-label="Menu"
             >
               <div className="flex items-center justify-between">
@@ -555,55 +557,76 @@ function Index() {
                 </button>
               </div>
 
-              <label className="mt-10 flex h-12 items-center gap-3 rounded-full border border-white/10 bg-white/[0.06] px-4 focus-within:border-white/25">
+              <label className="mt-8 flex h-11 items-center gap-3 rounded-full border border-white/10 bg-white/[0.06] px-4 focus-within:border-white/25 sm:mt-10 sm:h-12">
                 <Search className="size-4 text-white/45" />
                 <span className="sr-only">Search courses</span>
                 <input
                   type="search"
-                  placeholder="Search courses and workshops"
+                  placeholder="Search courses, workshops, mentors..."
                   className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/35"
                 />
               </label>
 
-              <nav className="mt-10 flex flex-col" aria-label="Menu navigation">
+              <nav
+                className="mt-8 flex flex-col sm:mt-10"
+                aria-label="Menu navigation"
+              >
                 {[
-                  ["Courses", "#courses"],
-                  ["Workshop", "#workshop"],
-                  ["Marketplace", "#marketplace"],
-                  ["Contact Us", "#contact"],
-                ].map(([label, href], index) => (
+                  { label: "Courses", href: "#courses" },
+                  { label: "Workshop", href: "#workshop" },
+                  { label: "Mentorship", href: "#mentorship", badge: "1-on-1" },
+                  { label: "Marketplace", href: "#marketplace" },
+                  { label: "Blog", href: "#blog" },
+                  { label: "Contact Us", href: "#contact" },
+                ].map((item, index) => (
                   <a
-                    key={label}
-                    href={href}
+                    key={item.label}
+                    href={item.href}
                     onClick={() => setMenuOpen(false)}
-                    className="group flex items-center justify-between border-b border-white/10 py-5 text-xl font-medium tracking-[-0.025em] transition-colors hover:text-white/65"
+                    className="group flex items-center justify-between border-b border-white/10 py-3.5 text-lg font-medium tracking-[-0.025em] transition-colors hover:text-white/65 sm:py-4 sm:text-xl"
                   >
-                    <span className="flex items-center gap-4">
-                      <span className="text-[10px] text-white/30">
+                    <span className="flex items-center gap-3.5 sm:gap-4">
+                      <span className="text-[10px] text-white/30 sm:text-[11px]">
                         0{index + 1}
                       </span>
-                      {label}
+                      <span className="text-white transition-colors group-hover:text-white/70">
+                        {item.label}
+                      </span>
+                      {item.badge && (
+                        <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-bold tracking-wider text-cyan-300 uppercase">
+                          {item.badge}
+                        </span>
+                      )}
                     </span>
-                    <ArrowUpRight className="size-4 opacity-35 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <ArrowUpRight className="size-4 opacity-35 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-75" />
                   </a>
                 ))}
               </nav>
 
-              <div className="mt-auto rounded-3xl border border-white/10 bg-white/[0.05] p-5">
-                <p className="text-sm font-semibold">
+              <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.05] p-5 sm:mt-auto">
+                <p className="text-sm font-semibold text-white">
                   Ready to start learning?
                 </p>
                 <p className="mt-1 text-xs leading-5 text-white/45">
                   Create your free account and build your first learning path.
                 </p>
-                <Link
-                  to="/sign-up"
-                  onClick={() => setMenuOpen(false)}
-                  className="mt-5 flex h-11 items-center justify-between rounded-full bg-white px-5 text-xs font-semibold text-[#080b11]"
-                >
-                  Register free
-                  <ArrowRight className="size-3.5" />
-                </Link>
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <Link
+                    to="/sign-up"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-white px-4 text-xs font-semibold text-[#080b11] transition-transform hover:scale-[1.02] active:scale-95"
+                  >
+                    <span>Register free</span>
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                  <Link
+                    to="/sign-in"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex h-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] px-4 text-xs font-semibold text-white transition-colors hover:bg-white/15"
+                  >
+                    Sign in
+                  </Link>
+                </div>
               </div>
             </aside>
           </>
