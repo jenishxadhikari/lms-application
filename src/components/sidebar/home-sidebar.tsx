@@ -30,7 +30,7 @@ import { NavUser } from "@/components/sidebar/nav-user"
 export const HOMEPAGE_SIDEBAR_ITEMS = [
   {
     title: "Courses",
-    url: "/#courses",
+    url: "/courses",
     icon: <BookOpenIcon className="size-4" />,
   },
   {

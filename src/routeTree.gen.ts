@@ -17,6 +17,7 @@ import { Route as authSignUpRouteImport } from "./routes/(auth)/sign-up"
 import { Route as authVerifyOtpRouteImport } from "./routes/(auth)/verify-otp"
 import { Route as ContactRouteImport } from "./routes/contact"
 import { Route as ContactUsRouteImport } from "./routes/contact-us"
+import { Route as CoursesRouteImport } from "./routes/courses"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SuperadminDashboardRouteImport } from "./routes/superadmin/dashboard"
 import { Route as SuperadminIndexRouteImport } from "./routes/superadmin/index"
@@ -41,6 +42,11 @@ const ContactRoute = ContactRouteImport.update({
 const ContactUsRoute = ContactUsRouteImport.update({
   id: "/contact-us",
   path: "/contact-us",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoursesRoute = CoursesRouteImport.update({
+  id: "/courses",
+  path: "/courses",
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuperadminRouteRoute = SuperadminRouteRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   "/superadmin": typeof SuperadminRouteRouteWithChildren
   "/contact": typeof ContactRoute
   "/contact-us": typeof ContactUsRoute
+  "/courses": typeof CoursesRoute
   "/forgot-password": typeof authForgotPasswordRoute
   "/reset-password": typeof authResetPasswordRoute
   "/sign-in": typeof authSignInRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/contact": typeof ContactRoute
   "/contact-us": typeof ContactUsRoute
+  "/courses": typeof CoursesRoute
   "/forgot-password": typeof authForgotPasswordRoute
   "/reset-password": typeof authResetPasswordRoute
   "/sign-in": typeof authSignInRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   "/superadmin": typeof SuperadminRouteRouteWithChildren
   "/contact": typeof ContactRoute
   "/contact-us": typeof ContactUsRoute
+  "/courses": typeof CoursesRoute
   "/(auth)/forgot-password": typeof authForgotPasswordRoute
   "/(auth)/reset-password": typeof authResetPasswordRoute
   "/(auth)/sign-in": typeof authSignInRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | "/superadmin"
     | "/contact"
     | "/contact-us"
+    | "/courses"
     | "/forgot-password"
     | "/reset-password"
     | "/sign-in"
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | "/"
     | "/contact"
     | "/contact-us"
+    | "/courses"
     | "/forgot-password"
     | "/reset-password"
     | "/sign-in"
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | "/superadmin"
     | "/contact"
     | "/contact-us"
+    | "/courses"
     | "/(auth)/forgot-password"
     | "/(auth)/reset-password"
     | "/(auth)/sign-in"
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   SuperadminRouteRoute: typeof SuperadminRouteRouteWithChildren
   ContactRoute: typeof ContactRoute
   ContactUsRoute: typeof ContactUsRoute
+  CoursesRoute: typeof CoursesRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -224,6 +237,13 @@ declare module "@tanstack/react-router" {
       path: "/contact-us"
       fullPath: "/contact-us"
       preLoaderRoute: typeof ContactUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/courses": {
+      id: "/courses"
+      path: "/courses"
+      fullPath: "/courses"
+      preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/superadmin": {
@@ -343,6 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuperadminRouteRoute: SuperadminRouteRouteWithChildren,
   ContactRoute: ContactRoute,
   ContactUsRoute: ContactUsRoute,
+  CoursesRoute: CoursesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

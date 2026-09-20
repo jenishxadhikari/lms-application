@@ -11,7 +11,7 @@ import { UserDropdown } from "@/components/user-dropdown"
 export const SITE_NAV_ITEMS = [
   {
     title: "Courses",
-    url: "/#courses",
+    url: "/courses",
   },
   {
     title: "Workshop",
