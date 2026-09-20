@@ -61,7 +61,7 @@ export function FloatingThemeCustomizer() {
   return (
     <div
       ref={panelRef}
-      className="fixed top-1/2 right-3 z-[60] flex -translate-y-1/2 flex-col items-end sm:right-4"
+      className="fixed top-1/2 right-3 z-[60] hidden -translate-y-1/2 flex-col items-end sm:right-4 sm:flex"
       aria-label="Theme & Display Customizer"
     >
       {/* Expanded Quick Settings Panel */}

@@ -146,7 +146,7 @@ export function MentorsShowcaseSection() {
   return (
     <section
       id="mentors"
-      className="relative scroll-mt-4 border-t border-border/80 bg-background px-4 py-12 text-foreground transition-colors sm:px-6 lg:px-10 lg:py-16"
+      className="relative scroll-mt-4 border-t border-border/80 bg-background px-4 py-10 text-foreground transition-colors sm:px-6 sm:py-12 lg:px-10 lg:py-16"
     >
       <div className="mx-auto w-full max-w-7xl">
         {/* Section Header */}

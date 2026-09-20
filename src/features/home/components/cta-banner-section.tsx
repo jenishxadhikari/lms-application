@@ -14,7 +14,7 @@ const ALUMNI_AVATARS = [
 
 export function CtaBannerSection() {
   return (
-    <section className="relative overflow-hidden border-t border-border/80 bg-zinc-50/50 py-12 transition-colors sm:py-16 lg:py-20 dark:bg-black">
+    <section className="relative overflow-hidden border-t border-border/80 bg-zinc-50/50 py-10 transition-colors sm:py-16 lg:py-20 dark:bg-black">
       {/* Subtle micro-dot pattern for crisp texture */}
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(#e4e4e7_1px,transparent_1px)] [background-size:20px_20px] opacity-60 dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] dark:opacity-30"
@@ -35,7 +35,7 @@ export function CtaBannerSection() {
         </div>
 
         {/* Main Headline */}
-        <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl dark:text-white">
+        <h2 className="mt-4 text-[clamp(1.75rem,9vw,2.25rem)] leading-tight font-extrabold tracking-tight text-zinc-950 sm:text-4xl lg:text-5xl dark:text-white">
           Ready to Accelerate Your{" "}
           <span className="bg-gradient-to-r from-zinc-950 via-zinc-700 to-zinc-900 bg-clip-text text-transparent dark:from-white dark:via-zinc-300 dark:to-zinc-400">
             Career in Tech?
@@ -77,7 +77,7 @@ export function CtaBannerSection() {
         </div>
 
         {/* Compact Social Proof Pill */}
-        <div className="mt-6 inline-flex items-center justify-center gap-3 rounded-full border border-zinc-200/90 bg-white px-3.5 py-1.5 shadow-2xs backdrop-blur-xs dark:border-zinc-800 dark:bg-zinc-900/80">
+        <div className="mt-6 inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-2xl border border-zinc-200/90 bg-white px-3.5 py-2 shadow-2xs backdrop-blur-xs sm:gap-3 sm:rounded-full sm:py-1.5 dark:border-zinc-800 dark:bg-zinc-900/80">
           <div className="flex -space-x-2" aria-hidden="true">
             {ALUMNI_AVATARS.map((avatar, i) => (
               <div
@@ -101,7 +101,7 @@ export function CtaBannerSection() {
 
           <div className="hidden h-3.5 w-px bg-zinc-300 sm:block dark:bg-zinc-700" />
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex min-w-0 flex-wrap items-center justify-center gap-1.5">
             <div
               className="flex text-zinc-950 dark:text-white"
               aria-label="5 out of 5 stars"
@@ -110,7 +110,7 @@ export function CtaBannerSection() {
                 <Star key={i} className="size-3.5 fill-current" />
               ))}
             </div>
-            <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
+            <span className="text-center text-[11px] leading-snug font-semibold text-zinc-900 sm:text-xs dark:text-zinc-100">
               4.95 / 5{" "}
               <span className="font-normal text-zinc-500 dark:text-zinc-400">
                 Rating from 10,000+ Students

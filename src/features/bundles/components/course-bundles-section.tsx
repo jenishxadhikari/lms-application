@@ -288,7 +288,7 @@ export function CourseBundlesSection() {
                     )}
 
                     {/* Footer Row */}
-                    <div className="mt-auto flex items-center justify-between gap-3 border-t border-border/50 pt-4">
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/50 pt-4">
                       {combinedValue > finalFee ? (
                         <span className="text-xs font-bold text-muted-foreground line-through">
                           {formatPrice(combinedValue, bundle.currency)}

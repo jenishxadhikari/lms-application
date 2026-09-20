@@ -14,8 +14,10 @@ const passwordSchema = z
 
 export const signupSchema = z
   .object({
-    firstName: z.string().nonempty({ error: "Please enter your full name." }),
-    lastName: z.string().nonempty({ error: "Please enter your full name." }),
+    fullName: z
+      .string()
+      .trim()
+      .min(2, { error: "Please enter your full name." }),
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z

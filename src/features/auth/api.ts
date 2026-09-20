@@ -6,18 +6,26 @@ import {
   forgotPasswordSchema,
   resendOtpSchema,
   resetPasswordSchema,
-  signupSchema,
   verifyOtpSchema,
   type ForgotPasswordResponse,
   type RegisterResponse,
   type ResendOtpResponse,
   type ResetPasswordResponse,
+  type SignupData,
   type VerifyOtpResponse,
 } from "./schema"
 
-export async function signup(data: z.infer<typeof signupSchema>) {
+export async function signup(data: SignupData) {
   try {
-    const res = await api.post<RegisterResponse>("/auth/register", data)
+    const { fullName, ...credentials } = data
+    const [firstName, ...remainingNames] = fullName.trim().split(/\s+/)
+    const lastName = remainingNames.join(" ") || firstName
+
+    const res = await api.post<RegisterResponse>("/auth/register", {
+      ...credentials,
+      firstName,
+      lastName,
+    })
     return res.data
   } catch (error) {
     throw new Error(getApiErrorMessage(error, "Registration failed"))

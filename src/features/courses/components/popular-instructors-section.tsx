@@ -75,8 +75,8 @@ const INSTRUCTORS: PopularInstructor[] = [
 
 export function PopularInstructorsSection() {
   return (
-    <section className="relative overflow-hidden border-t border-border/80 bg-zinc-50/50 py-12 transition-colors sm:py-16 lg:py-20 dark:bg-zinc-950/50">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10">
+    <section className="relative overflow-hidden border-t border-border/80 bg-zinc-50/50 px-4 py-12 transition-colors sm:px-6 sm:py-16 lg:px-10 lg:py-20 dark:bg-zinc-950/50">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>

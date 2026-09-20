@@ -39,8 +39,7 @@ export function SignupForm({
   const form = useForm<SignupData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -87,33 +86,17 @@ export function SignupForm({
           </p>
         </div>
         <Controller
-          name="firstName"
+          name="fullName"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 type="text"
-                placeholder="John"
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="lastName"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                type="text"
-                placeholder="Doe"
+                autoComplete="name"
+                placeholder="John Doe"
                 aria-invalid={fieldState.invalid}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

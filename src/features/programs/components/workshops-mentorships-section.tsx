@@ -446,7 +446,7 @@ export function WorkshopsMentorshipsSection() {
                     </div>
 
                     {/* Footer Row: Price & Action */}
-                    <div className="mt-auto flex items-center justify-between pt-3">
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-3">
                       <span className="text-base font-black text-foreground">
                         {formatPrice(program.entryFee, program.currency)}
                       </span>

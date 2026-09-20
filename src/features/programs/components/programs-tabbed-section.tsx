@@ -300,7 +300,7 @@ export function ProgramsTabbedSection() {
     <section
       id="programs"
       aria-labelledby="programs-tabbed-heading"
-      className="relative scroll-mt-4 overflow-hidden border-y border-zinc-800 bg-[#09090b] px-4 py-12 text-white shadow-2xl transition-colors sm:px-6 lg:px-10 lg:py-16"
+      className="relative scroll-mt-4 overflow-hidden border-y border-zinc-800 bg-[#09090b] px-4 pt-10 pb-8 text-white shadow-2xl transition-colors sm:px-6 sm:pt-20 lg:px-10 lg:pt-28 lg:pb-8"
     >
       {/* Anchor targets for navbar clicks */}
       <div id="workshop" className="sr-only" />
@@ -316,18 +316,18 @@ export function ProgramsTabbedSection() {
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
         {/* Section Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3.5">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-white shadow-xs">
+        <div className="flex items-start justify-between gap-2 sm:items-center sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-900 text-white shadow-xs sm:size-10">
               {currentMeta.icon}
             </div>
-            <div>
-              <span className="block text-[11px] font-black tracking-widest text-zinc-400 uppercase">
+            <div className="min-w-0">
+              <span className="block truncate text-[10px] font-black tracking-widest text-zinc-400 uppercase sm:text-[11px]">
                 {currentMeta.label}
               </span>
               <h2
                 id="programs-tabbed-heading"
-                className="text-xl font-black tracking-tight text-white sm:text-2xl"
+                className="truncate text-lg font-black tracking-tight text-white sm:text-2xl"
               >
                 {currentMeta.title}
               </h2>
@@ -335,22 +335,22 @@ export function ProgramsTabbedSection() {
           </div>
 
           {/* Right Controls: View Mode & "All ->" */}
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <div className="flex items-center rounded-lg border border-zinc-800 bg-zinc-900/90 p-1 shadow-2xs">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center rounded-lg border border-zinc-800 bg-zinc-900/90 p-0.5 shadow-2xs sm:p-1">
               <Button
                 type="button"
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="icon-xs"
                 onClick={() => setViewMode("list")}
                 className={cn(
-                  "size-7 transition-colors",
+                  "size-6 transition-colors sm:size-7",
                   viewMode === "list"
                     ? "bg-white text-zinc-950 shadow-xs hover:bg-white"
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
                 )}
                 aria-label="List view"
               >
-                <List className="size-3.5" />
+                <List className="size-3 sm:size-3.5" />
               </Button>
               <Button
                 type="button"
@@ -358,20 +358,20 @@ export function ProgramsTabbedSection() {
                 size="icon-xs"
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "size-7 transition-colors",
+                  "size-6 transition-colors sm:size-7",
                   viewMode === "grid"
                     ? "bg-white text-zinc-950 shadow-xs hover:bg-white"
                     : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
                 )}
                 aria-label="Grid view"
               >
-                <LayoutGrid className="size-3.5" />
+                <LayoutGrid className="size-3 sm:size-3.5" />
               </Button>
             </div>
 
             <Link
               to={currentMeta.viewAllLink}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-900/90 px-3.5 text-xs font-bold text-white shadow-2xs transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+              className="inline-flex h-8 items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-900/90 px-2.5 text-[11px] font-bold text-white shadow-2xs transition-colors hover:border-zinc-600 hover:bg-zinc-800 sm:h-9 sm:gap-1.5 sm:px-3.5 sm:text-xs"
             >
               <span>All</span>
               <ArrowRight className="size-3" />
@@ -380,14 +380,14 @@ export function ProgramsTabbedSection() {
         </div>
 
         {/* Tab Selection Bar */}
-        <div className="mt-6 flex flex-wrap items-center gap-2.5 border-b border-zinc-800 pb-4">
+        <div className="mt-5 flex [scrollbar-width:none] flex-nowrap items-center gap-1.5 overflow-x-auto border-b border-zinc-800 pb-4 sm:mt-6 sm:gap-2.5 [&::-webkit-scrollbar]:hidden">
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === "workshops"}
             onClick={() => setActiveTab("workshops")}
             className={cn(
-              "group relative inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:text-sm",
+              "group relative inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:gap-2 sm:px-4 sm:text-sm",
               activeTab === "workshops"
                 ? "bg-white text-zinc-950 shadow-md ring-1 ring-white/20"
                 : "border-zinc-750 hover:bg-zinc-850 border bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-white"
@@ -402,7 +402,7 @@ export function ProgramsTabbedSection() {
             <span>Workshops</span>
             <span
               className={cn(
-                "inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-black transition-colors",
+                "inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-black transition-colors sm:px-2 sm:text-[11px]",
                 activeTab === "workshops"
                   ? "bg-zinc-950/15 text-zinc-950"
                   : "bg-zinc-800 text-zinc-300 group-hover:bg-zinc-700 group-hover:text-white"
@@ -418,7 +418,7 @@ export function ProgramsTabbedSection() {
             aria-selected={activeTab === "mentorships"}
             onClick={() => setActiveTab("mentorships")}
             className={cn(
-              "group relative inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:text-sm",
+              "group relative inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:gap-2 sm:px-4 sm:text-sm",
               activeTab === "mentorships"
                 ? "bg-white text-zinc-950 shadow-md ring-1 ring-white/20"
                 : "border-zinc-750 hover:bg-zinc-850 border bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-white"
@@ -433,7 +433,7 @@ export function ProgramsTabbedSection() {
             <span>Mentorships</span>
             <span
               className={cn(
-                "inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-black transition-colors",
+                "inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-black transition-colors sm:px-2 sm:text-[11px]",
                 activeTab === "mentorships"
                   ? "bg-zinc-950/15 text-zinc-950"
                   : "bg-zinc-800 text-zinc-300 group-hover:bg-zinc-700 group-hover:text-white"
@@ -449,7 +449,7 @@ export function ProgramsTabbedSection() {
             aria-selected={activeTab === "bundles"}
             onClick={() => setActiveTab("bundles")}
             className={cn(
-              "group relative inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:text-sm",
+              "group relative inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition-all duration-200 outline-none select-none sm:gap-2 sm:px-4 sm:text-sm",
               activeTab === "bundles"
                 ? "bg-white text-zinc-950 shadow-md ring-1 ring-white/20"
                 : "border-zinc-750 hover:bg-zinc-850 border bg-zinc-900/70 text-zinc-400 hover:border-zinc-500 hover:text-white"
@@ -464,7 +464,7 @@ export function ProgramsTabbedSection() {
             <span>Bundles</span>
             <span
               className={cn(
-                "inline-flex items-center justify-center rounded-full px-2 py-0.5 text-[11px] font-black transition-colors",
+                "inline-flex items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-black transition-colors sm:px-2 sm:text-[11px]",
                 activeTab === "bundles"
                   ? "bg-zinc-950/15 text-zinc-950"
                   : "bg-zinc-800 text-zinc-300 group-hover:bg-zinc-700 group-hover:text-white"
@@ -627,7 +627,7 @@ export function ProgramsTabbedSection() {
                         </div>
                       </div>
 
-                      <div className="mt-auto flex items-center justify-between pt-2.5">
+                      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2.5">
                         <span className="text-sm font-black text-white">
                           {formatPrice(workshop.entryFee, workshop.currency)}
                         </span>
@@ -752,7 +752,7 @@ export function ProgramsTabbedSection() {
                         </div>
                       </div>
 
-                      <div className="mt-auto flex items-center justify-between pt-2.5">
+                      <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2.5">
                         <span className="text-sm font-black text-white">
                           {formatPrice(
                             mentorship.entryFee,
@@ -903,7 +903,7 @@ export function ProgramsTabbedSection() {
                           </div>
                         </div>
 
-                        <div className="mt-auto flex items-center justify-between pt-2.5">
+                        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2.5">
                           <div className="flex items-baseline gap-1.5">
                             <span className="text-sm font-black text-white">
                               {formatPrice(finalFee, bundle.currency)}

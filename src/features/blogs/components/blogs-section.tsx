@@ -150,7 +150,7 @@ export function BlogsSection() {
     <section
       id="blogs"
       aria-labelledby="blogs-heading"
-      className="relative scroll-mt-4 border-t border-border/80 bg-gradient-to-b from-background via-muted/20 to-background px-4 py-12 text-foreground transition-colors sm:px-6 lg:px-10 lg:py-16 dark:bg-background"
+      className="relative scroll-mt-4 border-t border-border/80 bg-gradient-to-b from-background via-muted/20 to-background px-4 py-10 text-foreground transition-colors sm:px-6 sm:py-12 lg:px-10 lg:py-16 dark:bg-background"
     >
       <div id="blog" className="sr-only" />
       <div className="mx-auto w-full max-w-7xl">
@@ -350,7 +350,7 @@ export function BlogsSection() {
                     )}
 
                     {/* Footer Row: View Count & Action */}
-                    <div className="mt-auto flex items-center justify-between gap-3 border-t border-border/50 pt-4">
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/50 pt-4">
                       <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Eye className="size-3.5 shrink-0" />
                         <span>{blog.viewCount ?? 0} views</span>

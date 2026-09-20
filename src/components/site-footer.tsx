@@ -8,10 +8,10 @@ export function SiteFooter() {
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-500/40 to-transparent" />
 
       {/* Main Navigation Columns */}
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-10 lg:py-16">
+        <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-12 lg:gap-8">
           {/* Col 1: Brand & Bio (4 cols on lg) */}
-          <div className="lg:col-span-4">
+          <div className="col-span-2 lg:col-span-4">
             <Link
               to="/"
               className="inline-flex items-center gap-2 transition-opacity hover:opacity-90"
@@ -54,7 +54,7 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
                 <a
-                  href="/#courses"
+                  href="/courses"
                   className="text-zinc-400 transition-colors hover:text-white"
                 >
                   All Courses
@@ -62,7 +62,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="/#workshop"
+                  href="/workshops"
                   className="text-zinc-400 transition-colors hover:text-white"
                 >
                   Live Workshops
@@ -70,7 +70,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="/#mentorship"
+                  href="/mentorships"
                   className="text-zinc-400 transition-colors hover:text-white"
                 >
                   1-on-1 Mentorship
@@ -86,7 +86,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="/#courses"
+                  href="/courses"
                   className="inline-flex items-center gap-1 text-zinc-400 transition-colors hover:text-white"
                 >
                   <span>Browse Catalog</span>
@@ -112,7 +112,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="/#blogs"
+                  href="/blogs"
                   className="text-zinc-400 transition-colors hover:text-white"
                 >
                   Learning Journal

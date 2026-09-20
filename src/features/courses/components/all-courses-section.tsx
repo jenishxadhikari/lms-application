@@ -95,7 +95,7 @@ export function AllCoursesSection() {
     <section
       id="courses"
       aria-labelledby="all-courses-heading"
-      className="relative scroll-mt-4 border-t border-border/80 bg-gradient-to-b from-background via-muted/20 to-background px-4 py-12 text-foreground transition-colors sm:px-6 lg:px-10 lg:py-16 dark:bg-background"
+      className="relative scroll-mt-4 border-t border-border/80 bg-gradient-to-b from-background via-muted/20 to-background px-4 py-10 text-foreground transition-colors sm:px-6 sm:py-12 lg:px-10 lg:py-16 dark:bg-background"
     >
       <div id="explore-content" className="sr-only" />
       <div className="mx-auto w-full max-w-7xl">
@@ -325,7 +325,7 @@ export function AllCoursesSection() {
                     </div>
 
                     {/* Card Footer: Price & View Course Button */}
-                    <div className="mt-auto flex items-center justify-between pt-3">
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-3">
                       <span className="text-base font-black text-foreground">
                         {formatPrice(course.price, course.currency)}
                       </span>

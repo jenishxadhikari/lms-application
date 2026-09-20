@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
+import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
 import { Route as CoursesRouteImport } from './routes/courses'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
+import { Route as MentorshipsRouteImport } from './routes/mentorships'
 import { Route as SuperadminRouteRouteImport } from './routes/superadmin/route'
+import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
@@ -34,6 +38,11 @@ const authRouteRoute = authRouteRouteImport.update({
   id: '/(auth)',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogsRoute = BlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -49,9 +58,24 @@ const CoursesRoute = CoursesRouteImport.update({
   path: '/courses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentorshipsRoute = MentorshipsRouteImport.update({
+  id: '/mentorships',
+  path: '/mentorships',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuperadminRouteRoute = SuperadminRouteRouteImport.update({
   id: '/superadmin',
   path: '/superadmin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkshopsRoute = WorkshopsRouteImport.update({
+  id: '/workshops',
+  path: '/workshops',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
@@ -103,9 +127,13 @@ const SuperadminPlanRoute = SuperadminPlanRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/superadmin': typeof SuperadminRouteRouteWithChildren
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/courses': typeof CoursesRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/mentorships': typeof MentorshipsRoute
+  '/workshops': typeof WorkshopsRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/reset-password': typeof authResetPasswordRoute
   '/sign-in': typeof authSignInRoute
@@ -118,9 +146,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/courses': typeof CoursesRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/mentorships': typeof MentorshipsRoute
+  '/workshops': typeof WorkshopsRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/reset-password': typeof authResetPasswordRoute
   '/sign-in': typeof authSignInRoute
@@ -136,9 +168,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/(auth)': typeof authRouteRouteWithChildren
   '/superadmin': typeof SuperadminRouteRouteWithChildren
+  '/blogs': typeof BlogsRoute
   '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/courses': typeof CoursesRoute
+  '/marketplace': typeof MarketplaceRoute
+  '/mentorships': typeof MentorshipsRoute
+  '/workshops': typeof WorkshopsRoute
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/reset-password': typeof authResetPasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
@@ -154,9 +190,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/superadmin'
+    | '/blogs'
     | '/contact'
     | '/contact-us'
     | '/courses'
+    | '/marketplace'
+    | '/mentorships'
+    | '/workshops'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -169,9 +209,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/blogs'
     | '/contact'
     | '/contact-us'
     | '/courses'
+    | '/marketplace'
+    | '/mentorships'
+    | '/workshops'
     | '/forgot-password'
     | '/reset-password'
     | '/sign-in'
@@ -186,9 +230,13 @@ export interface FileRouteTypes {
     | '/'
     | '/(auth)'
     | '/superadmin'
+    | '/blogs'
     | '/contact'
     | '/contact-us'
     | '/courses'
+    | '/marketplace'
+    | '/mentorships'
+    | '/workshops'
     | '/(auth)/forgot-password'
     | '/(auth)/reset-password'
     | '/(auth)/sign-in'
@@ -204,9 +252,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
   SuperadminRouteRoute: typeof SuperadminRouteRouteWithChildren
+  BlogsRoute: typeof BlogsRoute
   ContactRoute: typeof ContactRoute
   ContactUsRoute: typeof ContactUsRoute
   CoursesRoute: typeof CoursesRoute
+  MarketplaceRoute: typeof MarketplaceRoute
+  MentorshipsRoute: typeof MentorshipsRoute
+  WorkshopsRoute: typeof WorkshopsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -223,6 +275,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof authRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogs': {
+      id: '/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -246,11 +305,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CoursesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentorships': {
+      id: '/mentorships'
+      path: '/mentorships'
+      fullPath: '/mentorships'
+      preLoaderRoute: typeof MentorshipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/superadmin': {
       id: '/superadmin'
       path: '/superadmin'
       fullPath: '/superadmin'
       preLoaderRoute: typeof SuperadminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workshops': {
+      id: '/workshops'
+      path: '/workshops'
+      fullPath: '/workshops'
+      preLoaderRoute: typeof WorkshopsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/forgot-password': {
@@ -361,9 +441,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   SuperadminRouteRoute: SuperadminRouteRouteWithChildren,
+  BlogsRoute: BlogsRoute,
   ContactRoute: ContactRoute,
   ContactUsRoute: ContactUsRoute,
   CoursesRoute: CoursesRoute,
+  MarketplaceRoute: MarketplaceRoute,
+  MentorshipsRoute: MentorshipsRoute,
+  WorkshopsRoute: WorkshopsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

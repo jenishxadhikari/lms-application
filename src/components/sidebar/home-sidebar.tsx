@@ -35,23 +35,23 @@ export const HOMEPAGE_SIDEBAR_ITEMS = [
   },
   {
     title: "Workshop",
-    url: "/#workshop",
+    url: "/workshops",
     icon: <PresentationIcon className="size-4" />,
   },
   {
     title: "Mentorship",
-    url: "/#mentorship",
+    url: "/mentorships",
     icon: <UsersIcon className="size-4" />,
     badge: "1-on-1",
   },
   {
     title: "Marketplace",
-    url: "/#marketplace",
+    url: "/marketplace",
     icon: <StoreIcon className="size-4" />,
   },
   {
     title: "Blog",
-    url: "/#blog",
+    url: "/blogs",
     icon: <NewspaperIcon className="size-4" />,
   },
   {

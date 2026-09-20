@@ -39,7 +39,7 @@ export function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      className="relative scroll-mt-4 overflow-hidden border-y border-zinc-800 bg-[#09090b] px-4 py-14 text-white shadow-2xl transition-colors sm:px-6 lg:px-10 lg:py-20"
+      className="relative scroll-mt-4 overflow-hidden border-y border-zinc-800 bg-[#09090b] px-4 py-10 text-white shadow-2xl transition-colors sm:px-6 sm:py-14 lg:px-10 lg:py-20"
     >
       {/* Atmospheric Animated Background Layers */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_70%)]" />
@@ -67,11 +67,11 @@ export function TestimonialsSection() {
         </div>
 
         {/* Testimonial Cards Grid */}
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3">
           {TESTIMONIALS.map((t, idx) => (
             <div
               key={idx}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 p-6 shadow-xl backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-zinc-600 hover:shadow-2xl"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 p-5 shadow-xl backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-zinc-600 hover:shadow-2xl sm:p-6"
             >
               <div>
                 {/* Top Rating & Tag */}

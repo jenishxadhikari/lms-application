@@ -61,7 +61,7 @@ export function FaqSection() {
   return (
     <section
       id="faq"
-      className="relative scroll-mt-4 overflow-hidden border-t border-zinc-800 bg-[#09090b] px-4 py-14 text-white shadow-2xl transition-colors sm:px-6 lg:px-10 lg:py-20"
+      className="relative scroll-mt-4 overflow-hidden border-t border-zinc-800 bg-[#09090b] px-4 py-10 text-white shadow-2xl transition-colors sm:px-6 sm:py-14 lg:px-10 lg:py-20"
     >
       {/* Atmospheric Animated Background Layers */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,255,255,0.08),transparent_70%)]" />
@@ -89,7 +89,7 @@ export function FaqSection() {
         </div>
 
         {/* FAQ Accordion List */}
-        <div className="mt-10 space-y-3">
+        <div className="mt-7 space-y-3 sm:mt-10">
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx
             return (
@@ -100,14 +100,14 @@ export function FaqSection() {
                 <button
                   type="button"
                   onClick={() => toggle(idx)}
-                  className="flex w-full cursor-pointer items-center justify-between gap-4 p-5 text-left font-bold text-white transition-colors select-none"
+                  className="flex w-full cursor-pointer items-start justify-between gap-3 p-4 text-left font-bold text-white transition-colors select-none sm:items-center sm:gap-4 sm:p-5"
                   aria-expanded={isOpen}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
                     <span className="rounded-md border border-white/15 bg-white/10 px-2 py-0.5 text-[10px] font-black tracking-wide text-zinc-300 uppercase">
                       {faq.category}
                     </span>
-                    <span className="text-sm font-bold text-white sm:text-base">
+                    <span className="text-sm leading-snug font-bold text-white sm:text-base">
                       {faq.question}
                     </span>
                   </div>

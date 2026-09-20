@@ -88,7 +88,7 @@ function ContactUsPage() {
       <SidebarInset className="!m-0 min-h-svh min-w-0">
         <SiteHeader />
         {/* Main Container */}
-        <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-10 lg:py-18">
+        <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-14 lg:px-10 lg:py-18">
           {/* Hero Section */}
           <div className="mx-auto max-w-3xl text-center">
             <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-gradient-to-b from-zinc-100 to-zinc-200/60 px-3 py-1 text-xs font-black tracking-wider text-zinc-900 shadow-2xs dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:text-zinc-200">
@@ -107,9 +107,9 @@ function ContactUsPage() {
           </div>
 
           {/* 2-Column Content Grid */}
-          <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-start">
+          <div className="mt-8 grid gap-6 sm:mt-12 sm:gap-8 lg:grid-cols-12 lg:items-start">
             {/* Left Form Column */}
-            <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs sm:p-8 lg:col-span-7">
+            <div className="min-w-0 rounded-2xl border border-border/80 bg-card p-4 shadow-xs sm:p-8 lg:col-span-7">
               <div className="flex items-center gap-3 border-b border-border/60 pb-5">
                 <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-gradient-to-b from-zinc-100 to-zinc-200/60 text-zinc-900 shadow-xs dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:text-zinc-100">
                   <MessageSquare className="size-5" />
@@ -125,7 +125,7 @@ function ContactUsPage() {
               </div>
 
               {isSuccess ? (
-                <div className="mt-6 rounded-xl border border-dashed border-border bg-muted/30 p-8 text-center">
+                <div className="mt-6 rounded-xl border border-dashed border-border bg-muted/30 p-5 text-center sm:p-8">
                   <CheckCircle2 className="mx-auto size-12 text-zinc-900 dark:text-white" />
                   <h3 className="mt-3 text-lg font-black text-foreground">
                     Message Sent Successfully
@@ -275,7 +275,7 @@ function ContactUsPage() {
             {/* Right Info Cards Column */}
             <div className="space-y-4 lg:col-span-5">
               {/* Quick Contact Card */}
-              <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs">
+              <div className="min-w-0 rounded-2xl border border-border/80 bg-card p-4 shadow-xs sm:p-6">
                 <h3 className="text-base font-black text-foreground">
                   Contact Channels
                 </h3>
@@ -295,7 +295,7 @@ function ContactUsPage() {
                       </span>
                       <a
                         href="mailto:support@nepalimentor.com"
-                        className="text-sm font-bold text-foreground hover:underline"
+                        className="text-sm font-bold break-all text-foreground hover:underline"
                       >
                         support@nepalimentor.com
                       </a>
@@ -342,7 +342,7 @@ function ContactUsPage() {
               </div>
 
               {/* Quick Catalog Shortcuts Card */}
-              <div className="rounded-2xl border border-border/80 bg-gradient-to-b from-zinc-100/70 to-card p-6 shadow-xs dark:from-zinc-900/40 dark:to-card">
+              <div className="min-w-0 rounded-2xl border border-border/80 bg-gradient-to-b from-zinc-100/70 to-card p-4 shadow-xs sm:p-6 dark:from-zinc-900/40 dark:to-card">
                 <h3 className="text-base font-black text-foreground">
                   Looking for Programs?
                 </h3>
@@ -383,7 +383,7 @@ function ContactUsPage() {
           </div>
 
           {/* FAQs Section */}
-          <div className="mt-16 border-t border-border/80 pt-12 sm:pt-16">
+          <div className="mt-10 border-t border-border/80 pt-10 sm:mt-16 sm:pt-16">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-gradient-to-b from-zinc-100 to-zinc-200/60 text-zinc-900 shadow-xs dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950 dark:text-zinc-100">
                 <HelpCircle className="size-4" />

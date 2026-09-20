@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import {
   ArrowRight,
-  BookOpen,
   ChevronDown,
   Clock,
   LayoutGrid,
@@ -215,11 +214,7 @@ export function CoursesCatalogFiltered() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   // Filters State matching Old UI
-  const [search, setSearch] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedLevel, setSelectedLevel] = useState("all")
-  const [selectedLanguage, setSelectedLanguage] = useState("all")
-  const [selectedPrice, setSelectedPrice] = useState("all")
   const [sortBy, setSortBy] = useState<
     "popular" | "rating" | "newest" | "price-asc" | "price-desc"
   >("popular")
@@ -252,7 +247,7 @@ export function CoursesCatalogFiltered() {
     return FALLBACK_COURSES
   }, [apiCourses])
 
-  // Extract Categories & Languages dynamically
+  // Extract categories dynamically
   const categories = useMemo(() => {
     const set = new Set<string>()
     allCourses.forEach((c) => {
@@ -264,31 +259,10 @@ export function CoursesCatalogFiltered() {
     return Array.from(set).sort()
   }, [allCourses])
 
-  const languages = useMemo(() => {
-    const set = new Set<string>()
-    allCourses.forEach((c) => {
-      if (c.language) set.add(c.language)
-    })
-    return Array.from(set).sort()
-  }, [allCourses])
-
   // Filter & Sort Logic
   const filteredCourses = useMemo(() => {
     return allCourses
       .filter((course) => {
-        // Search Filter
-        if (search.trim()) {
-          const query = search.toLowerCase()
-          const matchesTitle = course.title?.toLowerCase().includes(query)
-          const matchesSubtitle = course.subtitle?.toLowerCase().includes(query)
-          const matchesInstructor = course.instructorName
-            ?.toLowerCase()
-            .includes(query)
-          if (!matchesTitle && !matchesSubtitle && !matchesInstructor) {
-            return false
-          }
-        }
-
         // Category Filter
         if (selectedCategory !== "all") {
           const courseCat = course.category?.toLowerCase() || ""
@@ -298,34 +272,6 @@ export function CoursesCatalogFiltered() {
           if (courseCat !== selectedCategory.toLowerCase() && !hasCat) {
             return false
           }
-        }
-
-        // Level Filter
-        if (selectedLevel !== "all") {
-          if (
-            course.level?.toUpperCase() !== selectedLevel.toUpperCase() &&
-            course.level !== selectedLevel
-          ) {
-            return false
-          }
-        }
-
-        // Language Filter
-        if (selectedLanguage !== "all") {
-          if (
-            course.language?.toLowerCase() !== selectedLanguage.toLowerCase()
-          ) {
-            return false
-          }
-        }
-
-        // Price Filter
-        if (selectedPrice === "free") {
-          const p = Number(course.price || 0)
-          if (p > 0) return false
-        } else if (selectedPrice === "paid") {
-          const p = Number(course.price || 0)
-          if (p === 0) return false
         }
 
         return true
@@ -346,60 +292,29 @@ export function CoursesCatalogFiltered() {
         // default: popular
         return (b.enrolledCount || 0) - (a.enrolledCount || 0)
       })
-  }, [
-    allCourses,
-    search,
-    selectedCategory,
-    selectedLevel,
-    selectedLanguage,
-    selectedPrice,
-    sortBy,
-  ])
+  }, [allCourses, selectedCategory, sortBy])
 
   // Count active filters
   const activeFiltersCount = useMemo(() => {
     let count = 0
-    if (search.trim()) count++
     if (selectedCategory !== "all") count++
-    if (selectedLevel !== "all") count++
-    if (selectedLanguage !== "all") count++
-    if (selectedPrice !== "all") count++
     return count
-  }, [search, selectedCategory, selectedLevel, selectedLanguage, selectedPrice])
+  }, [selectedCategory])
 
   const clearAllFilters = () => {
-    setSearch("")
     setSelectedCategory("all")
-    setSelectedLevel("all")
-    setSelectedLanguage("all")
-    setSelectedPrice("all")
     setSortBy("popular")
   }
 
   return (
     <section
       id="all-courses"
-      className="relative px-4 py-12 sm:px-6 lg:px-10 lg:py-16"
+      className="relative px-4 pt-6 pb-12 sm:px-6 lg:px-10 lg:pt-8 lg:pb-16"
     >
       <div className="mx-auto w-full max-w-7xl">
-        {/* Section Header */}
-        <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200/90 bg-zinc-100/90 px-3 py-1 text-[10px] font-bold tracking-widest text-zinc-900 uppercase shadow-2xs dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
-            <BookOpen className="size-3" />
-            <span>COMPLETE CURRICULUM</span>
-          </div>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground sm:text-3xl">
-            All Courses Catalog
-          </h2>
-          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Explore hands-on programming, system design, and creative
-            disciplines.
-          </p>
-        </div>
-
-        {/* 1. Category Horizontal Pills Bar (Instant 1-Click Filtering) */}
+        {/* Category filters */}
         {categories.length > 0 && (
-          <div className="mt-6 flex [scrollbar-width:none] items-center gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex [scrollbar-width:none] items-center gap-1.5 overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <button
               type="button"
               onClick={() => setSelectedCategory("all")}
@@ -434,99 +349,19 @@ export function CoursesCatalogFiltered() {
           </div>
         )}
 
-        {/* 2. Compact Inline Toolbar (Search + Pill Selects + Sort + View Toggle) */}
-        <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          {/* Left Cluster: Search + Secondary Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Search Input */}
-            <div className="relative w-full sm:w-64 md:w-72">
-              <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search courses or topics..."
-                className="h-8.5 w-full rounded-full border border-border/80 bg-background pr-7 pl-8.5 text-xs text-foreground transition-all placeholder:text-muted-foreground focus:border-foreground focus:ring-1 focus:ring-foreground focus:outline-none"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch("")}
-                  className="absolute top-1/2 right-2.5 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label="Clear search"
-                >
-                  <X className="size-3" />
-                </button>
-              )}
-            </div>
-
-            {/* Level Dropdown Pill */}
-            <div className="relative">
-              <select
-                value={selectedLevel}
-                onChange={(e) => setSelectedLevel(e.target.value)}
-                className={cn(
-                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
-                  selectedLevel !== "all" &&
-                    "border-foreground/60 bg-muted/60 font-semibold"
-                )}
-              >
-                <option value="all">Level: All</option>
-                <option value="BEGINNER">Beginner</option>
-                <option value="INTERMEDIATE">Intermediate</option>
-                <option value="ADVANCED">Advanced</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
-            </div>
-
-            {/* Language Dropdown Pill */}
-            <div className="relative">
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className={cn(
-                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
-                  selectedLanguage !== "all" &&
-                    "border-foreground/60 bg-muted/60 font-semibold"
-                )}
-              >
-                <option value="all">Language: All</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
-            </div>
-
-            {/* Price Dropdown Pill */}
-            <div className="relative">
-              <select
-                value={selectedPrice}
-                onChange={(e) => setSelectedPrice(e.target.value)}
-                className={cn(
-                  "h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none",
-                  selectedPrice !== "all" &&
-                    "border-foreground/60 bg-muted/60 font-semibold"
-                )}
-              >
-                <option value="all">Price: All</option>
-                <option value="free">Free</option>
-                <option value="paid">Paid</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-3 -translate-y-1/2 text-muted-foreground" />
-            </div>
-          </div>
-
+        {/* Section heading + sort/view controls */}
+        <div className="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <h2 className="text-xl font-black tracking-tight text-foreground min-[380px]:text-2xl sm:text-3xl">
+            All Courses Catalog
+          </h2>
           {/* Right Cluster: Sort By + View Mode Toggle */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex w-full min-w-0 items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:shrink-0 sm:justify-start">
             {/* Sort Select */}
-            <div className="relative">
+            <div className="relative min-w-0 flex-1 sm:flex-none">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="h-8.5 appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none"
+                className="h-9 w-full appearance-none rounded-full border border-border/80 bg-background pr-7 pl-3 text-xs font-medium text-foreground transition-all hover:border-foreground/40 focus:border-foreground focus:outline-none sm:w-auto"
               >
                 <option value="popular">Sort: Most Popular</option>
                 <option value="rating">Sort: Highest Rated</option>
@@ -587,64 +422,12 @@ export function CoursesCatalogFiltered() {
                   Filtered by:
                 </span>
 
-                {search && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
-                    <span>"{search}"</span>
-                    <button
-                      type="button"
-                      onClick={() => setSearch("")}
-                      className="hover:text-destructive"
-                    >
-                      <X className="size-2.5" />
-                    </button>
-                  </span>
-                )}
-
                 {selectedCategory !== "all" && (
                   <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
                     <span>{selectedCategory}</span>
                     <button
                       type="button"
                       onClick={() => setSelectedCategory("all")}
-                      className="hover:text-destructive"
-                    >
-                      <X className="size-2.5" />
-                    </button>
-                  </span>
-                )}
-
-                {selectedLevel !== "all" && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
-                    <span>Level: {selectedLevel}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedLevel("all")}
-                      className="hover:text-destructive"
-                    >
-                      <X className="size-2.5" />
-                    </button>
-                  </span>
-                )}
-
-                {selectedLanguage !== "all" && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
-                    <span>Language: {selectedLanguage}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedLanguage("all")}
-                      className="hover:text-destructive"
-                    >
-                      <X className="size-2.5" />
-                    </button>
-                  </span>
-                )}
-
-                {selectedPrice !== "all" && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-muted/50 px-2 py-0.5 text-[11px] text-foreground">
-                    <span className="capitalize">{selectedPrice}</span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedPrice("all")}
                       className="hover:text-destructive"
                     >
                       <X className="size-2.5" />
@@ -716,8 +499,7 @@ export function CoursesCatalogFiltered() {
               No courses found
             </h3>
             <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              We couldn't find any courses matching your active search and
-              filter criteria.
+              We couldn't find any courses matching the selected category.
             </p>
             <button
               type="button"
@@ -820,8 +602,8 @@ export function CoursesCatalogFiltered() {
                     </div>
 
                     {/* Card Footer: Price & Solid High-Contrast Action Button */}
-                    <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3">
-                      <span className="text-base font-black text-foreground">
+                    <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/50 pt-3">
+                      <span className="min-w-0 text-base font-black text-foreground">
                         {priceFormatted}
                       </span>
 

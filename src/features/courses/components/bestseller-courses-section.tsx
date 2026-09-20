@@ -1,13 +1,5 @@
 import { Link } from "@tanstack/react-router"
-import {
-  ArrowRight,
-  Clock,
-  Flame,
-  Play,
-  Sparkles,
-  Star,
-  Users,
-} from "lucide-react"
+import { ArrowRight, Flame, Star } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -100,12 +92,34 @@ const BESTSELLER_COURSES: BestsellerCourse[] = [
     level: "Beginner to Pro",
     category: "UI/UX Design",
   },
+  {
+    id: "course-4",
+    title: "Modern React & TypeScript Engineering",
+    subtitle:
+      "Build reliable frontend applications with React, TypeScript, testing, performance, and scalable architecture.",
+    instructor: {
+      name: "Nischal Karki",
+      avatarUrl: "/creators/team-04.webp",
+      role: "Senior Frontend Engineer",
+    },
+    rating: 4.96,
+    reviewsCount: 1460,
+    enrolledCount: 4870,
+    price: "Rs. 2,999",
+    originalPrice: "Rs. 4,499",
+    totalLessons: "38 Lessons",
+    duration: "18.5 Hours",
+    badge: "Student Favorite",
+    thumbnailUrl: "/creators/team-04.webp",
+    level: "Intermediate",
+    category: "Web Development",
+  },
 ]
 
 export function BestsellerCoursesSection() {
   return (
-    <section className="relative overflow-hidden border-b border-border/80 bg-zinc-50/40 py-10 transition-colors sm:py-14 dark:bg-zinc-950/40">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10">
+    <section className="relative overflow-hidden border-b border-border/80 bg-zinc-50/40 px-4 py-9 transition-colors sm:px-6 sm:py-14 lg:px-10 dark:bg-zinc-950/40">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Section Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -131,93 +145,58 @@ export function BestsellerCoursesSection() {
           </a>
         </div>
 
-        {/* 3-Column Spotlight Grid */}
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* 4-Column Spotlight Grid */}
+        <div className="mt-6 grid gap-4 sm:mt-8 sm:gap-5 md:grid-cols-2 lg:grid-cols-4">
           {BESTSELLER_COURSES.map((course) => (
             <article
               key={course.id}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl dark:border-zinc-800/90 dark:bg-zinc-900/60 dark:hover:border-zinc-700 dark:hover:shadow-2xl"
+              className="group relative flex flex-col overflow-hidden rounded-xl border border-zinc-200/90 bg-card shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-lg dark:border-zinc-800/90 dark:hover:border-zinc-700"
             >
               {/* Thumbnail Container */}
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+              <div className="relative aspect-video w-full overflow-hidden bg-muted">
                 <img
                   src={course.thumbnailUrl}
                   alt={course.title}
+                  loading="lazy"
                   className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60" />
 
-                {/* Top Badge: Level & Category */}
-                <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                  <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-zinc-950/80 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs backdrop-blur-md">
-                    <Sparkles className="size-2.5" />
-                    <span>{course.badge}</span>
-                  </span>
-                  <span className="rounded-full border border-white/20 bg-white/90 px-2.5 py-0.5 text-[10px] font-semibold text-zinc-900 shadow-xs backdrop-blur-md dark:bg-zinc-900/90 dark:text-zinc-100">
-                    {course.category}
-                  </span>
-                </div>
-
-                {/* Duration & Lessons Overlay */}
-                <div className="absolute right-3 bottom-3 flex items-center gap-2 text-[11px] font-medium text-white/95">
-                  <span className="inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 backdrop-blur-xs">
-                    <Clock className="size-3" />
-                    <span>{course.duration}</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-md bg-black/60 px-2 py-0.5 backdrop-blur-xs">
-                    <Play className="size-3" />
-                    <span>{course.totalLessons}</span>
-                  </span>
-                </div>
+                {/* Bestseller Badge */}
+                <span className="absolute top-2.5 left-2.5 inline-flex items-center rounded-full border border-white/20 bg-black/75 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-xs backdrop-blur-md">
+                  {course.badge}
+                </span>
               </div>
 
               {/* Card Body */}
-              <div className="flex flex-1 flex-col p-5">
-                {/* Rating & Learners */}
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 font-bold text-zinc-900 dark:text-zinc-100">
-                    <Star className="size-3.5 fill-current text-zinc-950 dark:text-white" />
-                    <span>{course.rating.toFixed(2)}</span>
-                    <span className="font-normal text-muted-foreground">
-                      ({course.reviewsCount.toLocaleString()})
+              <div className="flex flex-1 flex-col justify-between p-4">
+                <div>
+                  {/* Rating & Language */}
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                    <div className="flex items-center gap-1 font-bold text-foreground">
+                      <Star className="size-3.5 fill-current text-zinc-950 dark:text-white" />
+                      <span>{course.rating.toFixed(2)}</span>
+                      <span className="font-normal text-muted-foreground">
+                        ({course.reviewsCount.toLocaleString()})
+                      </span>
+                    </div>
+                    <span className="rounded-md border border-border bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium">
+                      English
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                    <Users className="size-3" />
-                    <span>
-                      {course.enrolledCount.toLocaleString()} enrolled
-                    </span>
-                  </div>
-                </div>
 
-                {/* Title & Subtitle */}
-                <h3 className="mt-2.5 line-clamp-1 text-base font-black tracking-tight text-foreground group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
-                  {course.title}
-                </h3>
-                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                  {course.subtitle}
-                </p>
-
-                {/* Instructor Row */}
-                <div className="mt-4 flex items-center gap-2.5 border-t border-border/50 pt-3">
-                  <img
-                    src={course.instructor.avatarUrl}
-                    alt={course.instructor.name}
-                    className="size-7 rounded-full border border-border object-cover"
-                  />
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold text-foreground">
-                      {course.instructor.name}
-                    </p>
-                    <p className="truncate text-[10px] text-muted-foreground">
-                      {course.instructor.role}
-                    </p>
-                  </div>
+                  {/* Title & Subtitle */}
+                  <h3 className="mt-2 line-clamp-1 text-sm font-black tracking-tight text-foreground group-hover:text-zinc-700 dark:group-hover:text-zinc-300">
+                    {course.title}
+                  </h3>
+                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                    {course.subtitle}
+                  </p>
                 </div>
 
                 {/* Pricing & CTA Button */}
-                <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3">
-                  <div className="flex items-baseline gap-1.5">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/50 pt-3">
+                  <div className="flex min-w-0 flex-wrap items-baseline gap-1.5">
                     <span className="text-base font-black text-foreground">
                       {course.price}
                     </span>
@@ -236,7 +215,7 @@ export function BestsellerCoursesSection() {
                       "dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-white dark:hover:bg-white dark:hover:text-zinc-950"
                     )}
                   >
-                    <span>Enroll Now</span>
+                    <span>View course</span>
                     <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                   </Link>
                 </div>

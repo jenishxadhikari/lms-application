@@ -15,20 +15,20 @@ export const SITE_NAV_ITEMS = [
   },
   {
     title: "Workshop",
-    url: "/#workshop",
+    url: "/workshops",
   },
   {
     title: "Mentorship",
-    url: "/#mentorship",
+    url: "/mentorships",
     badge: "1-on-1",
   },
   {
     title: "Marketplace",
-    url: "/#marketplace",
+    url: "/marketplace",
   },
   {
     title: "Blog",
-    url: "/#blog",
+    url: "/blogs",
   },
   {
     title: "Contact Us",
@@ -134,14 +134,14 @@ export function SiteHeader() {
     <>
       {isAnnouncementVisible && (
         <aside
-          className="relative flex min-h-9 shrink-0 items-center justify-center border-b border-zinc-800 bg-black px-9 py-1 text-center text-[clamp(0.5rem,2.65vw,0.6875rem)] leading-none font-semibold whitespace-nowrap text-white sm:px-11 sm:text-sm sm:leading-snug"
+          className="relative flex min-h-9 shrink-0 items-center justify-center border-b border-zinc-800 bg-black px-10 py-1.5 text-center font-semibold text-white sm:px-11"
           aria-label="Announcement"
         >
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+          <div className="flex min-w-0 items-center justify-center gap-2">
+            <span className="hidden shrink-0 items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-white uppercase sm:inline-flex">
               UPDATE
             </span>
-            <p className="text-xs font-semibold text-white sm:text-sm">
+            <p className="text-[10px] leading-tight font-semibold text-white sm:text-sm sm:leading-snug">
               New learning releases, workshops, and 1-on-1 mentorship slots are
               now live.
             </p>
@@ -157,7 +157,7 @@ export function SiteHeader() {
         </aside>
       )}
 
-      <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-1.5 border-b border-border bg-background px-2 text-foreground transition-[width,height] ease-linear sm:h-16 sm:gap-3 sm:px-4 lg:px-5">
+      <header className="sticky top-0 z-40 flex h-14 w-full min-w-0 shrink-0 items-center justify-between gap-1.5 border-b border-border bg-background/95 px-2 text-foreground shadow-sm backdrop-blur-xl transition-[width,height] ease-linear sm:h-16 sm:gap-3 sm:px-4 lg:px-5">
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
           <SidebarTrigger className="size-8 shrink-0 sm:-ml-1 sm:size-9">
             <Menu className="size-5" />
@@ -165,18 +165,18 @@ export function SiteHeader() {
 
           <Link
             to="/"
-            className="flex min-w-0 items-center gap-2 transition-opacity hover:opacity-90"
+            className="flex max-w-[108px] min-w-0 items-center gap-2 transition-opacity hover:opacity-90 min-[380px]:max-w-[126px] sm:max-w-none"
             aria-label="NepaliMentor home"
           >
             <img
               src="/logo-light.png"
               alt="NepaliMentor"
-              className="h-7 w-auto max-w-[112px] object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-9 sm:max-w-[150px] dark:hidden"
+              className="h-7 w-auto max-w-full object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-9 sm:max-w-[150px] dark:hidden"
             />
             <img
               src="/logo.png"
               alt="NepaliMentor"
-              className="hidden h-7 w-auto max-w-[112px] object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-9 sm:max-w-[150px] dark:block"
+              className="hidden h-7 w-auto max-w-full object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-9 sm:max-w-[150px] dark:block"
             />
           </Link>
 
@@ -189,7 +189,7 @@ export function SiteHeader() {
           {isAuthenticated ? (
             <UserDropdown />
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-center gap-1 sm:gap-2">
               <Link
                 to="/sign-in"
                 className="hidden h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-foreground/85 transition-colors hover:bg-muted hover:text-foreground sm:inline-flex"
