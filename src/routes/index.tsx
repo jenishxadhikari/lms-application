@@ -70,31 +70,28 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   const dragStartXRef = useRef(0)
   const dragStartRotationRef = useRef(0)
   const dragDistanceRef = useRef(0)
-  const [layout, setLayout] = useState({
-    cardSpacing: 295,
-    maxOffset: 2.6,
-  })
+  const [radius, setRadius] = useState(720)
 
-  // Render 2 full cycles of items around the 3D ring for continuous wrapping
-  const renderedCount = Math.max(items.length * 2, 8)
+  // Render 3 full cycles of items around the loop for a continuous, seamless circular ribbon
+  const renderedCount = Math.max(items.length * 3, 18)
 
   useEffect(() => {
-    const updateLayout = () => {
+    const updateRadius = () => {
       const w = window.innerWidth
       if (w < 640) {
-        setLayout({ cardSpacing: 220, maxOffset: 1.5 })
+        setRadius(420)
       } else if (w < 1024) {
-        setLayout({ cardSpacing: 250, maxOffset: 2.1 })
+        setRadius(540)
       } else if (w < 1440) {
-        setLayout({ cardSpacing: 275, maxOffset: 2.5 })
+        setRadius(640)
       } else {
-        setLayout({ cardSpacing: 295, maxOffset: 2.6 })
+        setRadius(720)
       }
     }
 
-    updateLayout()
-    window.addEventListener("resize", updateLayout)
-    return () => window.removeEventListener("resize", updateLayout)
+    updateRadius()
+    window.addEventListener("resize", updateRadius)
+    return () => window.removeEventListener("resize", updateRadius)
   }, [])
 
   useEffect(() => {
@@ -108,7 +105,9 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
     ).matches
 
     const stepAngle = (Math.PI * 2) / renderedCount
-    const fadeStart = layout.maxOffset - 0.75
+    // Symmetrical fade window in angular space (68 deg to 99 deg)
+    const fadeAngle = Math.PI * 0.38
+    const maxAngle = Math.PI * 0.55
 
     const renderCards = () => {
       cardsRef.current.forEach((card, index) => {
@@ -123,24 +122,21 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         if (deltaAngle < 0) deltaAngle += Math.PI * 2
         deltaAngle -= Math.PI
 
-        // Continuous card index offset from center: -2, -1, 0, 1, 2...
-        const cardOffset = deltaAngle / stepAngle
-        const absOffset = Math.abs(cardOffset)
+        const absAngle = Math.abs(deltaAngle)
 
-        // Fully hide cards beyond the fade boundary
-        if (absOffset >= layout.maxOffset) {
+        // Fully hide cards beyond the visible front arc to prevent back-loop collisions
+        if (absAngle >= maxAngle) {
           card.style.opacity = "0"
           card.style.visibility = "hidden"
           card.style.pointerEvents = "none"
           return
         }
 
-        // Seamless continuous fade at the edges (NO direct jump)
+        // Symmetrical smooth fade: as left card fades out, right card fades in identically
         let opacity = 1
         let edgeScale = 1
-        if (absOffset > fadeStart) {
-          const fadeProgress =
-            (absOffset - fadeStart) / (layout.maxOffset - fadeStart)
+        if (absAngle > fadeAngle) {
+          const fadeProgress = (absAngle - fadeAngle) / (maxAngle - fadeAngle)
           opacity = Math.max(0, Math.min(1, 1 - fadeProgress))
           edgeScale = 1 - fadeProgress * 0.12
         }
@@ -149,14 +145,14 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         card.style.pointerEvents = opacity > 0.3 ? "auto" : "none"
         card.style.opacity = `${opacity}`
 
-        // Uniform horizontal positioning: exact spacing maintained all the way to the ends
-        const x = cardOffset * layout.cardSpacing
+        // Hybrid circular projection: maintains circular 3D feel while preserving card spacing
+        const normAngle = deltaAngle / (Math.PI * 0.5)
+        const x = radius * (0.45 * Math.sin(deltaAngle) + 0.55 * normAngle)
 
-        // Subtle 3D perspective curvature: center is closest, ends curve gently into depth
-        const depthFactor = absOffset / layout.maxOffset
-        const z = -180 + Math.pow(depthFactor, 1.6) * 190
-        const rotateY = -Math.max(-36, Math.min(36, cardOffset * 15))
-        const zIndex = Math.round(50 - absOffset * 10)
+        // Authentic 3D circular cylinder depth and inward facing rotation
+        const z = -radius * Math.cos(deltaAngle)
+        const rotateY = -normAngle * 52
+        const zIndex = Math.round(50 - Math.abs(normAngle) * 20)
         const isActive = index % items.length === activeIndex % items.length
         const scale = (isActive ? 1.05 : 1) * edgeScale
 
@@ -243,7 +239,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       viewport.removeEventListener("pointerup", onPointerEnd)
       viewport.removeEventListener("pointercancel", onPointerEnd)
     }
-  }, [renderedCount, layout, items.length, activeIndex, onSelect])
+  }, [renderedCount, radius, items.length, activeIndex, onSelect])
 
   const handleCardClick = (index: number) => {
     // If the pointer dragged by more than 6px, treat as drag rather than click
@@ -422,9 +418,12 @@ function Index() {
   }, [menuOpen])
 
   return (
-    <main className="min-h-svh bg-[#f4f4f6] pt-[65px] text-[#101218] transition-colors duration-500 dark:bg-[#030711] dark:text-[#f2f3f7]">
-      <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-white/10 bg-[#030711]/90 text-white shadow-[0_10px_35px_rgba(0,0,0,.1)] backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-[1380px] items-center justify-between px-5 py-3 sm:px-8 lg:px-12">
+    <main className="min-h-svh bg-[#f4f4f6] pt-[76px] text-[#101218] transition-colors duration-500 sm:pt-[82px] dark:bg-[#030711] dark:text-[#f2f3f7]">
+      <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-white/[0.08] bg-[#030711]/55 text-white shadow-[0_10px_35px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300">
+        {/* Subtle top edge specular reflection */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+        <div className="mx-auto flex w-full max-w-[1380px] items-center justify-between px-5 py-4 sm:px-8 sm:py-5 lg:px-12">
           {/* Left section: Logo + Left-aligned navigation */}
           <div className="flex items-center gap-6 lg:gap-10">
             <Link
@@ -435,7 +434,7 @@ function Index() {
               <img
                 src="/logo.png"
                 alt="NepaliMentor"
-                className="h-8 w-auto object-contain sm:h-9"
+                className="h-8.5 w-auto object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-10"
               />
             </Link>
 
@@ -589,7 +588,7 @@ function Index() {
         )}
       </header>
 
-      <section className="relative mx-auto flex min-h-[calc(100svh-65px)] w-full max-w-[1666px] flex-col overflow-hidden">
+      <section className="relative mx-auto flex min-h-[calc(100svh-82px)] w-full max-w-[1666px] flex-col overflow-hidden">
         {/* Background Video with subtle cinematic overlay and bottom fade */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
           <video
