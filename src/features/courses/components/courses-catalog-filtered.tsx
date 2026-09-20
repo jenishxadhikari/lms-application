@@ -667,18 +667,39 @@ export function CoursesCatalogFiltered() {
 
         {/* Loading Skeletons */}
         {isLoading && (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div
+            className={cn(
+              "mt-6 grid gap-5",
+              viewMode === "grid"
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                : "grid-cols-1 lg:grid-cols-2"
+            )}
+          >
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-xl border border-border/80 bg-card p-3"
+                className={cn(
+                  "overflow-hidden rounded-xl border border-border/80 bg-card p-3",
+                  viewMode === "list" ? "flex flex-col gap-4 sm:flex-row" : ""
+                )}
               >
-                <Skeleton className="aspect-video w-full rounded-lg" />
-                <Skeleton className="mt-3 h-4 w-3/4" />
-                <Skeleton className="mt-2 h-3 w-1/2" />
-                <div className="mt-4 flex justify-between">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-7 w-20 rounded-md" />
+                <Skeleton
+                  className={cn(
+                    "rounded-lg",
+                    viewMode === "list"
+                      ? "aspect-video w-full sm:aspect-[16/10] sm:w-52 sm:shrink-0"
+                      : "aspect-video w-full"
+                  )}
+                />
+                <div className="flex flex-1 flex-col justify-between py-1">
+                  <div>
+                    <Skeleton className="mt-1 h-4 w-3/4" />
+                    <Skeleton className="mt-2 h-3 w-1/2" />
+                  </div>
+                  <div className="mt-4 flex justify-between pt-2">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-7 w-20 rounded-md" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -713,10 +734,10 @@ export function CoursesCatalogFiltered() {
         {!isLoading && filteredCourses.length > 0 && (
           <div
             className={cn(
-              "mt-6",
+              "mt-6 grid gap-5",
               viewMode === "grid"
-                ? "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                : "flex flex-col gap-4"
+                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                : "grid-cols-1 lg:grid-cols-2"
             )}
           >
             {filteredCourses.map((course) => {
@@ -744,7 +765,7 @@ export function CoursesCatalogFiltered() {
                     className={cn(
                       "relative overflow-hidden bg-muted",
                       viewMode === "list"
-                        ? "aspect-video w-full sm:aspect-auto sm:h-auto sm:w-64 sm:shrink-0"
+                        ? "aspect-video w-full sm:aspect-auto sm:h-auto sm:w-52 sm:shrink-0 md:w-56"
                         : "aspect-video w-full"
                     )}
                   >
