@@ -149,7 +149,17 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         card.style.pointerEvents = opacity > 0.3 ? "auto" : "none"
         card.style.opacity = `${opacity}`
 
-        // Hybrid circular projection: maintains circular 3D feel while preserving card spacing
+        // Dynamic center magnification: smoothly expands width as card nears center and tapers off as it moves away
+        const centerZone = stepAngle * 1.35
+        const centerFactor =
+          absAngle < centerZone
+            ? 0.5 * (1 + Math.cos((absAngle / centerZone) * Math.PI))
+            : 0
+
+        // Subtly expand card width near center (+12% width, +3% height)
+        const centerWidthBoost = 1 + 0.12 * centerFactor
+        const centerHeightBoost = 1 + 0.03 * centerFactor
+
         const normAngle = deltaAngle / (Math.PI * 0.5)
         const x = radius * (0.42 * Math.sin(deltaAngle) + 0.58 * normAngle)
 
@@ -159,9 +169,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         const rotateY = -normAngle * 42
         const zIndex = Math.round(50 - Math.abs(normAngle) * 20)
         const isActive = index % items.length === activeIndex % items.length
-        const scale = (isActive ? 1.05 : 1) * edgeScale
+        const scaleX = (isActive ? 1.02 : 1) * edgeScale * centerWidthBoost
+        const scaleY = (isActive ? 1.02 : 1) * edgeScale * centerHeightBoost
 
-        card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`
+        card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scaleX}, ${scaleY})`
         card.style.zIndex = `${zIndex}`
       })
     }
