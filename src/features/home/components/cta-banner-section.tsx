@@ -64,7 +64,8 @@ export function CtaBannerSection() {
           </Link>
 
           <Link
-            to="/mentorships"
+            to="/"
+            hash="mentorship"
             className={cn(
               buttonVariants({ variant: "outline", size: "default" }),
               "dark:hover:bg-zinc-850 h-11 w-full cursor-pointer gap-2 rounded-xl border-zinc-300 bg-white px-7 text-xs font-bold text-zinc-900 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-zinc-400 hover:bg-zinc-50 active:translate-y-0 sm:w-auto dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-zinc-700"

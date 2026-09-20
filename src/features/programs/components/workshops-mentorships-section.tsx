@@ -243,7 +243,7 @@ export function WorkshopsMentorshipsSection() {
             </div>
 
             <Link
-              to="/workshops"
+              to={"/workshops" as any}
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card px-4 text-xs font-bold text-foreground shadow-2xs transition-colors hover:bg-muted"
             >
               <span>All</span>
@@ -453,9 +453,9 @@ export function WorkshopsMentorshipsSection() {
 
                       <Link
                         to={
-                          isMentorship
+                          (isMentorship
                             ? `/mentorships/${program.id}`
-                            : `/workshops/${program.id}`
+                            : `/workshops/${program.id}`) as any
                         }
                         className={cn(
                           "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold shadow-2xs transition-all",

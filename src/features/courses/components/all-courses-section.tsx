@@ -150,7 +150,7 @@ export function AllCoursesSection() {
             </div>
 
             <Link
-              to="/courses"
+              to={"/courses" as any}
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-border bg-card px-4 text-xs font-bold text-foreground shadow-2xs transition-colors hover:bg-muted"
             >
               <span>All</span>
@@ -331,7 +331,11 @@ export function AllCoursesSection() {
                       </span>
 
                       <Link
-                        to={course.id ? `/courses/${course.id}` : "/sign-up"}
+                        to={
+                          (course.id
+                            ? `/courses/${course.id}`
+                            : "/sign-up") as any
+                        }
                         className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-gradient-to-b from-zinc-100 to-zinc-200/80 px-3 py-1.5 text-xs font-bold text-zinc-900 shadow-2xs transition-all hover:bg-zinc-900 hover:text-white dark:border-zinc-700 dark:bg-gradient-to-b dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-100 dark:hover:bg-white dark:hover:text-zinc-950"
                       >
                         <span>View course</span>

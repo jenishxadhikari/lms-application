@@ -19,7 +19,7 @@ import { api } from "@/lib/api"
 import { cn } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export type ProgramTabKey = "workshops" | "mentorships" | "bundles"
@@ -632,7 +632,7 @@ export function ProgramsTabbedSection() {
                           {formatPrice(workshop.entryFee, workshop.currency)}
                         </span>
                         <Link
-                          to={`/workshops/${workshop.id}`}
+                          to={`/workshops/${workshop.id}` as any}
                           className="inline-flex h-7 items-center gap-1 rounded-md border border-zinc-700 bg-zinc-800 px-2.5 text-xs font-bold text-white transition-colors hover:bg-white hover:text-zinc-950"
                         >
                           <span>Join workshop</span>
@@ -760,7 +760,7 @@ export function ProgramsTabbedSection() {
                           )}
                         </span>
                         <Link
-                          to={`/mentorships/${mentorship.id}`}
+                          to={`/mentorships/${mentorship.id}` as any}
                           className="inline-flex h-7 items-center gap-1 rounded-md border border-zinc-700 bg-zinc-800 px-2.5 text-xs font-bold text-white transition-colors hover:bg-white hover:text-zinc-950"
                         >
                           <span>Book 1-on-1</span>
@@ -916,7 +916,7 @@ export function ProgramsTabbedSection() {
                           </div>
 
                           <Link
-                            to={`/bundles/${bundle.id}`}
+                            to={`/bundles/${bundle.id}` as any}
                             className="inline-flex h-7 items-center gap-1 rounded-md border border-zinc-700 bg-zinc-800 px-2.5 text-xs font-bold text-white transition-colors hover:bg-white hover:text-zinc-950"
                           >
                             <span>View bundle</span>

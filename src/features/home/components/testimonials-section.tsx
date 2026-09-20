@@ -1,4 +1,4 @@
-import { MessageSquareQuote, Sparkles, Star } from "lucide-react"
+import { Sparkles, Star } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 

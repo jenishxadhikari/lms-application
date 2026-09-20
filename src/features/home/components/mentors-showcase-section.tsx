@@ -82,9 +82,8 @@ export function MentorsShowcaseSection() {
     queryKey: ["public-featured-mentors"],
     queryFn: async () => {
       try {
-        const [mentorshipsRes, workshopsRes] = await Promise.allSettled([
+        const [mentorshipsRes] = await Promise.allSettled([
           api.get("/public/mentorships?page=0&size=10"),
-          api.get("/public/workshops?page=0&size=10"),
         ])
 
         const extracted: Record<string, MentorProfile> = {}
@@ -171,7 +170,8 @@ export function MentorsShowcaseSection() {
           </div>
 
           <Link
-            to="/mentorships"
+            to="/"
+            hash="mentorship"
             className={cn(
               buttonVariants({ variant: "outline", size: "sm" }),
               "cursor-pointer gap-1.5 self-start font-bold shadow-2xs sm:self-auto"
@@ -251,7 +251,8 @@ export function MentorsShowcaseSection() {
               {/* Bottom CTA */}
               <div className="border-t border-border/60 p-4 pt-3 sm:px-5 sm:pb-5">
                 <Link
-                  to="/mentorships"
+                  to="/"
+                  hash="mentorship"
                   className={cn(
                     buttonVariants({ variant: "outline", size: "sm" }),
                     "w-full cursor-pointer justify-center gap-1.5 border-zinc-300 text-xs font-bold transition-colors hover:bg-zinc-900 hover:text-white dark:border-zinc-700 dark:hover:bg-white dark:hover:text-zinc-950"

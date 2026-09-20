@@ -37,6 +37,7 @@ import { AllCoursesSection } from "@/features/courses/components/all-courses-sec
 import {
   DEFAULT_HERO_ITEMS,
   useHeroShowcase,
+  type HeroItem,
 } from "@/features/hero-showcase/api"
 import { CtaBannerSection } from "@/features/home/components/cta-banner-section"
 import { FaqSection } from "@/features/home/components/faq-section"
@@ -584,7 +585,6 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
 }
 
 function Index() {
-  const { isAuthenticated } = useAuth()
   const isMobileViewport = useIsMobile()
   const usesCompactCarousel = useIsMobile(1024)
   const [isMuted, setIsMuted] = useState(true)
@@ -768,14 +768,16 @@ function Index() {
               {/* Top Rating & Enrollment Badge */}
               <div className="hero-reveal hidden items-center gap-3 transition-all duration-300 sm:flex lg:hidden">
                 <div className="flex -space-x-2.5">
-                  {(activeItem.avatars || []).slice(0, 4).map((src, index) => (
-                    <img
-                      key={`${activeItem.id}-av-${index}`}
-                      src={src}
-                      alt={`Student ${index + 1}`}
-                      className="size-7 rounded-full border-2 border-background object-cover shadow-md transition-transform duration-200 hover:z-10 hover:scale-110 sm:size-9"
-                    />
-                  ))}
+                  {(activeItem.avatars || [])
+                    .slice(0, 4)
+                    .map((src: string, index: number) => (
+                      <img
+                        key={`${activeItem.id}-av-${index}`}
+                        src={src}
+                        alt={`Student ${index + 1}`}
+                        className="size-7 rounded-full border-2 border-background object-cover shadow-md transition-transform duration-200 hover:z-10 hover:scale-110 sm:size-9"
+                      />
+                    ))}
                 </div>
                 <div className="text-left text-[11px] leading-tight sm:text-xs">
                   <div className="flex items-center gap-1 font-bold text-white">

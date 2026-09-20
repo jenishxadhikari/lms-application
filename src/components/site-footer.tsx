@@ -85,13 +85,13 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <Link
-                  to="/courses"
+                <a
+                  href="/#courses"
                   className="inline-flex items-center gap-1 text-zinc-400 transition-colors hover:text-white"
                 >
                   <span>Browse Catalog</span>
                   <ArrowRight className="size-3" />
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -104,10 +104,10 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
                 <Link
-                  to="/about-us"
+                  to="/contact-us"
                   className="text-zinc-400 transition-colors hover:text-white"
                 >
-                  About Us
+                  About Us &amp; Support
                 </Link>
               </li>
               <li>

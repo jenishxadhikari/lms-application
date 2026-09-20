@@ -4,6 +4,8 @@ import { api } from "@/lib/api"
 
 import type { HeroItem } from "./types"
 
+export type { HeroItem }
+
 export const DEFAULT_HERO_ITEMS: HeroItem[] = [
   {
     id: "course-1",
