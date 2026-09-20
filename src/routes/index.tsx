@@ -83,9 +83,24 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   const dragStartXRef = useRef(0)
   const dragStartRotationRef = useRef(0)
   const dragDistanceRef = useRef(0)
+  const [radius, setRadius] = useState(620)
 
   // Render 2 full cycles of items around the 3D ring for rich depth and density
   const renderedCount = Math.max(items.length * 2, 8)
+
+  useEffect(() => {
+    const updateRadius = () => {
+      const w = window.innerWidth
+      if (w < 640) setRadius(360)
+      else if (w < 1024) setRadius(460)
+      else if (w < 1440) setRadius(560)
+      else setRadius(640)
+    }
+
+    updateRadius()
+    window.addEventListener("resize", updateRadius)
+    return () => window.removeEventListener("resize", updateRadius)
+  }, [])
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -103,34 +118,39 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
 
         const angle =
           rotationRef.current + Math.PI + (index / renderedCount) * Math.PI * 2
-        const x = 750 * Math.sin(angle)
-        const z = 750 * Math.cos(angle)
-        const rotateY = interpolate(
-          x,
-          [-750, -412.5, 0, 412.5, 750],
-          [70, 30, 0, -30, -70]
+        const x = radius * Math.sin(angle)
+        const z = radius * Math.cos(angle)
+        const rotateY = (-x / radius) * 44
+        const opacity = interpolate(
+          z,
+          [-radius, 0, radius * 0.35, radius * 0.75],
+          [1, 0.95, 0.35, 0]
         )
-        const opacity = interpolate(z, [0, 187.5], [1, 0])
-        const zIndex = Math.round(interpolate(z, [-750, 0], [0, 9]))
+        const zIndex = Math.round(interpolate(z, [-radius, radius], [50, 1]))
+        const isActive = index % items.length === activeIndex % items.length
+        const scale = isActive ? 1.04 : 1
 
-        card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg)`
+        card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`
         card.style.opacity = `${opacity}`
         card.style.zIndex = `${zIndex}`
       })
     }
 
+    // Immediately position cards on mount / state change
+    renderCards()
+
     const renderFrame = (now: number) => {
       const elapsed = Math.min(now - lastFrame, 50)
       lastFrame = now
 
-      // Smoothly interpolate towards target rotation if user clicked a card
+      // Smoothly interpolate towards target rotation if user clicked a card or released drag
       if (targetRotationRef.current !== null) {
         const diff = targetRotationRef.current - rotationRef.current
         if (Math.abs(diff) < 0.0005) {
           rotationRef.current = targetRotationRef.current
           targetRotationRef.current = null
         } else {
-          rotationRef.current += diff * 0.08
+          rotationRef.current += diff * 0.09
         }
       } else if (!reduceMotion && !isDraggingRef.current) {
         // Subtle ambient drifting rotation
@@ -167,6 +187,16 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       if (viewport.hasPointerCapture(event.pointerId)) {
         viewport.releasePointerCapture(event.pointerId)
       }
+
+      // If user dragged noticeably, snap to the nearest card at front center
+      if (dragDistanceRef.current > 12) {
+        const step = (Math.PI * 2) / renderedCount
+        const nearestIndex = Math.round(-rotationRef.current / step)
+        const normalizedIndex =
+          ((nearestIndex % items.length) + items.length) % items.length
+        targetRotationRef.current = -nearestIndex * step
+        onSelect(normalizedIndex)
+      }
     }
 
     viewport.addEventListener("pointerdown", onPointerDown)
@@ -184,7 +214,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       viewport.removeEventListener("pointerup", onPointerEnd)
       viewport.removeEventListener("pointercancel", onPointerEnd)
     }
-  }, [renderedCount])
+  }, [renderedCount, radius, items.length, activeIndex, onSelect])
 
   const handleCardClick = (index: number) => {
     // If the pointer dragged by more than 6px, treat as drag rather than click
@@ -194,9 +224,8 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
     onSelect(itemIndex)
 
     // Calculate target rotation to snap card 'index' to the front center:
-    // angle = rotation + Math.PI + (index / renderedCount) * 2 * Math.PI
-    // At front center: angle = Math.PI -> rotation = - (index / renderedCount) * 2 * Math.PI
-    const target = -(index / renderedCount) * Math.PI * 2
+    const step = (Math.PI * 2) / renderedCount
+    const target = -index * step
     const current = rotationRef.current
     const normalizedDiff = Math.atan2(
       Math.sin(target - current),
@@ -211,6 +240,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       className="hero-collage relative mt-auto -mb-[110px] h-[520px] w-full cursor-grab touch-none select-none active:cursor-grabbing"
       aria-label="Courses and workshops showcase carousel"
     >
+      {/* Subtle atmospheric edge vignettes */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 bg-gradient-to-r from-[#f4f4f6] to-transparent sm:w-36 dark:from-[#030711]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-24 bg-gradient-to-l from-[#f4f4f6] to-transparent sm:w-36 dark:from-[#030711]" />
+
       <div className="absolute inset-0 -translate-y-[215px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d]">
         {Array.from({ length: renderedCount }, (_, index) => {
           const item = items[index % items.length]
@@ -224,10 +257,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
               }}
               onClick={() => handleCardClick(index)}
               className={cn(
-                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[137.5px] h-[330px] w-[275px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 will-change-transform [backface-visibility:hidden]",
+                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[137.5px] h-[330px] w-[275px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden]",
                 isActive
-                  ? "scale-[1.03] shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
-                  : "opacity-80 hover:scale-[1.02] hover:opacity-100"
+                  ? "shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
+                  : "hover:ring-1 hover:ring-white/40"
               )}
               aria-label={`${item.title} - ${item.badge}`}
               role="button"
