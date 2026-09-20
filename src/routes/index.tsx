@@ -810,7 +810,7 @@ function Index() {
             </button>
           </aside>
         )}
-        <header className="flex h-14 shrink-0 items-center justify-between gap-1.5 border-b border-border bg-background px-2 text-foreground transition-[width,height] ease-linear sm:h-16 sm:gap-3 sm:px-4 lg:px-5">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between gap-1.5 border-b border-border bg-background px-2 text-foreground transition-[width,height] ease-linear sm:h-16 sm:gap-3 sm:px-4 lg:px-5">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
             <SidebarTrigger className="size-8 shrink-0 sm:-ml-1 sm:size-9">
               <Menu className="size-5" />
