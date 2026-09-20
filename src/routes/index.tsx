@@ -121,9 +121,9 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         const x = radius * Math.sin(angle)
         const z = radius * Math.cos(angle)
 
-        // Only cards on the front arc (z < -radius * 0.05) are visible.
-        // Back-half cards (z >= -radius * 0.05) are hidden to prevent 2 cards colliding at the corners.
-        if (z >= -radius * 0.05) {
+        // Only cards on the front arc (z <= 0) are visible.
+        // Back-half cards (z > 0) are hidden to prevent 2 cards colliding at the corners.
+        if (z > 0) {
           card.style.opacity = "0"
           card.style.visibility = "hidden"
           card.style.pointerEvents = "none"
@@ -134,15 +134,11 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         card.style.pointerEvents = "auto"
 
         const rotateY = (-x / radius) * 42
-        // Smooth opacity falloff as the card approaches the outer turn
-        const opacity = interpolate(
-          z,
-          [-radius, -radius * 0.55, -radius * 0.08],
-          [1, 0.95, 0]
-        )
+        // Keep 100% crisp opacity - do not fade cards at start and end
+        const opacity = 1
         const zIndex = Math.round(interpolate(z, [-radius, 0], [50, 1]))
         const isActive = index % items.length === activeIndex % items.length
-        const scale = isActive ? 1.04 : interpolate(z, [-radius, 0], [1, 0.9])
+        const scale = isActive ? 1.04 : interpolate(z, [-radius, 0], [1, 0.92])
 
         card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`
         card.style.opacity = `${opacity}`
@@ -254,10 +250,6 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       className="hero-collage relative mt-auto -mb-[110px] h-[520px] w-full cursor-grab touch-none select-none active:cursor-grabbing"
       aria-label="Courses and workshops showcase carousel"
     >
-      {/* Subtle atmospheric edge vignettes */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-20 w-24 bg-gradient-to-r from-[#f4f4f6] to-transparent sm:w-36 dark:from-[#030711]" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-20 w-24 bg-gradient-to-l from-[#f4f4f6] to-transparent sm:w-36 dark:from-[#030711]" />
-
       <div className="absolute inset-0 -translate-y-[215px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d]">
         {Array.from({ length: renderedCount }, (_, index) => {
           const item = items[index % items.length]
