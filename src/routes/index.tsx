@@ -182,8 +182,8 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
           rotationRef.current += diff * 0.09
         }
       } else if (!reduceMotion && !isDraggingRef.current) {
-        // Subtle ambient drifting rotation
-        rotationRef.current += 0.00006 * elapsed
+        // Ambient drifting rotation: smooth right-to-left sliding
+        rotationRef.current -= 0.00006 * elapsed
       }
 
       renderCards()
@@ -206,7 +206,8 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
         dragDistanceRef.current,
         Math.abs(diffX)
       )
-      rotationRef.current = dragStartRotationRef.current - 0.0015 * diffX
+      // Natural 1:1 drag direction: dragging left moves cards left, dragging right moves cards right
+      rotationRef.current = dragStartRotationRef.current + 0.0015 * diffX
       renderCards()
     }
 
@@ -674,21 +675,6 @@ function Index() {
                 {activeItem.enrolledCount.toLocaleString()}+ learners enrolled
               </p>
             </div>
-          </div>
-
-          {/* Active Item Metadata Pill */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-3.5 py-1 text-[11px] font-semibold tracking-wide text-white/90 shadow-sm backdrop-blur-md">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-              </span>
-              <span>{activeItem.badge}</span>
-              <span className="text-white/30">•</span>
-              <span className="font-normal text-white/75">
-                {activeItem.instructor.name}
-              </span>
-            </span>
           </div>
 
           {/* Dynamic Headline */}
