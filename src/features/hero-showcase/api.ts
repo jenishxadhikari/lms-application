@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
+import { api } from "@/lib/api"
+
 import type { HeroItem } from "./types"
 
 export const DEFAULT_HERO_ITEMS: HeroItem[] = [
@@ -161,18 +163,160 @@ export const DEFAULT_HERO_ITEMS: HeroItem[] = [
   },
 ]
 
-/**
- * Hook to fetch hero showcase courses and workshops.
- * When the backend API is ready, replace or supplement the queryFn with:
- * `const res = await api.get('/courses/hero-showcase'); return res.data;`
- */
+interface RawCourse {
+  id: string
+  title: string
+  subtitle?: string
+  description?: string
+  thumbnailUrl?: string
+  trailerUrl?: string
+  avgRating?: number
+  enrolledStudents?: number
+  reviewCount?: number
+  categories?: Array<{ name: string; slug: string }>
+  mentor?: {
+    fullName?: string
+    avatarUrl?: string
+    aboutMe?: string
+  }
+}
+
+interface RawWorkshop {
+  id: string
+  title: string
+  subtitle?: string
+  description?: string
+  thumbnailUrl?: string
+  trailerUrl?: string
+  avgRating?: number
+  enrolledStudents?: number
+  reviewCount?: number
+  mentor?: {
+    fullName?: string
+    avatarUrl?: string
+  }
+}
+
+function stripHtml(html: string = ""): string {
+  return html.replace(/<[^>]*>?/gm, "").trim()
+}
+
 export function useHeroShowcase() {
   return useQuery<HeroItem[]>({
     queryKey: ["hero-showcase"],
     queryFn: async () => {
-      // Prepared for backend integration
-      return DEFAULT_HERO_ITEMS
+      try {
+        const [coursesRes, workshopsRes] = await Promise.allSettled([
+          api.get<{ courses?: RawCourse[] }>("/public/courses"),
+          api.get<{ workshops?: RawWorkshop[] }>(
+            "/public/workshops?page=0&size=10"
+          ),
+        ])
+
+        const fetchedItems: HeroItem[] = []
+
+        if (
+          coursesRes.status === "fulfilled" &&
+          coursesRes.value.data?.courses
+        ) {
+          coursesRes.value.data.courses.forEach((c) => {
+            const rawDesc = stripHtml(c.description || c.subtitle || "")
+            fetchedItems.push({
+              id: c.id,
+              type: "course",
+              title: c.title?.trim() || "Nepali Mentor Course",
+              description:
+                rawDesc.length > 160
+                  ? rawDesc.slice(0, 160) + "..."
+                  : rawDesc ||
+                    "Accelerate your mastery with hands-on projects and industry mentors.",
+              thumbnailUrl: c.thumbnailUrl || "/creators/team-01.webp",
+              trailerVideoUrl: c.trailerUrl || "/videos/bheda-ko-oon.mp4",
+              rating:
+                typeof c.avgRating === "number" && c.avgRating > 0
+                  ? c.avgRating
+                  : 4.9,
+              reviewsCount: c.reviewCount || 12,
+              enrolledCount: c.enrolledStudents || 150,
+              badge: c.categories?.[0]?.name
+                ? `${c.categories[0].name} Course`
+                : "Featured Course",
+              instructor: {
+                name: c.mentor?.fullName || "Nepali Mentor",
+                avatarUrl: c.mentor?.avatarUrl || "/creators/team-01.webp",
+                role: "Instructor",
+              },
+              enrollUrl: `/sign-up`,
+              avatars: [
+                c.mentor?.avatarUrl || "/creators/team-01.webp",
+                "/creators/team-02.webp",
+                "/creators/team-03.webp",
+                "/creators/team-04.webp",
+              ],
+            })
+          })
+        }
+
+        if (
+          workshopsRes.status === "fulfilled" &&
+          workshopsRes.value.data?.workshops
+        ) {
+          workshopsRes.value.data.workshops.forEach((w) => {
+            const rawDesc = stripHtml(w.description || w.subtitle || "")
+            fetchedItems.push({
+              id: w.id,
+              type: "workshop",
+              title: w.title?.trim() || "Live Practical Workshop",
+              description:
+                rawDesc.length > 160
+                  ? rawDesc.slice(0, 160) + "..."
+                  : rawDesc ||
+                    "Interactive live session with industry leaders and direct code feedback.",
+              thumbnailUrl: w.thumbnailUrl || "/creators/team-02.webp",
+              trailerVideoUrl: w.trailerUrl || "/videos/bheda-ko-oon.mp4",
+              rating:
+                typeof w.avgRating === "number" && w.avgRating > 0
+                  ? w.avgRating
+                  : 5.0,
+              reviewsCount: w.reviewCount || 18,
+              enrolledCount: w.enrolledStudents || 280,
+              badge: "Live Workshop",
+              instructor: {
+                name: w.mentor?.fullName || "Industry Specialist",
+                avatarUrl: w.mentor?.avatarUrl || "/creators/team-02.webp",
+                role: "Workshop Leader",
+              },
+              enrollUrl: `/sign-up`,
+              avatars: [
+                w.mentor?.avatarUrl || "/creators/team-02.webp",
+                "/creators/team-03.webp",
+                "/creators/team-04.webp",
+                "/creators/team-5-img-1.webp",
+              ],
+            })
+          })
+        }
+
+        // If API returned items, append fallbacks if needed so the 3D ring has at least 6 cards
+        if (fetchedItems.length > 0) {
+          if (fetchedItems.length < 6) {
+            return [
+              ...fetchedItems,
+              ...DEFAULT_HERO_ITEMS.slice(fetchedItems.length, 6),
+            ]
+          }
+          return fetchedItems
+        }
+
+        return DEFAULT_HERO_ITEMS
+      } catch (err) {
+        console.warn(
+          "Failed to fetch hero showcase items, using defaults:",
+          err
+        )
+        return DEFAULT_HERO_ITEMS
+      }
     },
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes
   })
 }

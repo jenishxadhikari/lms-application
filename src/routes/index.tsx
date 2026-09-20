@@ -6,35 +6,26 @@ import {
   ArrowUpRight,
   ChevronDown,
   Menu,
+  Play,
   Search,
+  Sparkles,
   Star,
   Volume2,
   VolumeX,
   X,
 } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
+import {
+  DEFAULT_HERO_ITEMS,
+  useHeroShowcase,
+} from "@/features/hero-showcase/api"
+import type { HeroItem } from "@/features/hero-showcase/types"
+
 export const Route = createFileRoute("/")({
   component: Index,
 })
-
-const ratingAvatars = [
-  "/creators/team-01.webp",
-  "/creators/team-02.webp",
-  "/creators/team-03.webp",
-  "/creators/team-04.webp",
-]
-
-const creatorImages = [
-  "/creators/team-01.webp",
-  "/creators/team-02.webp",
-  "/creators/team-03.webp",
-  "/creators/team-04.webp",
-  "/creators/team-5-img-1.webp",
-  "/creators/team-5-img-2.webp",
-  "/creators/team-5-img-3.webp",
-]
-
-const renderedCardCount = creatorImages.length * 2
 
 function interpolate(value: number, input: number[], output: number[]): number {
   if (value <= input[0]) return output[0]
@@ -49,9 +40,52 @@ function interpolate(value: number, input: number[], output: number[]): number {
   return output[segment] + progress * (output[segment + 1] - output[segment])
 }
 
-function CreatorCarousel() {
+function renderHighlightedTitle(title: string, highlightWord?: string) {
+  if (highlightWord && title.includes(highlightWord)) {
+    const parts = title.split(highlightWord)
+    return (
+      <>
+        {parts[0]}
+        <span className="font-serif font-normal tracking-[-0.045em] text-white italic underline decoration-white/30 decoration-1 underline-offset-4">
+          {highlightWord}
+        </span>
+        {parts.slice(1).join(highlightWord)}
+      </>
+    )
+  }
+
+  const words = title.trim().split(" ")
+  if (words.length <= 2) return title
+  const main = words.slice(0, -1).join(" ")
+  const last = words[words.length - 1]
+  return (
+    <>
+      {main}{" "}
+      <span className="font-serif font-normal tracking-[-0.045em] text-white italic">
+        {last}
+      </span>
+    </>
+  )
+}
+
+interface CourseCarouselProps {
+  items: HeroItem[]
+  activeIndex: number
+  onSelect: (index: number) => void
+}
+
+function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   const viewportRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<Array<HTMLDivElement | null>>([])
+  const rotationRef = useRef(0)
+  const targetRotationRef = useRef<number | null>(null)
+  const isDraggingRef = useRef(false)
+  const dragStartXRef = useRef(0)
+  const dragStartRotationRef = useRef(0)
+  const dragDistanceRef = useRef(0)
+
+  // Render 2 full cycles of items around the 3D ring for rich depth and density
+  const renderedCount = Math.max(items.length * 2, 8)
 
   useEffect(() => {
     const viewport = viewportRef.current
@@ -59,10 +93,6 @@ function CreatorCarousel() {
 
     let animationFrame = 0
     let lastFrame = performance.now()
-    let rotation = 0
-    let isDragging = false
-    let dragStartX = 0
-    let dragStartRotation = 0
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches
@@ -72,7 +102,7 @@ function CreatorCarousel() {
         if (!card) return
 
         const angle =
-          rotation + Math.PI + (index / renderedCardCount) * Math.PI * 2
+          rotationRef.current + Math.PI + (index / renderedCount) * Math.PI * 2
         const x = 750 * Math.sin(angle)
         const z = 750 * Math.cos(angle)
         const rotateY = interpolate(
@@ -93,8 +123,18 @@ function CreatorCarousel() {
       const elapsed = Math.min(now - lastFrame, 50)
       lastFrame = now
 
-      if (!reduceMotion && !isDragging) {
-        rotation += 0.000096 * elapsed
+      // Smoothly interpolate towards target rotation if user clicked a card
+      if (targetRotationRef.current !== null) {
+        const diff = targetRotationRef.current - rotationRef.current
+        if (Math.abs(diff) < 0.0005) {
+          rotationRef.current = targetRotationRef.current
+          targetRotationRef.current = null
+        } else {
+          rotationRef.current += diff * 0.08
+        }
+      } else if (!reduceMotion && !isDraggingRef.current) {
+        // Subtle ambient drifting rotation
+        rotationRef.current += 0.00006 * elapsed
       }
 
       renderCards()
@@ -102,21 +142,28 @@ function CreatorCarousel() {
     }
 
     const onPointerDown = (event: PointerEvent) => {
-      isDragging = true
-      dragStartX = event.clientX
-      dragStartRotation = rotation
+      isDraggingRef.current = true
+      dragStartXRef.current = event.clientX
+      dragStartRotationRef.current = rotationRef.current
+      dragDistanceRef.current = 0
+      targetRotationRef.current = null
       viewport.setPointerCapture(event.pointerId)
     }
 
     const onPointerMove = (event: PointerEvent) => {
-      if (!isDragging) return
-      rotation = dragStartRotation - 0.0015 * (event.clientX - dragStartX)
+      if (!isDraggingRef.current) return
+      const diffX = event.clientX - dragStartXRef.current
+      dragDistanceRef.current = Math.max(
+        dragDistanceRef.current,
+        Math.abs(diffX)
+      )
+      rotationRef.current = dragStartRotationRef.current - 0.0015 * diffX
       renderCards()
     }
 
     const onPointerEnd = (event: PointerEvent) => {
-      if (!isDragging) return
-      isDragging = false
+      if (!isDraggingRef.current) return
+      isDraggingRef.current = false
       if (viewport.hasPointerCapture(event.pointerId)) {
         viewport.releasePointerCapture(event.pointerId)
       }
@@ -126,6 +173,7 @@ function CreatorCarousel() {
     viewport.addEventListener("pointermove", onPointerMove)
     viewport.addEventListener("pointerup", onPointerEnd)
     viewport.addEventListener("pointercancel", onPointerEnd)
+
     renderCards()
     animationFrame = requestAnimationFrame(renderFrame)
 
@@ -136,32 +184,113 @@ function CreatorCarousel() {
       viewport.removeEventListener("pointerup", onPointerEnd)
       viewport.removeEventListener("pointercancel", onPointerEnd)
     }
-  }, [])
+  }, [renderedCount])
+
+  const handleCardClick = (index: number) => {
+    // If the pointer dragged by more than 6px, treat as drag rather than click
+    if (dragDistanceRef.current > 6) return
+
+    const itemIndex = index % items.length
+    onSelect(itemIndex)
+
+    // Calculate target rotation to snap card 'index' to the front center:
+    // angle = rotation + Math.PI + (index / renderedCount) * 2 * Math.PI
+    // At front center: angle = Math.PI -> rotation = - (index / renderedCount) * 2 * Math.PI
+    const target = -(index / renderedCount) * Math.PI * 2
+    const current = rotationRef.current
+    const normalizedDiff = Math.atan2(
+      Math.sin(target - current),
+      Math.cos(target - current)
+    )
+    targetRotationRef.current = current + normalizedDiff
+  }
 
   return (
     <div
       ref={viewportRef}
-      className="hero-collage relative mt-auto -mb-[110px] h-[520px] w-full cursor-grab touch-none active:cursor-grabbing"
-      aria-label="Featured learners and mentors"
+      className="hero-collage relative mt-auto -mb-[110px] h-[520px] w-full cursor-grab touch-none select-none active:cursor-grabbing"
+      aria-label="Courses and workshops showcase carousel"
     >
       <div className="absolute inset-0 -translate-y-[215px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d]">
-        {Array.from({ length: renderedCardCount }, (_, index) => (
-          <div
-            key={index}
-            ref={(element) => {
-              cardsRef.current[index] = element
-            }}
-            className="creator-card pointer-events-none absolute bottom-0 left-1/2 -ml-[137.5px] h-[330px] w-[275px] overflow-hidden rounded-2xl shadow-2xl will-change-transform [backface-visibility:hidden]"
-            aria-hidden="true"
-          >
-            <img
-              src={creatorImages[index % creatorImages.length]}
-              alt=""
-              draggable={false}
-              className="h-full w-full object-cover select-none"
-            />
-          </div>
-        ))}
+        {Array.from({ length: renderedCount }, (_, index) => {
+          const item = items[index % items.length]
+          const isActive = index % items.length === activeIndex % items.length
+
+          return (
+            <div
+              key={`${item.id}-${index}`}
+              ref={(element) => {
+                cardsRef.current[index] = element
+              }}
+              onClick={() => handleCardClick(index)}
+              className={cn(
+                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[137.5px] h-[330px] w-[275px] overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 will-change-transform [backface-visibility:hidden]",
+                isActive
+                  ? "scale-[1.03] shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
+                  : "opacity-80 hover:scale-[1.02] hover:opacity-100"
+              )}
+              aria-label={`${item.title} - ${item.badge}`}
+              role="button"
+              tabIndex={0}
+            >
+              {/* Card Thumbnail Image */}
+              <img
+                src={item.thumbnailUrl}
+                alt={item.title}
+                draggable={false}
+                className="h-full w-full object-cover transition-transform duration-500 select-none group-hover:scale-105"
+              />
+
+              {/* Floating Top Category Badge */}
+              <div className="absolute top-3 left-3 z-10">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-2.5 py-1 text-[10px] font-bold tracking-wider text-white uppercase shadow-md backdrop-blur-md">
+                  {item.type === "workshop" ? (
+                    <span className="size-1.5 animate-pulse rounded-full bg-rose-500" />
+                  ) : (
+                    <Sparkles className="size-2.5 text-cyan-400" />
+                  )}
+                  {item.badge}
+                </span>
+              </div>
+
+              {/* Active Now Pill */}
+              {isActive && (
+                <div className="animate-fade-in absolute top-3 right-3 z-10">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[9px] font-extrabold tracking-wide text-[#030711] uppercase shadow-lg">
+                    <Play className="size-2 fill-current" />
+                    Trailer
+                  </span>
+                </div>
+              )}
+
+              {/* Bottom Card Overlay with Title, Instructor, and Rating */}
+              <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#030711] via-[#030711]/60 to-transparent p-4 text-left">
+                <div className="mb-1.5 flex items-center gap-2">
+                  <img
+                    src={item.instructor.avatarUrl}
+                    alt={item.instructor.name}
+                    className="size-5 rounded-full border border-white/30 object-cover"
+                  />
+                  <span className="truncate text-[11px] font-medium text-white/80">
+                    {item.instructor.name}
+                  </span>
+                </div>
+
+                <h3 className="line-clamp-2 text-xs leading-snug font-bold text-white">
+                  {item.title}
+                </h3>
+
+                <div className="mt-2 flex items-center justify-between text-[10px] text-white/70">
+                  <span className="flex items-center gap-1 font-semibold text-amber-300">
+                    <Star className="size-3 fill-amber-300" />
+                    {item.rating.toFixed(1)}
+                  </span>
+                  <span>{item.enrolledCount.toLocaleString()} enrolled</span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -170,7 +299,28 @@ function CreatorCarousel() {
 function Index() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  const { data: heroItems = DEFAULT_HERO_ITEMS } = useHeroShowcase()
+  const activeItem = heroItems[activeIndex % heroItems.length] || heroItems[0]
+
+  // Synchronize background trailer video with the active item
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !activeItem?.trailerVideoUrl) return
+
+    if (!video.src.endsWith(activeItem.trailerVideoUrl)) {
+      video.src = activeItem.trailerVideoUrl
+      video.load()
+      video.play().catch(() => {
+        // Browsers block autoplay with audio without prior gesture; fallback to muted
+        video.muted = true
+        setIsMuted(true)
+        video.play().catch(() => {})
+      })
+    }
+  }, [activeItem?.trailerVideoUrl])
 
   useEffect(() => {
     const video = videoRef.current
@@ -178,7 +328,6 @@ function Index() {
 
     video.muted = false
     video.play().catch(() => {
-      // Browsers often block autoplay with audio without prior user interaction; fallback to muted
       video.muted = true
       setIsMuted(true)
       video.play().catch(() => {})
@@ -247,15 +396,10 @@ function Index() {
                   href={href}
                   className="group relative overflow-hidden rounded-full px-3.5 py-1.5 text-sm font-semibold tracking-tight text-white/80 transition-all duration-300 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_20px_rgba(255,255,255,0.12)] active:scale-95"
                 >
-                  {/* Subtle top edge specular highlight on hover */}
                   <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                  {/* Label with micro lift */}
                   <span className="relative z-10 inline-block transition-transform duration-200 group-hover:-translate-y-0.5">
                     {label}
                   </span>
-
-                  {/* Expanding glowing underline beam */}
                   <span className="pointer-events-none absolute inset-x-2 bottom-0.5 h-[2px] scale-x-0 rounded-full bg-gradient-to-r from-transparent via-white to-transparent transition-transform duration-300 ease-out group-hover:scale-x-100" />
                 </a>
               ))}
@@ -272,7 +416,8 @@ function Index() {
                 className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/40"
               />
             </label>
-            {/* White Register Button with black text and arrow */}
+
+            {/* White Register Button */}
             <Link
               to="/sign-up"
               className="group flex h-9 items-center gap-2 rounded-full bg-white px-4 text-xs font-bold text-[#080b11] shadow-md transition-all duration-200 hover:scale-[1.02] hover:bg-white/90 active:scale-95 sm:px-5"
@@ -396,9 +541,21 @@ function Index() {
             muted={isMuted}
             playsInline
             preload="auto"
-            className="h-full w-full object-cover"
+            onError={(e) => {
+              // Fallback if remote trailer URL fails or expires
+              const target = e.currentTarget
+              if (!target.src.includes("/videos/bheda-ko-oon.mp4")) {
+                target.src = "/videos/bheda-ko-oon.mp4"
+                target.load()
+                target.play().catch(() => {})
+              }
+            }}
+            className="h-full w-full object-cover transition-opacity duration-700"
           >
-            <source src="/videos/bheda-ko-oon.mp4" type="video/mp4" />
+            <source
+              src={activeItem?.trailerVideoUrl || "/videos/bheda-ko-oon.mp4"}
+              type="video/mp4"
+            />
           </video>
           <div className="absolute inset-0 bg-white/50 dark:bg-black/40" />
 
@@ -408,7 +565,7 @@ function Index() {
             aria-hidden="true"
           />
 
-          {/* Bottom gradient fade on video ONLY (stays behind cards slider) */}
+          {/* Bottom gradient fade on video ONLY (stays strictly behind the cards slider) */}
           <div
             className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#f4f4f6] via-[#f4f4f6]/80 to-transparent sm:h-80 lg:h-96 dark:from-[#030711] dark:via-[#030711]/85 dark:to-transparent"
             aria-hidden="true"
@@ -437,46 +594,66 @@ function Index() {
           )}
         </button>
 
-        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 pt-[7vh] text-center">
-          <div className="hero-reveal flex items-center gap-3">
+        {/* Dynamic Center Hero Information */}
+        <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center px-6 pt-[5vh] text-center sm:pt-[7vh]">
+          {/* Top Rating & Enrollment Badge */}
+          <div className="hero-reveal flex items-center gap-3 transition-all duration-300">
             <div className="flex -space-x-2.5">
-              {ratingAvatars.map((src, index) => (
+              {(activeItem.avatars || []).slice(0, 4).map((src, index) => (
                 <img
-                  key={index}
+                  key={`${activeItem.id}-av-${index}`}
                   src={src}
-                  alt={`Learner ${index + 1}`}
+                  alt={`Student ${index + 1}`}
                   className="size-9 rounded-full border-2 border-[#030711] object-cover shadow-md transition-transform duration-200 hover:z-10 hover:scale-110 sm:size-10"
                 />
               ))}
             </div>
             <div className="text-left text-[11px] leading-tight sm:text-xs">
-              <div className="flex items-center gap-1 font-bold">
-                <Star className="size-3.5 fill-current" />
-                4.9/5 Rating
+              <div className="flex items-center gap-1 font-bold text-white">
+                <Star className="size-3.5 fill-amber-400 text-amber-400" />
+                {activeItem.rating.toFixed(1)}/5 Rating
               </div>
               <p className="mt-0.5 text-black/60 dark:text-white/70">
-                10k+ learner reviews
+                {activeItem.enrolledCount.toLocaleString()}+ learners enrolled
               </p>
             </div>
           </div>
 
-          <h1 className="hero-reveal mt-5 max-w-[680px] text-[clamp(2.75rem,4.7vw,4.4rem)] leading-[0.96] font-medium tracking-[-0.06em] drop-shadow-sm [animation-delay:80ms] dark:drop-shadow-[0_2px_18px_rgba(0,0,0,0.7)]">
-            Built for real{" "}
-            <span className="font-serif font-normal tracking-[-0.045em] italic">
-              growth,
+          {/* Active Item Metadata Pill */}
+          <div className="mt-4 flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-3.5 py-1 text-[11px] font-semibold tracking-wide text-white/90 shadow-sm backdrop-blur-md">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+              </span>
+              <span>{activeItem.badge}</span>
+              <span className="text-white/30">•</span>
+              <span className="font-normal text-white/75">
+                {activeItem.instructor.name}
+              </span>
             </span>
-            <br />
-            Loved by creators
+          </div>
+
+          {/* Dynamic Headline */}
+          <h1
+            key={activeItem.id}
+            className="hero-reveal mt-3 max-w-[740px] text-[clamp(2.4rem,4.5vw,4.1rem)] leading-[0.98] font-medium tracking-[-0.05em] drop-shadow-sm transition-all duration-300 dark:drop-shadow-[0_2px_18px_rgba(0,0,0,0.8)]"
+          >
+            {renderHighlightedTitle(activeItem.title, activeItem.highlightWord)}
           </h1>
 
-          <p className="hero-reveal mt-5 max-w-md text-xs leading-[1.5] text-black/75 drop-shadow-sm [animation-delay:150ms] sm:text-sm dark:text-white/80">
-            Learn practical skills through focused courses, live workshops, and
-            personal guidance from people who have done it before.
+          {/* Dynamic Synopsis */}
+          <p
+            key={`${activeItem.id}-desc`}
+            className="hero-reveal mt-4 line-clamp-3 max-w-lg text-xs leading-[1.6] text-black/75 drop-shadow-sm transition-opacity duration-300 sm:text-sm dark:text-white/80"
+          >
+            {activeItem.description}
           </p>
 
-          <div className="hero-reveal mt-6 inline-block [animation-delay:220ms]">
+          {/* Dynamic Interactive CTA Button */}
+          <div className="hero-reveal mt-6 inline-block">
             <Link
-              to="/sign-up"
+              to={activeItem.enrollUrl || "/sign-up"}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full p-[1.5px] font-semibold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(192,132,252,0.6)] active:scale-95"
             >
               {/* Continuously Rotating Conic Gradient Border Beam */}
@@ -490,7 +667,9 @@ function Index() {
                 </span>
 
                 <span className="relative z-10 tracking-tight">
-                  Explore Nepali Mentor free
+                  {activeItem.type === "workshop"
+                    ? "Join Live Workshop"
+                    : "Explore Course & Enroll"}
                 </span>
 
                 <span className="relative z-10 flex size-6 items-center justify-center rounded-full bg-white/15 transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-black">
@@ -501,7 +680,12 @@ function Index() {
           </div>
         </div>
 
-        <CreatorCarousel />
+        {/* Interactive 3D Showcase Carousel */}
+        <CourseCarousel
+          items={heroItems}
+          activeIndex={activeIndex}
+          onSelect={(index) => setActiveIndex(index)}
+        />
 
         {/* Animated "Browse more" button */}
         <Link
