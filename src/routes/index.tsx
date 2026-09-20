@@ -37,16 +37,22 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { FullscreenButton } from "@/components/fullscreen-button"
-import { ModeToggle } from "@/components/mode-toggle"
+import { FloatingThemeCustomizer } from "@/components/floating-theme-customizer"
 import { HomeSidebar } from "@/components/sidebar/home-sidebar"
+import { SiteFooter } from "@/components/site-footer"
 import { UserDropdown } from "@/components/user-dropdown"
 
+import { BlogsSection } from "@/features/blogs/components/blogs-section"
+import { AllCoursesSection } from "@/features/courses/components/all-courses-section"
 import {
   DEFAULT_HERO_ITEMS,
   useHeroShowcase,
 } from "@/features/hero-showcase/api"
-import type { HeroItem } from "@/features/hero-showcase/types"
+import { CtaBannerSection } from "@/features/home/components/cta-banner-section"
+import { FaqSection } from "@/features/home/components/faq-section"
+import { MentorsShowcaseSection } from "@/features/home/components/mentors-showcase-section"
+import { TestimonialsSection } from "@/features/home/components/testimonials-section"
+import { ProgramsTabbedSection } from "@/features/programs/components/programs-tabbed-section"
 
 const HOMEPAGE_NAV_ITEMS = [
   {
@@ -72,7 +78,7 @@ const HOMEPAGE_NAV_ITEMS = [
   },
   {
     title: "Contact Us",
-    url: "#contact",
+    url: "/contact-us",
   },
 ]
 
@@ -314,7 +320,7 @@ function MobileCourseSlider({
               type="button"
               onClick={() => selectAndCenterCard(index)}
               className={cn(
-                "course-card-swipe group relative h-[min(285px,38svh)] w-[min(76vw,270px)] shrink-0 snap-center overflow-hidden rounded-2xl border-2 text-left transition-[border-color,opacity,transform,box-shadow] duration-300 md:h-[340px] md:w-[290px]",
+                "course-card-swipe group relative h-[min(285px,38svh)] w-[min(79vw,290px)] shrink-0 snap-center overflow-hidden rounded-2xl border-2 text-left transition-[border-color,opacity,transform,box-shadow] duration-300 md:h-[340px] md:w-[315px]",
                 isActive
                   ? "scale-100 border-white opacity-100 shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_16px_38px_rgba(0,0,0,0.5)]"
                   : "scale-[0.94] border-white/20 opacity-55 shadow-[0_10px_24px_rgba(0,0,0,0.32)]"
@@ -332,6 +338,8 @@ function MobileCourseSlider({
               <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/65 px-2 py-1 text-[9px] font-bold tracking-wider text-white uppercase shadow-md backdrop-blur-md">
                 {item.type === "workshop" ? (
                   <span className="size-1.5 rounded-full bg-white/80" />
+                ) : item.type === "mentorship" ? (
+                  <Users className="size-2.5" />
                 ) : (
                   <Sparkles className="size-2.5" />
                 )}
@@ -624,7 +632,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
               }}
               onClick={() => handleCardClick(index)}
               className={cn(
-                "creator-card course-card-swipe group pointer-events-auto absolute bottom-4 left-1/2 -ml-[105px] h-[270px] w-[210px] cursor-pointer overflow-hidden rounded-xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden] sm:bottom-5 sm:-ml-[125px] sm:h-[315px] sm:w-[250px] sm:rounded-2xl lg:bottom-6 lg:-ml-[145px] lg:h-[350px] lg:w-[290px]",
+                "creator-card course-card-swipe group pointer-events-auto absolute bottom-4 left-1/2 -ml-[112px] h-[270px] w-[225px] cursor-pointer overflow-hidden rounded-xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden] sm:bottom-5 sm:-ml-[135px] sm:h-[315px] sm:w-[270px] sm:rounded-2xl lg:bottom-6 lg:-ml-[157px] lg:h-[350px] lg:w-[315px] xl:-ml-[167px] xl:w-[335px]",
                 isActive
                   ? "shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
                   : "hover:ring-1 hover:ring-white/40"
@@ -646,6 +654,8 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
                 <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/60 px-2 py-1 text-[9px] font-bold tracking-wider text-white uppercase shadow-md backdrop-blur-md sm:gap-1.5 sm:px-2.5 sm:text-[10px]">
                   {item.type === "workshop" ? (
                     <span className="size-1.5 animate-pulse rounded-full bg-white/70" />
+                  ) : item.type === "mentorship" ? (
+                    <Users className="size-2.5 text-current" />
                   ) : (
                     <Sparkles className="size-2.5 text-current" />
                   )}
@@ -796,14 +806,22 @@ function Index() {
       <SidebarInset className="!m-0 min-h-svh min-w-0">
         {isAnnouncementVisible && (
           <aside
-            className="relative flex min-h-9 shrink-0 items-center justify-center border-b border-blue-200/80 bg-blue-50 px-9 py-1 text-center text-[clamp(0.5rem,2.65vw,0.6875rem)] leading-none font-semibold whitespace-nowrap text-blue-600 sm:px-11 sm:text-sm sm:leading-snug dark:border-blue-900/60 dark:bg-blue-950/70 dark:text-blue-300"
+            className="relative flex min-h-9 shrink-0 items-center justify-center border-b border-zinc-800 bg-black px-9 py-1 text-center text-[clamp(0.5rem,2.65vw,0.6875rem)] leading-none font-semibold whitespace-nowrap text-white sm:px-11 sm:text-sm sm:leading-snug"
             aria-label="Announcement"
           >
-            <p>New learning updates and announcements will appear here.</p>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black tracking-wider text-white uppercase">
+                UPDATE
+              </span>
+              <p className="text-xs font-semibold text-white sm:text-sm">
+                New learning releases, workshops, and 1-on-1 mentorship slots
+                are now live.
+              </p>
+            </div>
             <button
               type="button"
               onClick={() => setIsAnnouncementVisible(false)}
-              className="absolute right-1.5 inline-flex size-7 items-center justify-center rounded-md text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-800 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:outline-none sm:right-4 dark:text-blue-300 dark:hover:bg-blue-900/70 dark:hover:text-blue-100 dark:focus-visible:ring-offset-blue-950"
+              className="absolute right-1.5 inline-flex size-7 cursor-pointer items-center justify-center rounded-md text-zinc-400 transition-colors hover:bg-white/15 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:outline-none sm:right-4"
               aria-label="Dismiss announcement"
             >
               <X className="size-4" aria-hidden="true" />
@@ -838,11 +856,6 @@ function Index() {
 
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <AnimatedNavbarSearch />
-
-            <ModeToggle />
-            <div className="hidden sm:block">
-              <FullscreenButton />
-            </div>
 
             {isAuthenticated ? (
               <UserDropdown />
@@ -1101,7 +1114,9 @@ function Index() {
                     <span className="relative z-10 tracking-wide">
                       {activeItem.type === "workshop"
                         ? "Join Live Workshop"
-                        : "Browse Course"}
+                        : activeItem.type === "mentorship"
+                          ? "Book Mentorship"
+                          : "Browse Course"}
                     </span>
 
                     <span className="relative z-10 flex size-6 items-center justify-center rounded-full bg-zinc-950 text-white shadow-md transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110 group-hover:bg-black sm:size-7 dark:bg-white dark:text-black dark:group-hover:bg-zinc-100">
@@ -1142,74 +1157,16 @@ function Index() {
               </div>
             </a>
           </section>
-          <section
-            id="explore-content"
-            aria-labelledby="explore-heading"
-            className="relative scroll-mt-4 border-t border-white/10 bg-[#080a0f] px-4 py-14 text-white sm:px-6 lg:px-10 lg:pt-16 lg:pb-20"
-          >
-            <div className="mx-auto w-full max-w-7xl">
-              <div className="mx-auto max-w-3xl text-center">
-                <p className="text-xs font-bold tracking-[0.2em] text-white/55 uppercase">
-                  Continue exploring
-                </p>
-                <h2
-                  id="explore-heading"
-                  className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl"
-                >
-                  Choose how you want to learn
-                </h2>
-                <p className="mt-3 text-sm leading-relaxed text-white/60 sm:text-base">
-                  Build practical skills through structured courses, live
-                  workshops, one-to-one guidance, and ready-to-use assets.
-                </p>
-              </div>
-
-              <div className="mt-8 grid grid-cols-2 gap-3 lg:mx-auto lg:mt-10 lg:max-w-5xl lg:grid-cols-4 lg:gap-4">
-                {[
-                  {
-                    id: "courses",
-                    label: "Browse Courses",
-                    detail: "Learn at your pace",
-                  },
-                  {
-                    id: "workshop",
-                    label: "Live Workshops",
-                    detail: "Practice with experts",
-                  },
-                  {
-                    id: "mentorship",
-                    label: "Find a Mentor",
-                    detail: "Get 1-on-1 guidance",
-                  },
-                  {
-                    id: "marketplace",
-                    label: "Explore Assets",
-                    detail: "Use creator resources",
-                  },
-                ].map((item) => (
-                  <Link
-                    key={item.id}
-                    id={item.id}
-                    to="/sign-up"
-                    className="group flex min-h-24 items-center justify-between gap-3 rounded-2xl border border-white/12 bg-white/[0.045] p-4 text-left shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition-all duration-300 hover:-translate-y-1 hover:border-white/35 hover:bg-white/[0.09] hover:shadow-[0_18px_38px_rgba(0,0,0,0.3)] sm:p-5"
-                  >
-                    <span className="min-w-0">
-                      <span className="block text-sm font-bold sm:text-base">
-                        {item.label}
-                      </span>
-                      <span className="mt-1 block text-[11px] text-white/50 sm:text-xs">
-                        {item.detail}
-                      </span>
-                    </span>
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-black transition-transform duration-300 group-hover:translate-x-1 sm:size-9">
-                      <ArrowRight className="size-4" />
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
+          <AllCoursesSection />
+          <ProgramsTabbedSection />
+          <MentorsShowcaseSection />
+          <TestimonialsSection />
+          <BlogsSection />
+          <FaqSection />
+          <CtaBannerSection />
+          <SiteFooter />
         </main>
+        <FloatingThemeCustomizer />
       </SidebarInset>
     </SidebarProvider>
   )

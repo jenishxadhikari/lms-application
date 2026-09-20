@@ -303,7 +303,12 @@ interface RawCourse {
   subtitle?: string
   description?: string
   thumbnailUrl?: string
+  coverImageUrl?: string
+  coverImage?: string
+  imageUrl?: string
+  thumbnail?: string
   trailerUrl?: string
+  trailer?: string
   avgRating?: number
   enrolledStudents?: number
   reviewCount?: number
@@ -321,13 +326,48 @@ interface RawWorkshop {
   subtitle?: string
   description?: string
   thumbnailUrl?: string
+  coverImageUrl?: string
+  coverImage?: string
+  imageUrl?: string
+  thumbnail?: string
   trailerUrl?: string
+  trailer?: string
   avgRating?: number
   enrolledStudents?: number
   reviewCount?: number
   mentor?: {
     fullName?: string
     avatarUrl?: string
+  }
+}
+
+interface RawMentorship {
+  id: string
+  title: string
+  subtitle?: string
+  brief?: string
+  description?: string
+  thumbnailUrl?: string
+  coverImageUrl?: string
+  coverImage?: string
+  imageUrl?: string
+  thumbnail?: string
+  trailerUrl?: string
+  trailer?: string
+  entryFee?: number
+  price?: number
+  fee?: number
+  amount?: number
+  avgRating?: number
+  enrolledStudents?: number
+  reviewCount?: number
+  sessions?: Array<{ id?: string; title?: string }>
+  mentor?: {
+    fullName?: string
+    firstName?: string
+    lastName?: string
+    avatarUrl?: string
+    role?: string
   }
 }
 
@@ -340,12 +380,16 @@ export function useHeroShowcase() {
     queryKey: ["hero-showcase"],
     queryFn: async () => {
       try {
-        const [coursesRes, workshopsRes] = await Promise.allSettled([
-          api.get<{ courses?: RawCourse[] }>("/public/courses"),
-          api.get<{ workshops?: RawWorkshop[] }>(
-            "/public/workshops?page=0&size=10"
-          ),
-        ])
+        const [coursesRes, workshopsRes, mentorshipsRes] =
+          await Promise.allSettled([
+            api.get<{ courses?: RawCourse[] }>("/public/courses"),
+            api.get<{ workshops?: RawWorkshop[] }>(
+              "/public/workshops?page=0&size=10"
+            ),
+            api.get<{ mentorships?: RawMentorship[] }>(
+              "/public/mentorships?page=0&size=10"
+            ),
+          ])
 
         const DUMMY_COURSE_PRICES = [
           "Rs. 2,999",
@@ -407,152 +451,270 @@ export function useHeroShowcase() {
 
         const fetchedItems: HeroItem[] = []
 
-        if (
-          coursesRes.status === "fulfilled" &&
-          coursesRes.value.data?.courses
-        ) {
-          coursesRes.value.data.courses.forEach((c, idx) => {
-            const rawDesc = stripHtml(c.description || c.subtitle || "")
-            const mentorFallback =
-              DUMMY_COURSE_MENTORS[idx % DUMMY_COURSE_MENTORS.length]
-            const instructorName =
-              c.mentor?.fullName?.trim() || mentorFallback.name
-            const instructorAvatar =
-              c.mentor?.avatarUrl || mentorFallback.avatarUrl
-
-            const priceStr =
-              typeof (c as any).price === "number"
-                ? (c as any).price === 0
-                  ? "Free"
-                  : `Rs. ${(c as any).price.toLocaleString()}`
-                : (c as any).price ||
-                  DUMMY_COURSE_PRICES[idx % DUMMY_COURSE_PRICES.length]
-
-            const lessonsStr = (c as any).totalLessons
-              ? `${(c as any).totalLessons} Lessons`
-              : (c as any).lessonCount
-                ? `${(c as any).lessonCount} Lessons`
-                : DUMMY_COURSE_LESSONS[idx % DUMMY_COURSE_LESSONS.length]
-
-            const durationStr = (c as any).duration
-              ? `${(c as any).duration}`
-              : (c as any).totalDuration
-                ? `${(c as any).totalDuration}`
-                : DUMMY_COURSE_DURATIONS[idx % DUMMY_COURSE_DURATIONS.length]
-
-            fetchedItems.push({
-              id: c.id,
-              type: "course",
-              title: c.title?.trim() || "Nepali Mentor Course",
-              description:
-                rawDesc.length > 160
-                  ? rawDesc.slice(0, 160) + "..."
-                  : rawDesc ||
-                    "Accelerate your mastery with hands-on projects and industry mentors.",
-              thumbnailUrl: c.thumbnailUrl || "/creators/team-01.webp",
-              trailerVideoUrl: c.trailerUrl || "/videos/bheda-ko-oon.mp4",
-              rating:
-                typeof c.avgRating === "number" && c.avgRating > 0
-                  ? c.avgRating
-                  : 4.9,
-              reviewsCount: c.reviewCount || 12,
-              enrolledCount: c.enrolledStudents || 150,
-              badge: c.categories?.[0]?.name
-                ? `${c.categories[0].name} Course`
-                : "Featured Course",
-              instructor: {
-                name: instructorName,
-                avatarUrl: instructorAvatar,
-                role: "Instructor",
-              },
-              price: priceStr,
-              totalLessons: lessonsStr,
-              duration: durationStr,
-              enrollUrl: `/sign-up`,
-              avatars: [
-                instructorAvatar,
-                "/creators/team-02.webp",
-                "/creators/team-03.webp",
-                "/creators/team-04.webp",
-              ],
-            })
-          })
+        let rawCoursesList: RawCourse[] = []
+        if (coursesRes.status === "fulfilled" && coursesRes.value?.data) {
+          const d = coursesRes.value.data as any
+          if (Array.isArray(d)) rawCoursesList = d
+          else if (Array.isArray(d.courses)) rawCoursesList = d.courses
+          else if (Array.isArray(d.data?.courses))
+            rawCoursesList = d.data.courses
+          else if (Array.isArray(d.data)) rawCoursesList = d.data
+          else if (Array.isArray(d.content)) rawCoursesList = d.content
+          else if (Array.isArray(d.items)) rawCoursesList = d.items
         }
 
-        if (
-          workshopsRes.status === "fulfilled" &&
-          workshopsRes.value.data?.workshops
-        ) {
-          workshopsRes.value.data.workshops.forEach((w, idx) => {
-            const rawDesc = stripHtml(w.description || w.subtitle || "")
-            const mentorFallback =
-              DUMMY_WORKSHOP_MENTORS[idx % DUMMY_WORKSHOP_MENTORS.length]
-            const instructorName =
-              w.mentor?.fullName?.trim() || mentorFallback.name
-            const instructorAvatar =
-              w.mentor?.avatarUrl || mentorFallback.avatarUrl
-
-            const priceStr =
-              typeof (w as any).price === "number"
-                ? (w as any).price === 0
-                  ? "Free"
-                  : `Rs. ${(w as any).price.toLocaleString()}`
-                : (w as any).price ||
-                  DUMMY_WORKSHOP_PRICES[idx % DUMMY_WORKSHOP_PRICES.length]
-
-            const lessonsStr = (w as any).totalLessons
-              ? `${(w as any).totalLessons} Modules`
-              : DUMMY_WORKSHOP_LESSONS[idx % DUMMY_WORKSHOP_LESSONS.length]
-
-            const durationStr = (w as any).duration
-              ? `${(w as any).duration}`
-              : DUMMY_WORKSHOP_DURATIONS[idx % DUMMY_WORKSHOP_DURATIONS.length]
-
-            fetchedItems.push({
-              id: w.id,
-              type: "workshop",
-              title: w.title?.trim() || "Live Practical Workshop",
-              description:
-                rawDesc.length > 160
-                  ? rawDesc.slice(0, 160) + "..."
-                  : rawDesc ||
-                    "Interactive live session with industry leaders and direct code feedback.",
-              thumbnailUrl: w.thumbnailUrl || "/creators/team-02.webp",
-              trailerVideoUrl: w.trailerUrl || "/videos/bheda-ko-oon.mp4",
-              rating:
-                typeof w.avgRating === "number" && w.avgRating > 0
-                  ? w.avgRating
-                  : 5.0,
-              reviewsCount: w.reviewCount || 18,
-              enrolledCount: w.enrolledStudents || 280,
-              badge: "Live Workshop",
-              instructor: {
-                name: instructorName,
-                avatarUrl: instructorAvatar,
-                role: "Workshop Leader",
-              },
-              price: priceStr,
-              totalLessons: lessonsStr,
-              duration: durationStr,
-              enrollUrl: `/sign-up`,
-              avatars: [
-                instructorAvatar,
-                "/creators/team-03.webp",
-                "/creators/team-04.webp",
-                "/creators/team-5-img-1.webp",
-              ],
-            })
-          })
+        let rawWorkshopsList: RawWorkshop[] = []
+        if (workshopsRes.status === "fulfilled" && workshopsRes.value?.data) {
+          const d = workshopsRes.value.data as any
+          if (Array.isArray(d)) rawWorkshopsList = d
+          else if (Array.isArray(d.workshops)) rawWorkshopsList = d.workshops
+          else if (Array.isArray(d.data?.workshops))
+            rawWorkshopsList = d.data.workshops
+          else if (Array.isArray(d.data)) rawWorkshopsList = d.data
+          else if (Array.isArray(d.content)) rawWorkshopsList = d.content
+          else if (Array.isArray(d.items)) rawWorkshopsList = d.items
         }
 
-        // If API returned items, append fallbacks if needed so the 3D ring has at least 10 cards
+        rawCoursesList.forEach((c, idx) => {
+          const rawDesc = stripHtml(c.description || c.subtitle || "")
+          const mentorFallback =
+            DUMMY_COURSE_MENTORS[idx % DUMMY_COURSE_MENTORS.length]
+          const instructorName =
+            c.mentor?.fullName?.trim() || mentorFallback.name
+          const instructorAvatar =
+            c.mentor?.avatarUrl || mentorFallback.avatarUrl
+
+          const priceStr =
+            typeof (c as any).price === "number"
+              ? (c as any).price === 0
+                ? "Free"
+                : `Rs. ${(c as any).price.toLocaleString()}`
+              : (c as any).price ||
+                DUMMY_COURSE_PRICES[idx % DUMMY_COURSE_PRICES.length]
+
+          const lessonsStr = (c as any).totalLessons
+            ? `${(c as any).totalLessons} Lessons`
+            : (c as any).lessonCount
+              ? `${(c as any).lessonCount} Lessons`
+              : DUMMY_COURSE_LESSONS[idx % DUMMY_COURSE_LESSONS.length]
+
+          const durationStr = (c as any).duration
+            ? `${(c as any).duration}`
+            : (c as any).totalDuration
+              ? `${(c as any).totalDuration}`
+              : DUMMY_COURSE_DURATIONS[idx % DUMMY_COURSE_DURATIONS.length]
+
+          const courseThumbnail =
+            c.thumbnailUrl ||
+            c.coverImageUrl ||
+            c.coverImage ||
+            c.thumbnail ||
+            c.imageUrl ||
+            "/creators/team-01.webp"
+
+          fetchedItems.push({
+            id: c.id,
+            type: "course",
+            title: c.title?.trim() || "Nepali Mentor Course",
+            description:
+              rawDesc.length > 160
+                ? rawDesc.slice(0, 160) + "..."
+                : rawDesc ||
+                  "Accelerate your mastery with hands-on projects and industry mentors.",
+            thumbnailUrl: courseThumbnail,
+            trailerVideoUrl:
+              c.trailerUrl || c.trailer || "/videos/bheda-ko-oon.mp4",
+            rating:
+              typeof c.avgRating === "number" && c.avgRating > 0
+                ? c.avgRating
+                : 4.9,
+            reviewsCount: c.reviewCount || 12,
+            enrolledCount: c.enrolledStudents || 150,
+            badge: c.categories?.[0]?.name
+              ? `${c.categories[0].name} Course`
+              : "Featured Course",
+            instructor: {
+              name: instructorName,
+              avatarUrl: instructorAvatar,
+              role: "Instructor",
+            },
+            price: priceStr,
+            totalLessons: lessonsStr,
+            duration: durationStr,
+            enrollUrl: `/sign-up`,
+            avatars: [
+              instructorAvatar,
+              "/creators/team-02.webp",
+              "/creators/team-03.webp",
+              "/creators/team-04.webp",
+            ],
+          })
+        })
+
+        let rawMentorshipsList: RawMentorship[] = []
+        if (
+          mentorshipsRes.status === "fulfilled" &&
+          mentorshipsRes.value?.data
+        ) {
+          const d = mentorshipsRes.value.data as any
+          if (Array.isArray(d)) rawMentorshipsList = d
+          else if (Array.isArray(d.mentorships))
+            rawMentorshipsList = d.mentorships
+          else if (Array.isArray(d.workshops)) rawMentorshipsList = d.workshops
+          else if (Array.isArray(d.data?.mentorships))
+            rawMentorshipsList = d.data.mentorships
+          else if (Array.isArray(d.data)) rawMentorshipsList = d.data
+          else if (Array.isArray(d.content)) rawMentorshipsList = d.content
+          else if (Array.isArray(d.items)) rawMentorshipsList = d.items
+        }
+
+        rawWorkshopsList.forEach((w, idx) => {
+          const rawDesc = stripHtml(w.description || w.subtitle || "")
+          const mentorFallback =
+            DUMMY_WORKSHOP_MENTORS[idx % DUMMY_WORKSHOP_MENTORS.length]
+          const instructorName =
+            w.mentor?.fullName?.trim() || mentorFallback.name
+          const instructorAvatar =
+            w.mentor?.avatarUrl || mentorFallback.avatarUrl
+
+          const priceStr =
+            typeof (w as any).price === "number"
+              ? (w as any).price === 0
+                ? "Free"
+                : `Rs. ${(w as any).price.toLocaleString()}`
+              : (w as any).price ||
+                (w as any).entryFee ||
+                DUMMY_WORKSHOP_PRICES[idx % DUMMY_WORKSHOP_PRICES.length]
+
+          const lessonsStr = (w as any).totalLessons
+            ? `${(w as any).totalLessons} Modules`
+            : DUMMY_WORKSHOP_LESSONS[idx % DUMMY_WORKSHOP_LESSONS.length]
+
+          const durationStr = (w as any).duration
+            ? `${(w as any).duration}`
+            : DUMMY_WORKSHOP_DURATIONS[idx % DUMMY_WORKSHOP_DURATIONS.length]
+
+          const workshopThumbnail =
+            w.coverImageUrl ||
+            w.coverImage ||
+            w.thumbnailUrl ||
+            w.thumbnail ||
+            w.imageUrl ||
+            "/creators/team-02.webp"
+
+          fetchedItems.push({
+            id: w.id,
+            type: "workshop",
+            title: w.title?.trim() || "Live Practical Workshop",
+            description:
+              rawDesc.length > 160
+                ? rawDesc.slice(0, 160) + "..."
+                : rawDesc ||
+                  "Interactive live session with industry leaders and direct code feedback.",
+            thumbnailUrl: workshopThumbnail,
+            trailerVideoUrl:
+              w.trailerUrl || w.trailer || "/videos/bheda-ko-oon.mp4",
+            rating:
+              typeof w.avgRating === "number" && w.avgRating > 0
+                ? w.avgRating
+                : 5.0,
+            reviewsCount: w.reviewCount || 18,
+            enrolledCount: w.enrolledStudents || 280,
+            badge: "Live Workshop",
+            instructor: {
+              name: instructorName,
+              avatarUrl: instructorAvatar,
+              role: "Workshop Leader",
+            },
+            price: priceStr,
+            totalLessons: lessonsStr,
+            duration: durationStr,
+            enrollUrl: `/sign-up`,
+            avatars: [
+              instructorAvatar,
+              "/creators/team-03.webp",
+              "/creators/team-04.webp",
+              "/creators/team-5-img-1.webp",
+            ],
+          })
+        })
+
+        rawMentorshipsList.forEach((m, idx) => {
+          const rawDesc = stripHtml(
+            m.description || m.brief || m.subtitle || ""
+          )
+          const mentorFallback =
+            DUMMY_WORKSHOP_MENTORS[idx % DUMMY_WORKSHOP_MENTORS.length]
+          const instructorName =
+            m.mentor?.fullName?.trim() ||
+            [m.mentor?.firstName, m.mentor?.lastName]
+              .filter(Boolean)
+              .join(" ")
+              .trim() ||
+            mentorFallback.name
+          const instructorAvatar =
+            m.mentor?.avatarUrl || mentorFallback.avatarUrl
+
+          const rawPrice = m.entryFee ?? m.price ?? m.fee ?? m.amount
+          const priceStr =
+            typeof rawPrice === "number"
+              ? rawPrice === 0
+                ? "Free"
+                : `Rs. ${rawPrice.toLocaleString()}`
+              : rawPrice || "Rs. 2,999"
+
+          const sessionsCount = m.sessions?.length
+          const lessonsStr = sessionsCount
+            ? `${sessionsCount} Session${sessionsCount > 1 ? "s" : ""}`
+            : "1-on-1 Mentorship"
+
+          const mentorshipThumbnail =
+            m.coverImageUrl ||
+            m.coverImage ||
+            m.thumbnailUrl ||
+            m.thumbnail ||
+            m.imageUrl ||
+            "/creators/team-03.webp"
+
+          fetchedItems.push({
+            id: m.id,
+            type: "mentorship",
+            title: m.title?.trim() || "1-on-1 Mentorship Program",
+            description:
+              rawDesc.length > 160
+                ? rawDesc.slice(0, 160) + "..."
+                : rawDesc ||
+                  "Direct 1-on-1 personalized mentorship, portfolio reviews, and career guidance.",
+            thumbnailUrl: mentorshipThumbnail,
+            trailerVideoUrl:
+              m.trailerUrl || m.trailer || "/videos/bheda-ko-oon.mp4",
+            rating:
+              typeof m.avgRating === "number" && m.avgRating > 0
+                ? m.avgRating
+                : 5.0,
+            reviewsCount: m.reviewCount || 24,
+            enrolledCount: m.enrolledStudents || 120,
+            badge: "1-on-1 Mentorship",
+            instructor: {
+              name: instructorName,
+              avatarUrl: instructorAvatar,
+              role: m.mentor?.role || "Industry Mentor",
+            },
+            price: priceStr,
+            totalLessons: lessonsStr,
+            duration: "Flexible Schedule",
+            enrollUrl: `/sign-up`,
+            avatars: [
+              instructorAvatar,
+              "/creators/team-01.webp",
+              "/creators/team-02.webp",
+              "/creators/team-04.webp",
+            ],
+          })
+        })
+
+        // If API returned real items, use ONLY real items without appending any dummy courses
         if (fetchedItems.length > 0) {
-          if (fetchedItems.length < 10) {
-            return [
-              ...fetchedItems,
-              ...DEFAULT_HERO_ITEMS.slice(fetchedItems.length, 10),
-            ]
-          }
           return fetchedItems
         }
 

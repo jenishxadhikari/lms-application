@@ -2,9 +2,21 @@ import { useEffect, useState } from "react"
 
 import { Maximize2Icon, Minimize2Icon } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/ui/button"
 
-export function FullscreenButton() {
+interface FullscreenButtonProps {
+  className?: string
+  variant?: "ghost" | "outline" | "default" | "secondary"
+  size?: "default" | "sm" | "xs" | "icon" | "icon-sm" | "icon-xs"
+}
+
+export function FullscreenButton({
+  className,
+  variant = "ghost",
+  size = "icon",
+}: FullscreenButtonProps) {
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
@@ -20,20 +32,29 @@ export function FullscreenButton() {
   }, [])
 
   async function toggleFullscreen() {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen()
-    } else {
-      await document.documentElement.requestFullscreen()
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen()
+      } else {
+        await document.documentElement.requestFullscreen()
+      }
+    } catch (err) {
+      console.warn("Fullscreen toggle failed:", err)
     }
   }
 
   return (
     <Button
       type="button"
-      variant="ghost"
-      size="icon"
+      variant={variant}
+      size={size}
+      className={cn(
+        "relative inline-flex items-center justify-center",
+        className
+      )}
       onClick={toggleFullscreen}
       aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+      title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
     >
       {isFullscreen ? (
         <Minimize2Icon className="size-4" />

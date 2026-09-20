@@ -56,7 +56,7 @@ export const HOMEPAGE_SIDEBAR_ITEMS = [
   },
   {
     title: "Contact Us",
-    url: "#contact",
+    url: "/contact-us",
     icon: <LifeBuoyIcon className="size-4" />,
   },
 ]

@@ -8,251 +8,291 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as authRouteRouteImport } from './routes/(auth)/route'
-import { Route as SuperadminRouteRouteImport } from './routes/superadmin/route'
-import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
-import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
-import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
-import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
-import { Route as authVerifyOtpRouteImport } from './routes/(auth)/verify-otp'
-import { Route as SuperadminIndexRouteImport } from './routes/superadmin/index'
-import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/dashboard'
-import { Route as SuperadminOrganizationRouteImport } from './routes/superadmin/organization'
-import { Route as SuperadminPlanRouteImport } from './routes/superadmin/plan'
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as authForgotPasswordRouteImport } from "./routes/(auth)/forgot-password"
+import { Route as authResetPasswordRouteImport } from "./routes/(auth)/reset-password"
+import { Route as authRouteRouteImport } from "./routes/(auth)/route"
+import { Route as authSignInRouteImport } from "./routes/(auth)/sign-in"
+import { Route as authSignUpRouteImport } from "./routes/(auth)/sign-up"
+import { Route as authVerifyOtpRouteImport } from "./routes/(auth)/verify-otp"
+import { Route as ContactRouteImport } from "./routes/contact"
+import { Route as ContactUsRouteImport } from "./routes/contact-us"
+import { Route as IndexRouteImport } from "./routes/index"
+import { Route as SuperadminDashboardRouteImport } from "./routes/superadmin/dashboard"
+import { Route as SuperadminIndexRouteImport } from "./routes/superadmin/index"
+import { Route as SuperadminOrganizationRouteImport } from "./routes/superadmin/organization"
+import { Route as SuperadminPlanRouteImport } from "./routes/superadmin/plan"
+import { Route as SuperadminRouteRouteImport } from "./routes/superadmin/route"
 
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
 const authRouteRoute = authRouteRouteImport.update({
-  id: '/(auth)',
+  id: "/(auth)",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: "/contact",
+  path: "/contact",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactUsRoute = ContactUsRouteImport.update({
+  id: "/contact-us",
+  path: "/contact-us",
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuperadminRouteRoute = SuperadminRouteRouteImport.update({
-  id: '/superadmin',
-  path: '/superadmin',
+  id: "/superadmin",
+  path: "/superadmin",
   getParentRoute: () => rootRouteImport,
 } as any)
 const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+  id: "/forgot-password",
+  path: "/forgot-password",
   getParentRoute: () => authRouteRoute,
 } as any)
 const authResetPasswordRoute = authResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
+  id: "/reset-password",
+  path: "/reset-password",
   getParentRoute: () => authRouteRoute,
 } as any)
 const authSignInRoute = authSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+  id: "/sign-in",
+  path: "/sign-in",
   getParentRoute: () => authRouteRoute,
 } as any)
 const authSignUpRoute = authSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
+  id: "/sign-up",
+  path: "/sign-up",
   getParentRoute: () => authRouteRoute,
 } as any)
 const authVerifyOtpRoute = authVerifyOtpRouteImport.update({
-  id: '/verify-otp',
-  path: '/verify-otp',
+  id: "/verify-otp",
+  path: "/verify-otp",
   getParentRoute: () => authRouteRoute,
 } as any)
 const SuperadminIndexRoute = SuperadminIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
 const SuperadminDashboardRoute = SuperadminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+  id: "/dashboard",
+  path: "/dashboard",
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
 const SuperadminOrganizationRoute = SuperadminOrganizationRouteImport.update({
-  id: '/organization',
-  path: '/organization',
+  id: "/organization",
+  path: "/organization",
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
 const SuperadminPlanRoute = SuperadminPlanRouteImport.update({
-  id: '/plan',
-  path: '/plan',
+  id: "/plan",
+  path: "/plan",
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/superadmin': typeof SuperadminRouteRouteWithChildren
-  '/forgot-password': typeof authForgotPasswordRoute
-  '/reset-password': typeof authResetPasswordRoute
-  '/sign-in': typeof authSignInRoute
-  '/sign-up': typeof authSignUpRoute
-  '/verify-otp': typeof authVerifyOtpRoute
-  '/superadmin/dashboard': typeof SuperadminDashboardRoute
-  '/superadmin/organization': typeof SuperadminOrganizationRoute
-  '/superadmin/plan': typeof SuperadminPlanRoute
-  '/superadmin/': typeof SuperadminIndexRoute
+  "/": typeof IndexRoute
+  "/superadmin": typeof SuperadminRouteRouteWithChildren
+  "/contact": typeof ContactRoute
+  "/contact-us": typeof ContactUsRoute
+  "/forgot-password": typeof authForgotPasswordRoute
+  "/reset-password": typeof authResetPasswordRoute
+  "/sign-in": typeof authSignInRoute
+  "/sign-up": typeof authSignUpRoute
+  "/verify-otp": typeof authVerifyOtpRoute
+  "/superadmin/dashboard": typeof SuperadminDashboardRoute
+  "/superadmin/organization": typeof SuperadminOrganizationRoute
+  "/superadmin/plan": typeof SuperadminPlanRoute
+  "/superadmin/": typeof SuperadminIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/forgot-password': typeof authForgotPasswordRoute
-  '/reset-password': typeof authResetPasswordRoute
-  '/sign-in': typeof authSignInRoute
-  '/sign-up': typeof authSignUpRoute
-  '/verify-otp': typeof authVerifyOtpRoute
-  '/superadmin/dashboard': typeof SuperadminDashboardRoute
-  '/superadmin/organization': typeof SuperadminOrganizationRoute
-  '/superadmin/plan': typeof SuperadminPlanRoute
-  '/superadmin': typeof SuperadminIndexRoute
+  "/": typeof IndexRoute
+  "/contact": typeof ContactRoute
+  "/contact-us": typeof ContactUsRoute
+  "/forgot-password": typeof authForgotPasswordRoute
+  "/reset-password": typeof authResetPasswordRoute
+  "/sign-in": typeof authSignInRoute
+  "/sign-up": typeof authSignUpRoute
+  "/verify-otp": typeof authVerifyOtpRoute
+  "/superadmin/dashboard": typeof SuperadminDashboardRoute
+  "/superadmin/organization": typeof SuperadminOrganizationRoute
+  "/superadmin/plan": typeof SuperadminPlanRoute
+  "/superadmin": typeof SuperadminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/(auth)': typeof authRouteRouteWithChildren
-  '/superadmin': typeof SuperadminRouteRouteWithChildren
-  '/(auth)/forgot-password': typeof authForgotPasswordRoute
-  '/(auth)/reset-password': typeof authResetPasswordRoute
-  '/(auth)/sign-in': typeof authSignInRoute
-  '/(auth)/sign-up': typeof authSignUpRoute
-  '/(auth)/verify-otp': typeof authVerifyOtpRoute
-  '/superadmin/dashboard': typeof SuperadminDashboardRoute
-  '/superadmin/organization': typeof SuperadminOrganizationRoute
-  '/superadmin/plan': typeof SuperadminPlanRoute
-  '/superadmin/': typeof SuperadminIndexRoute
+  "/": typeof IndexRoute
+  "/(auth)": typeof authRouteRouteWithChildren
+  "/superadmin": typeof SuperadminRouteRouteWithChildren
+  "/contact": typeof ContactRoute
+  "/contact-us": typeof ContactUsRoute
+  "/(auth)/forgot-password": typeof authForgotPasswordRoute
+  "/(auth)/reset-password": typeof authResetPasswordRoute
+  "/(auth)/sign-in": typeof authSignInRoute
+  "/(auth)/sign-up": typeof authSignUpRoute
+  "/(auth)/verify-otp": typeof authVerifyOtpRoute
+  "/superadmin/dashboard": typeof SuperadminDashboardRoute
+  "/superadmin/organization": typeof SuperadminOrganizationRoute
+  "/superadmin/plan": typeof SuperadminPlanRoute
+  "/superadmin/": typeof SuperadminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/superadmin'
-    | '/forgot-password'
-    | '/reset-password'
-    | '/sign-in'
-    | '/sign-up'
-    | '/verify-otp'
-    | '/superadmin/dashboard'
-    | '/superadmin/organization'
-    | '/superadmin/plan'
-    | '/superadmin/'
+    | "/"
+    | "/superadmin"
+    | "/contact"
+    | "/contact-us"
+    | "/forgot-password"
+    | "/reset-password"
+    | "/sign-in"
+    | "/sign-up"
+    | "/verify-otp"
+    | "/superadmin/dashboard"
+    | "/superadmin/organization"
+    | "/superadmin/plan"
+    | "/superadmin/"
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/forgot-password'
-    | '/reset-password'
-    | '/sign-in'
-    | '/sign-up'
-    | '/verify-otp'
-    | '/superadmin/dashboard'
-    | '/superadmin/organization'
-    | '/superadmin/plan'
-    | '/superadmin'
+    | "/"
+    | "/contact"
+    | "/contact-us"
+    | "/forgot-password"
+    | "/reset-password"
+    | "/sign-in"
+    | "/sign-up"
+    | "/verify-otp"
+    | "/superadmin/dashboard"
+    | "/superadmin/organization"
+    | "/superadmin/plan"
+    | "/superadmin"
   id:
-    | '__root__'
-    | '/'
-    | '/(auth)'
-    | '/superadmin'
-    | '/(auth)/forgot-password'
-    | '/(auth)/reset-password'
-    | '/(auth)/sign-in'
-    | '/(auth)/sign-up'
-    | '/(auth)/verify-otp'
-    | '/superadmin/dashboard'
-    | '/superadmin/organization'
-    | '/superadmin/plan'
-    | '/superadmin/'
+    | "__root__"
+    | "/"
+    | "/(auth)"
+    | "/superadmin"
+    | "/contact"
+    | "/contact-us"
+    | "/(auth)/forgot-password"
+    | "/(auth)/reset-password"
+    | "/(auth)/sign-in"
+    | "/(auth)/sign-up"
+    | "/(auth)/verify-otp"
+    | "/superadmin/dashboard"
+    | "/superadmin/organization"
+    | "/superadmin/plan"
+    | "/superadmin/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
   SuperadminRouteRoute: typeof SuperadminRouteRouteWithChildren
+  ContactRoute: typeof ContactRoute
+  ContactUsRoute: typeof ContactUsRoute
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
+    "/": {
+      id: "/"
+      path: "/"
+      fullPath: "/"
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)': {
-      id: '/(auth)'
-      path: ''
-      fullPath: ''
+    "/(auth)": {
+      id: "/(auth)"
+      path: ""
+      fullPath: ""
       preLoaderRoute: typeof authRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/superadmin': {
-      id: '/superadmin'
-      path: '/superadmin'
-      fullPath: '/superadmin'
+    "/contact": {
+      id: "/contact"
+      path: "/contact"
+      fullPath: "/contact"
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/contact-us": {
+      id: "/contact-us"
+      path: "/contact-us"
+      fullPath: "/contact-us"
+      preLoaderRoute: typeof ContactUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/superadmin": {
+      id: "/superadmin"
+      path: "/superadmin"
+      fullPath: "/superadmin"
       preLoaderRoute: typeof SuperadminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)/forgot-password': {
-      id: '/(auth)/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
+    "/(auth)/forgot-password": {
+      id: "/(auth)/forgot-password"
+      path: "/forgot-password"
+      fullPath: "/forgot-password"
       preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(auth)/reset-password': {
-      id: '/(auth)/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
+    "/(auth)/reset-password": {
+      id: "/(auth)/reset-password"
+      path: "/reset-password"
+      fullPath: "/reset-password"
       preLoaderRoute: typeof authResetPasswordRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(auth)/sign-in': {
-      id: '/(auth)/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
+    "/(auth)/sign-in": {
+      id: "/(auth)/sign-in"
+      path: "/sign-in"
+      fullPath: "/sign-in"
       preLoaderRoute: typeof authSignInRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(auth)/sign-up': {
-      id: '/(auth)/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
+    "/(auth)/sign-up": {
+      id: "/(auth)/sign-up"
+      path: "/sign-up"
+      fullPath: "/sign-up"
       preLoaderRoute: typeof authSignUpRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/(auth)/verify-otp': {
-      id: '/(auth)/verify-otp'
-      path: '/verify-otp'
-      fullPath: '/verify-otp'
+    "/(auth)/verify-otp": {
+      id: "/(auth)/verify-otp"
+      path: "/verify-otp"
+      fullPath: "/verify-otp"
       preLoaderRoute: typeof authVerifyOtpRouteImport
       parentRoute: typeof authRouteRoute
     }
-    '/superadmin/': {
-      id: '/superadmin/'
-      path: '/'
-      fullPath: '/superadmin/'
+    "/superadmin/": {
+      id: "/superadmin/"
+      path: "/"
+      fullPath: "/superadmin/"
       preLoaderRoute: typeof SuperadminIndexRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
-    '/superadmin/dashboard': {
-      id: '/superadmin/dashboard'
-      path: '/dashboard'
-      fullPath: '/superadmin/dashboard'
+    "/superadmin/dashboard": {
+      id: "/superadmin/dashboard"
+      path: "/dashboard"
+      fullPath: "/superadmin/dashboard"
       preLoaderRoute: typeof SuperadminDashboardRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
-    '/superadmin/organization': {
-      id: '/superadmin/organization'
-      path: '/organization'
-      fullPath: '/superadmin/organization'
+    "/superadmin/organization": {
+      id: "/superadmin/organization"
+      path: "/organization"
+      fullPath: "/superadmin/organization"
       preLoaderRoute: typeof SuperadminOrganizationRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
-    '/superadmin/plan': {
-      id: '/superadmin/plan'
-      path: '/plan'
-      fullPath: '/superadmin/plan'
+    "/superadmin/plan": {
+      id: "/superadmin/plan"
+      path: "/plan"
+      fullPath: "/superadmin/plan"
       preLoaderRoute: typeof SuperadminPlanRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
@@ -276,7 +316,7 @@ const authRouteRouteChildren: authRouteRouteChildren = {
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
-  authRouteRouteChildren,
+  authRouteRouteChildren
 )
 
 interface SuperadminRouteRouteChildren {
@@ -294,13 +334,15 @@ const SuperadminRouteRouteChildren: SuperadminRouteRouteChildren = {
 }
 
 const SuperadminRouteRouteWithChildren = SuperadminRouteRoute._addFileChildren(
-  SuperadminRouteRouteChildren,
+  SuperadminRouteRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   SuperadminRouteRoute: SuperadminRouteRouteWithChildren,
+  ContactRoute: ContactRoute,
+  ContactUsRoute: ContactUsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
