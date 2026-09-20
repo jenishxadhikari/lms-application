@@ -418,12 +418,12 @@ function Index() {
   }, [menuOpen])
 
   return (
-    <main className="min-h-svh bg-[#f4f4f6] pt-[76px] text-[#101218] transition-colors duration-500 sm:pt-[82px] dark:bg-[#030711] dark:text-[#f2f3f7]">
+    <main className="min-h-svh bg-[#f4f4f6] pt-[68px] text-[#101218] transition-colors duration-500 sm:pt-[72px] dark:bg-[#030711] dark:text-[#f2f3f7]">
       <header className="fixed inset-x-0 top-0 z-50 w-full border-b border-white/[0.08] bg-[#030711]/55 text-white shadow-[0_10px_35px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300">
         {/* Subtle top edge specular reflection */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-        <div className="mx-auto flex w-full max-w-[1380px] items-center justify-between px-5 py-4 sm:px-8 sm:py-5 lg:px-12">
+        <div className="mx-auto flex w-full max-w-[1380px] items-center justify-between px-5 py-3 sm:px-8 sm:py-3.5 lg:px-12">
           {/* Left section: Logo + Left-aligned navigation */}
           <div className="flex items-center gap-6 lg:gap-10">
             <Link
@@ -434,7 +434,7 @@ function Index() {
               <img
                 src="/logo.png"
                 alt="NepaliMentor"
-                className="h-8.5 w-auto object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-10"
+                className="h-8 w-auto object-contain transition-transform duration-200 hover:scale-[1.02] sm:h-9"
               />
             </Link>
 
@@ -588,7 +588,7 @@ function Index() {
         )}
       </header>
 
-      <section className="relative mx-auto flex min-h-[calc(100svh-82px)] w-full max-w-[1666px] flex-col overflow-hidden">
+      <section className="relative mx-auto flex min-h-[calc(100svh-72px)] w-full max-w-[1666px] flex-col overflow-hidden">
         {/* Background Video with subtle cinematic overlay and bottom fade */}
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
           <video
