@@ -210,8 +210,7 @@ function MobileCourseSlider({
   items,
   activeIndex,
   onSelect,
-  announcementVisible,
-}: CourseCarouselProps & { announcementVisible: boolean }) {
+}: CourseCarouselProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const scrollTimerRef = useRef<number | null>(null)
   const isInteractingRef = useRef(false)
@@ -290,15 +289,10 @@ function MobileCourseSlider({
   }
 
   return (
-    <div
-      className={cn(
-        "relative mt-auto w-full pb-10 transition-transform duration-300 md:hidden",
-        announcementVisible ? "-translate-y-24" : "-translate-y-36"
-      )}
-    >
+    <div className="relative mt-[clamp(1.5rem,4svh,3rem)] w-full pb-[clamp(1rem,3svh,2.5rem)] lg:hidden">
       <div
         ref={trackRef}
-        className="mobile-course-track flex snap-x snap-mandatory gap-3 overflow-x-auto px-[12vw] pt-1.5 pb-3"
+        className="mobile-course-track flex snap-x snap-mandatory gap-3 overflow-x-auto px-[12vw] pt-1.5 pb-3 md:px-[calc(50vw-145px)]"
         onScroll={handleScroll}
         onPointerDown={() => {
           isInteractingRef.current = true
@@ -320,7 +314,7 @@ function MobileCourseSlider({
               type="button"
               onClick={() => selectAndCenterCard(index)}
               className={cn(
-                "course-card-swipe group relative h-[285px] w-[76vw] max-w-[270px] shrink-0 snap-center overflow-hidden rounded-2xl border-2 text-left transition-[border-color,opacity,transform,box-shadow] duration-300",
+                "course-card-swipe group relative h-[min(285px,38svh)] w-[min(76vw,270px)] shrink-0 snap-center overflow-hidden rounded-2xl border-2 text-left transition-[border-color,opacity,transform,box-shadow] duration-300 md:h-[340px] md:w-[290px]",
                 isActive
                   ? "scale-100 border-white opacity-100 shadow-[0_0_0_1px_rgba(255,255,255,0.2),0_16px_38px_rgba(0,0,0,0.5)]"
                   : "scale-[0.94] border-white/20 opacity-55 shadow-[0_10px_24px_rgba(0,0,0,0.32)]"
@@ -614,10 +608,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   return (
     <div
       ref={viewportRef}
-      className="hero-collage relative mt-auto hidden h-[485px] w-full cursor-grab touch-none select-none active:cursor-grabbing md:-mb-[105px] md:block lg:-mb-[135px] lg:h-[550px]"
+      className="hero-collage relative mt-auto hidden h-[500px] w-full cursor-grab touch-none select-none active:cursor-grabbing lg:-mb-[135px] lg:block lg:-translate-y-[88px]"
       aria-label="Courses and workshops showcase carousel"
     >
-      <div className="absolute inset-0 -translate-y-[135px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d] sm:-translate-y-[190px] lg:-translate-y-[240px]">
+      <div className="absolute inset-0 -translate-y-[135px] [perspective-origin:50%_65%] [perspective:800px] [transform-style:preserve-3d] sm:-translate-y-[190px] lg:-translate-y-[80px]">
         {Array.from({ length: renderedCount }, (_, index) => {
           const item = items[index % items.length]
           const isActive = index % items.length === activeIndex % items.length
@@ -710,6 +704,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
 function Index() {
   const { isAuthenticated } = useAuth()
   const isMobileViewport = useIsMobile()
+  const usesCompactCarousel = useIsMobile(1024)
   const [isAnnouncementVisible, setIsAnnouncementVisible] = useState(true)
   const [isMuted, setIsMuted] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -736,14 +731,19 @@ function Index() {
     const video = videoRef.current
     if (isMobileViewport || !video || !activeItem?.trailerVideoUrl) return
 
+    // Set both properties before assigning/loading a source so the browser can
+    // never begin autoplay with sound during the initial media load.
+    video.defaultMuted = isMuted
+    video.muted = isMuted
+
     if (!video.src.endsWith(activeItem.trailerVideoUrl)) {
       video.src = activeItem.trailerVideoUrl
       video.load()
     }
 
-    video.muted = isMuted
     video.play().catch(() => {
       video.muted = true
+      video.defaultMuted = true
       setIsMuted(true)
       video.play().catch(() => {})
     })
@@ -755,6 +755,7 @@ function Index() {
 
     const nextMuted = !isMuted
     video.muted = nextMuted
+    video.defaultMuted = nextMuted
     setIsMuted(nextMuted)
     if (!nextMuted) {
       video.play().catch(() => {})
@@ -792,7 +793,7 @@ function Index() {
   return (
     <SidebarProvider defaultOpen={false}>
       <HomeSidebar />
-      <SidebarInset className="!m-0 min-w-0">
+      <SidebarInset className="!m-0 min-h-svh min-w-0">
         {isAnnouncementVisible && (
           <aside
             className="relative flex min-h-9 shrink-0 items-center justify-center border-b border-blue-200/80 bg-blue-50 px-9 py-1 text-center text-[clamp(0.5rem,2.65vw,0.6875rem)] leading-none font-semibold whitespace-nowrap text-blue-600 sm:px-11 sm:text-sm sm:leading-snug dark:border-blue-900/60 dark:bg-blue-950/70 dark:text-blue-300"
@@ -864,15 +865,8 @@ function Index() {
             )}
           </div>
         </header>
-        <main className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
-          <section
-            className={cn(
-              "relative flex w-full max-w-none flex-col overflow-x-hidden bg-background",
-              isAnnouncementVisible
-                ? "min-h-[calc(100svh-92px)] sm:min-h-[calc(100svh-100px)]"
-                : "min-h-[calc(100svh-56px)] sm:min-h-[calc(100svh-64px)]"
-            )}
-          >
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip overflow-y-visible">
+          <section className="relative flex min-h-0 w-full max-w-none flex-col overflow-x-clip overflow-y-visible bg-background lg:h-[calc(100svh_-_15rem)] lg:max-h-[850px] lg:min-h-[720px] lg:flex-none lg:border-b lg:border-white/15">
             {isMobileViewport ? (
               <div
                 className="mobile-hero-background pointer-events-none absolute inset-0 z-0 overflow-hidden"
@@ -888,9 +882,24 @@ function Index() {
                   muted={isMuted}
                   playsInline
                   preload="auto"
+                  onLoadStart={(event) => {
+                    if (isMuted) {
+                      event.currentTarget.defaultMuted = true
+                      event.currentTarget.muted = true
+                    }
+                  }}
+                  onCanPlay={(event) => {
+                    if (isMuted) {
+                      event.currentTarget.defaultMuted = true
+                      event.currentTarget.muted = true
+                    }
+                  }}
                   onError={(e) => {
                     const target = e.currentTarget
                     if (!target.src.includes("/videos/bheda-ko-oon.mp4")) {
+                      target.defaultMuted = true
+                      target.muted = true
+                      setIsMuted(true)
                       target.src = "/videos/bheda-ko-oon.mp4"
                       target.load()
                       target.play().catch(() => {})
@@ -944,9 +953,9 @@ function Index() {
             </button>
 
             {/* Dynamic Center Hero Information */}
-            <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-3 pt-2 text-center sm:px-5 sm:pt-4 lg:px-6 lg:pt-6">
+            <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-3 pt-2 text-center sm:px-5 sm:pt-4 lg:px-6 lg:pt-12">
               {/* Top Rating & Enrollment Badge */}
-              <div className="hero-reveal hidden items-center gap-3 transition-all duration-300 sm:flex">
+              <div className="hero-reveal hidden items-center gap-3 transition-all duration-300 sm:flex lg:hidden">
                 <div className="flex -space-x-2.5">
                   {(activeItem.avatars || []).slice(0, 4).map((src, index) => (
                     <img
@@ -1103,12 +1112,11 @@ function Index() {
               </div>
             </div>
 
-            {isMobileViewport ? (
+            {usesCompactCarousel ? (
               <MobileCourseSlider
                 items={heroItems}
                 activeIndex={activeIndex}
                 onSelect={(index) => setActiveIndex(index)}
-                announcementVisible={isAnnouncementVisible}
               />
             ) : (
               <CourseCarousel
@@ -1119,9 +1127,9 @@ function Index() {
             )}
 
             {/* Animated "Browse more" button */}
-            <Link
-              to="/sign-up"
-              className="group absolute bottom-2 left-1/2 z-30 hidden -translate-x-1/2 flex-col items-center gap-0.5 rounded-full border border-white/20 bg-black/45 px-4 py-1.5 text-center text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/40 hover:bg-black/65 hover:shadow-2xl active:scale-95 md:bottom-4 md:flex md:gap-1 md:px-6 md:py-2 dark:border-white/15 dark:bg-[#030711]/75 dark:hover:bg-[#030711]/90"
+            <a
+              href="#explore-content"
+              className="group absolute bottom-2 left-1/2 z-30 hidden -translate-x-1/2 flex-col items-center gap-0.5 rounded-full border border-white/20 bg-black/70 px-4 py-1.5 text-center text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white/40 hover:bg-black/85 hover:shadow-2xl active:scale-95 lg:bottom-0 lg:flex lg:translate-y-1/2 lg:gap-1 lg:px-6 lg:py-2 dark:border-white/15 dark:hover:bg-black/90"
               aria-label="Browse more"
             >
               <span className="text-[11px] font-bold tracking-wider text-white/90 transition-colors group-hover:text-white sm:text-xs">
@@ -1132,7 +1140,74 @@ function Index() {
                 <ChevronDown className="size-3 animate-bounce [animation-delay:150ms] [animation-duration:1.2s] sm:size-3.5" />
                 <ChevronDown className="size-3 animate-bounce [animation-delay:300ms] [animation-duration:1.2s] sm:size-3.5" />
               </div>
-            </Link>
+            </a>
+          </section>
+          <section
+            id="explore-content"
+            aria-labelledby="explore-heading"
+            className="relative scroll-mt-4 border-t border-white/10 bg-[#080a0f] px-4 py-14 text-white sm:px-6 lg:px-10 lg:pt-16 lg:pb-20"
+          >
+            <div className="mx-auto w-full max-w-7xl">
+              <div className="mx-auto max-w-3xl text-center">
+                <p className="text-xs font-bold tracking-[0.2em] text-white/55 uppercase">
+                  Continue exploring
+                </p>
+                <h2
+                  id="explore-heading"
+                  className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl"
+                >
+                  Choose how you want to learn
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-white/60 sm:text-base">
+                  Build practical skills through structured courses, live
+                  workshops, one-to-one guidance, and ready-to-use assets.
+                </p>
+              </div>
+
+              <div className="mt-8 grid grid-cols-2 gap-3 lg:mx-auto lg:mt-10 lg:max-w-5xl lg:grid-cols-4 lg:gap-4">
+                {[
+                  {
+                    id: "courses",
+                    label: "Browse Courses",
+                    detail: "Learn at your pace",
+                  },
+                  {
+                    id: "workshop",
+                    label: "Live Workshops",
+                    detail: "Practice with experts",
+                  },
+                  {
+                    id: "mentorship",
+                    label: "Find a Mentor",
+                    detail: "Get 1-on-1 guidance",
+                  },
+                  {
+                    id: "marketplace",
+                    label: "Explore Assets",
+                    detail: "Use creator resources",
+                  },
+                ].map((item) => (
+                  <Link
+                    key={item.id}
+                    id={item.id}
+                    to="/sign-up"
+                    className="group flex min-h-24 items-center justify-between gap-3 rounded-2xl border border-white/12 bg-white/[0.045] p-4 text-left shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition-all duration-300 hover:-translate-y-1 hover:border-white/35 hover:bg-white/[0.09] hover:shadow-[0_18px_38px_rgba(0,0,0,0.3)] sm:p-5"
+                  >
+                    <span className="min-w-0">
+                      <span className="block text-sm font-bold sm:text-base">
+                        {item.label}
+                      </span>
+                      <span className="mt-1 block text-[11px] text-white/50 sm:text-xs">
+                        {item.detail}
+                      </span>
+                    </span>
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-black transition-transform duration-300 group-hover:translate-x-1 sm:size-9">
+                      <ArrowRight className="size-4" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </section>
         </main>
       </SidebarInset>
