@@ -120,15 +120,29 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
           rotationRef.current + Math.PI + (index / renderedCount) * Math.PI * 2
         const x = radius * Math.sin(angle)
         const z = radius * Math.cos(angle)
-        const rotateY = (-x / radius) * 44
+
+        // Only cards on the front arc (z < -radius * 0.05) are visible.
+        // Back-half cards (z >= -radius * 0.05) are hidden to prevent 2 cards colliding at the corners.
+        if (z >= -radius * 0.05) {
+          card.style.opacity = "0"
+          card.style.visibility = "hidden"
+          card.style.pointerEvents = "none"
+          return
+        }
+
+        card.style.visibility = "visible"
+        card.style.pointerEvents = "auto"
+
+        const rotateY = (-x / radius) * 42
+        // Smooth opacity falloff as the card approaches the outer turn
         const opacity = interpolate(
           z,
-          [-radius, 0, radius * 0.35, radius * 0.75],
-          [1, 0.95, 0.35, 0]
+          [-radius, -radius * 0.55, -radius * 0.08],
+          [1, 0.95, 0]
         )
-        const zIndex = Math.round(interpolate(z, [-radius, radius], [50, 1]))
+        const zIndex = Math.round(interpolate(z, [-radius, 0], [50, 1]))
         const isActive = index % items.length === activeIndex % items.length
-        const scale = isActive ? 1.04 : 1
+        const scale = isActive ? 1.04 : interpolate(z, [-radius, 0], [1, 0.9])
 
         card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`
         card.style.opacity = `${opacity}`
