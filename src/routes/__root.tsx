@@ -13,7 +13,7 @@ interface MyRouterContext {
 }
 
 const RootLayout = () => (
-  <ThemeProvider storageKey="vite-ui-theme">
+  <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     <Toaster richColors />
     <Outlet />
     <TanStackRouterDevtools />
