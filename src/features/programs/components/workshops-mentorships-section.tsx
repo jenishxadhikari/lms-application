@@ -319,9 +319,9 @@ export function WorkshopsMentorshipsSection() {
                       "border border-zinc-700/50 bg-zinc-950 text-white dark:border-zinc-300/50 dark:bg-white dark:text-zinc-950",
                     hoverBorder:
                       "hover:border-zinc-400 dark:hover:border-zinc-700",
-                    btnText: "text-zinc-900 dark:text-zinc-100",
+                    btnText: "",
                     btnBg:
-                      "border-zinc-300 bg-gradient-to-b from-zinc-100 to-zinc-200/80 hover:bg-zinc-900 hover:text-white dark:border-zinc-700 dark:bg-gradient-to-b dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-100 dark:hover:bg-white dark:hover:text-zinc-950",
+                      "border-zinc-300/80 bg-zinc-100 text-zinc-900 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-white dark:hover:bg-white dark:hover:text-zinc-950",
                     categoryText: "text-muted-foreground",
                   }
                 : {
@@ -329,9 +329,9 @@ export function WorkshopsMentorshipsSection() {
                       "border border-zinc-700/50 bg-zinc-900 text-white dark:border-zinc-300/50 dark:bg-zinc-100 dark:text-zinc-900",
                     hoverBorder:
                       "hover:border-zinc-400 dark:hover:border-zinc-700",
-                    btnText: "text-zinc-900 dark:text-zinc-100",
+                    btnText: "",
                     btnBg:
-                      "border-zinc-300 bg-gradient-to-b from-zinc-100 to-zinc-200/80 hover:bg-zinc-900 hover:text-white dark:border-zinc-700 dark:bg-gradient-to-b dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-100 dark:hover:bg-white dark:hover:text-zinc-950",
+                      "border-zinc-300/80 bg-zinc-100 text-zinc-900 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-white dark:hover:bg-white dark:hover:text-zinc-950",
                     categoryText: "text-muted-foreground",
                   }
 

@@ -336,7 +336,7 @@ export function AllCoursesSection() {
                             ? `/courses/${course.id}`
                             : "/sign-up") as any
                         }
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-gradient-to-b from-zinc-100 to-zinc-200/80 px-3 py-1.5 text-xs font-bold text-zinc-900 shadow-2xs transition-all hover:bg-zinc-900 hover:text-white dark:border-zinc-700 dark:bg-gradient-to-b dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-100 dark:hover:bg-white dark:hover:text-zinc-950"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300/80 bg-zinc-100 px-3 py-1.5 text-xs font-bold text-zinc-900 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-zinc-950 hover:bg-zinc-950 hover:text-white hover:shadow-sm active:translate-y-0 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-white dark:hover:bg-white dark:hover:text-zinc-950"
                       >
                         <span>View course</span>
                         <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
