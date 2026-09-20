@@ -8,18 +8,10 @@
     <script>
       (function () {
         try {
-          var key = 'vite-ui-theme';
-          var stored = localStorage.getItem(key);
-          if (stored === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-          } else {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-          }
-        } catch (e) {
           document.documentElement.classList.add('dark');
-        }
+          document.documentElement.classList.remove('light');
+          document.documentElement.style.colorScheme = 'dark';
+        } catch (e) {}
       })();
     </script>
   </head>

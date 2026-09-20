@@ -34,27 +34,27 @@ function renderHighlightedTitle(title: string, highlightWord?: string) {
   if (highlightWord && title.includes(highlightWord)) {
     const parts = title.split(highlightWord)
     return (
-      <>
-        {parts[0]}
+      <span className="text-white">
+        <span className="text-white">{parts[0]}</span>
         <span className="font-serif font-normal tracking-[-0.045em] text-white italic underline decoration-white/30 decoration-1 underline-offset-4">
           {highlightWord}
         </span>
-        {parts.slice(1).join(highlightWord)}
-      </>
+        <span className="text-white">{parts.slice(1).join(highlightWord)}</span>
+      </span>
     )
   }
 
   const words = title.trim().split(" ")
-  if (words.length <= 2) return title
+  if (words.length <= 2) return <span className="text-white">{title}</span>
   const main = words.slice(0, -1).join(" ")
   const last = words[words.length - 1]
   return (
-    <>
-      {main}{" "}
+    <span className="text-white">
+      <span className="text-white">{main}</span>{" "}
       <span className="font-serif font-normal tracking-[-0.045em] text-white italic">
         {last}
       </span>
-    </>
+    </span>
   )
 }
 
@@ -375,6 +375,12 @@ function Index() {
   const { data: heroItems = DEFAULT_HERO_ITEMS } = useHeroShowcase()
   const activeItem = heroItems[activeIndex % heroItems.length] || heroItems[0]
 
+  // Enforce dark mode on the landing page
+  useEffect(() => {
+    document.documentElement.classList.add("dark")
+    document.documentElement.classList.remove("light")
+  }, [])
+
   // Synchronize background trailer video with the active item
   useEffect(() => {
     const video = videoRef.current
@@ -684,19 +690,21 @@ function Index() {
             <div className="text-left text-[11px] leading-tight sm:text-xs">
               <div className="flex items-center gap-1 font-bold text-white">
                 <Star className="size-3.5 fill-amber-400 text-amber-400" />
-                {activeItem.rating.toFixed(1)}/5 Rating
+                <span className="text-white">
+                  {activeItem.rating.toFixed(1)}/5 Rating
+                </span>
               </div>
-              <p className="mt-0.5 text-black/60 dark:text-white/70">
+              <p className="mt-0.5 text-white/75">
                 {activeItem.enrolledCount.toLocaleString()}+ learners enrolled
               </p>
             </div>
           </div>
 
           {/* Dynamic Headline: Strictly 1 line with locked height so button never shifts */}
-          <div className="mt-2 flex h-[1.25em] max-w-[850px] items-center justify-center text-[clamp(1.85rem,3.4vw,2.95rem)] leading-[1.15] font-medium tracking-[-0.04em] drop-shadow-sm sm:mt-2.5 dark:drop-shadow-[0_2px_18px_rgba(0,0,0,0.8)]">
+          <div className="mt-2 flex h-[1.25em] max-w-[850px] items-center justify-center text-[clamp(1.85rem,3.4vw,2.95rem)] leading-[1.15] font-medium tracking-[-0.04em] text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.8)] sm:mt-2.5">
             <h1
               key={activeItem.id}
-              className="hero-reveal truncate text-center"
+              className="hero-reveal truncate text-center text-white"
             >
               {renderHighlightedTitle(
                 activeItem.title,
@@ -719,7 +727,7 @@ function Index() {
                 alt={activeItem.instructor?.name || "Nepali Mentor"}
                 className="size-4.5 rounded-full border border-white/30 object-cover"
               />
-              <span className="text-[11px] font-semibold sm:text-xs">
+              <span className="text-[11px] font-semibold text-white sm:text-xs">
                 {activeItem.instructor?.name || "Nepali Mentor"}
               </span>
             </div>
@@ -750,10 +758,10 @@ function Index() {
           </div>
 
           {/* Dynamic Synopsis: Strictly 2 lines with locked height so button never shifts */}
-          <div className="mt-2.5 flex h-[2.85em] max-w-lg items-center justify-center text-xs leading-[1.42] text-black/75 drop-shadow-sm sm:text-sm sm:leading-[1.42] dark:text-white/80">
+          <div className="mt-2.5 flex h-[2.85em] max-w-lg items-center justify-center text-xs leading-[1.42] text-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] sm:text-sm sm:leading-[1.42]">
             <p
               key={`${activeItem.id}-desc`}
-              className="hero-reveal line-clamp-2 text-center"
+              className="hero-reveal line-clamp-2 text-center text-white/80"
             >
               {activeItem.description}
             </p>
