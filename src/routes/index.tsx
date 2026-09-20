@@ -27,19 +27,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 })
 
-function interpolate(value: number, input: number[], output: number[]): number {
-  if (value <= input[0]) return output[0]
-  if (value >= input[input.length - 1]) return output[output.length - 1]
-
-  const segment = input.findIndex(
-    (_, index) => index < input.length - 1 && value <= input[index + 1]
-  )
-  const progress =
-    (value - input[segment]) / (input[segment + 1] - input[segment])
-
-  return output[segment] + progress * (output[segment + 1] - output[segment])
-}
-
 function renderHighlightedTitle(title: string, highlightWord?: string) {
   if (highlightWord && title.includes(highlightWord)) {
     const parts = title.split(highlightWord)
@@ -83,23 +70,31 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
   const dragStartXRef = useRef(0)
   const dragStartRotationRef = useRef(0)
   const dragDistanceRef = useRef(0)
-  const [radius, setRadius] = useState(620)
+  const [layout, setLayout] = useState({
+    cardSpacing: 295,
+    maxOffset: 2.6,
+  })
 
-  // Render 2 full cycles of items around the 3D ring for rich depth and density
+  // Render 2 full cycles of items around the 3D ring for continuous wrapping
   const renderedCount = Math.max(items.length * 2, 8)
 
   useEffect(() => {
-    const updateRadius = () => {
+    const updateLayout = () => {
       const w = window.innerWidth
-      if (w < 640) setRadius(360)
-      else if (w < 1024) setRadius(460)
-      else if (w < 1440) setRadius(560)
-      else setRadius(640)
+      if (w < 640) {
+        setLayout({ cardSpacing: 220, maxOffset: 1.5 })
+      } else if (w < 1024) {
+        setLayout({ cardSpacing: 250, maxOffset: 2.1 })
+      } else if (w < 1440) {
+        setLayout({ cardSpacing: 275, maxOffset: 2.5 })
+      } else {
+        setLayout({ cardSpacing: 295, maxOffset: 2.6 })
+      }
     }
 
-    updateRadius()
-    window.addEventListener("resize", updateRadius)
-    return () => window.removeEventListener("resize", updateRadius)
+    updateLayout()
+    window.addEventListener("resize", updateLayout)
+    return () => window.removeEventListener("resize", updateLayout)
   }, [])
 
   useEffect(() => {
@@ -112,36 +107,60 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       "(prefers-reduced-motion: reduce)"
     ).matches
 
+    const stepAngle = (Math.PI * 2) / renderedCount
+    const fadeStart = layout.maxOffset - 0.75
+
     const renderCards = () => {
       cardsRef.current.forEach((card, index) => {
         if (!card) return
 
-        const angle =
-          rotationRef.current + Math.PI + (index / renderedCount) * Math.PI * 2
-        const x = radius * Math.sin(angle)
-        const z = radius * Math.cos(angle)
+        // Compute continuous angle offset from center in range [-Math.PI, Math.PI]
+        let deltaAngle =
+          (rotationRef.current +
+            Math.PI +
+            (index / renderedCount) * Math.PI * 2) %
+          (Math.PI * 2)
+        if (deltaAngle < 0) deltaAngle += Math.PI * 2
+        deltaAngle -= Math.PI
 
-        // Only cards on the front arc (z <= 0) are visible.
-        // Back-half cards (z > 0) are hidden to prevent 2 cards colliding at the corners.
-        if (z > 0) {
+        // Continuous card index offset from center: -2, -1, 0, 1, 2...
+        const cardOffset = deltaAngle / stepAngle
+        const absOffset = Math.abs(cardOffset)
+
+        // Fully hide cards beyond the fade boundary
+        if (absOffset >= layout.maxOffset) {
           card.style.opacity = "0"
           card.style.visibility = "hidden"
           card.style.pointerEvents = "none"
           return
         }
 
-        card.style.visibility = "visible"
-        card.style.pointerEvents = "auto"
+        // Seamless continuous fade at the edges (NO direct jump)
+        let opacity = 1
+        let edgeScale = 1
+        if (absOffset > fadeStart) {
+          const fadeProgress =
+            (absOffset - fadeStart) / (layout.maxOffset - fadeStart)
+          opacity = Math.max(0, Math.min(1, 1 - fadeProgress))
+          edgeScale = 1 - fadeProgress * 0.12
+        }
 
-        const rotateY = (-x / radius) * 42
-        // Keep 100% crisp opacity - do not fade cards at start and end
-        const opacity = 1
-        const zIndex = Math.round(interpolate(z, [-radius, 0], [50, 1]))
+        card.style.visibility = "visible"
+        card.style.pointerEvents = opacity > 0.3 ? "auto" : "none"
+        card.style.opacity = `${opacity}`
+
+        // Uniform horizontal positioning: exact spacing maintained all the way to the ends
+        const x = cardOffset * layout.cardSpacing
+
+        // Subtle 3D perspective curvature: center is closest, ends curve gently into depth
+        const depthFactor = absOffset / layout.maxOffset
+        const z = -180 + Math.pow(depthFactor, 1.6) * 190
+        const rotateY = -Math.max(-36, Math.min(36, cardOffset * 15))
+        const zIndex = Math.round(50 - absOffset * 10)
         const isActive = index % items.length === activeIndex % items.length
-        const scale = isActive ? 1.04 : interpolate(z, [-radius, 0], [1, 0.92])
+        const scale = (isActive ? 1.05 : 1) * edgeScale
 
         card.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`
-        card.style.opacity = `${opacity}`
         card.style.zIndex = `${zIndex}`
       })
     }
@@ -200,11 +219,10 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
 
       // If user dragged noticeably, snap to the nearest card at front center
       if (dragDistanceRef.current > 12) {
-        const step = (Math.PI * 2) / renderedCount
-        const nearestIndex = Math.round(-rotationRef.current / step)
+        const nearestIndex = Math.round(-rotationRef.current / stepAngle)
         const normalizedIndex =
           ((nearestIndex % items.length) + items.length) % items.length
-        targetRotationRef.current = -nearestIndex * step
+        targetRotationRef.current = -nearestIndex * stepAngle
         onSelect(normalizedIndex)
       }
     }
@@ -224,7 +242,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
       viewport.removeEventListener("pointerup", onPointerEnd)
       viewport.removeEventListener("pointercancel", onPointerEnd)
     }
-  }, [renderedCount, radius, items.length, activeIndex, onSelect])
+  }, [renderedCount, layout, items.length, activeIndex, onSelect])
 
   const handleCardClick = (index: number) => {
     // If the pointer dragged by more than 6px, treat as drag rather than click
@@ -263,7 +281,7 @@ function CourseCarousel({ items, activeIndex, onSelect }: CourseCarouselProps) {
               }}
               onClick={() => handleCardClick(index)}
               className={cn(
-                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[137.5px] h-[330px] w-[275px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden]",
+                "creator-card group pointer-events-auto absolute bottom-0 left-1/2 -ml-[130px] h-[330px] w-[260px] cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-[box-shadow,ring-color] duration-200 will-change-transform select-none [backface-visibility:hidden]",
                 isActive
                   ? "shadow-[0_0_35px_rgba(255,255,255,0.45)] ring-2 ring-white"
                   : "hover:ring-1 hover:ring-white/40"
