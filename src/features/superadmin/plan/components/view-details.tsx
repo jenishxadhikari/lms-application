@@ -1,8 +1,18 @@
-import { CreditCardIcon, PackageIcon, UsersRoundIcon } from "lucide-react"
+import {
+  BookOpenIcon,
+  CalendarDaysIcon,
+  CalendarRangeIcon,
+  CreditCardIcon,
+  GraduationCapIcon,
+  HardDriveIcon,
+  PackageIcon,
+  UserRoundCheckIcon,
+} from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { currency } from "@/lib/helper"
 
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import {
   Sheet,
   SheetContent,
@@ -19,123 +29,148 @@ interface ViewDetailsProps {
   onOpenChange: (open: boolean) => void
 }
 
-const currency = new Intl.NumberFormat(undefined, {
-  style: "currency",
-  currency: "USD",
-})
-
-function DetailRow({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4 py-3 text-sm first:pt-0 last:pb-0">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="min-w-0 text-right font-medium text-foreground tabular-nums">
-        {children}
-      </dd>
-    </div>
-  )
-}
-
 export function ViewDetails({ plan, open, onOpenChange }: ViewDetailsProps) {
+  const limits = [
+    {
+      label: "Students",
+      value: plan.maxStudents.toLocaleString(),
+      icon: GraduationCapIcon,
+    },
+    {
+      label: "Mentors",
+      value: plan.maxMentors.toLocaleString(),
+      icon: UserRoundCheckIcon,
+    },
+    {
+      label: "Courses",
+      value: plan.maxCourses.toLocaleString(),
+      icon: BookOpenIcon,
+    },
+    {
+      label: "Storage",
+      value: `${plan.storageGB.toLocaleString()} GB`,
+      icon: HardDriveIcon,
+    },
+  ]
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full gap-0 transition-[transform,opacity] duration-200 ease-[cubic-bezier(0.32,0.72,0,1)] data-ending-style:duration-150 motion-reduce:transition-opacity motion-reduce:data-ending-style:translate-x-0 motion-reduce:data-starting-style:translate-x-0 md:min-w-2xl">
-        <SheetHeader className="shrink-0 border-b bg-muted/20 px-6 py-6 pr-14">
-          <p className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            Plan details
-          </p>
-          <div className="flex items-center gap-4">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/10">
-              <PackageIcon className="size-6" strokeWidth={1.75} />
-            </span>
-            <div className="min-w-0 space-y-1.5">
-              <SheetTitle className="wrap-break-words text-xl leading-tight">
-                {plan.name}
-              </SheetTitle>
-              <SheetDescription className="font-mono text-xs break-all">
-                {plan.code}
-              </SheetDescription>
+      <SheetContent className="data-[side=right]:w-full data-[side=right]:sm:max-w-2xl">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="shrink-0 border-b bg-muted/20 px-1 py-2 sm:px-2">
+            <SheetHeader>
+              <div className="pr-10">
+                <p className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Plan details
+                </p>
+                <div className="flex min-w-0 items-center gap-4">
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary ring-1 ring-primary/10">
+                    <PackageIcon className="size-6" strokeWidth={1.75} />
+                  </span>
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="text-xl leading-tight wrap-break-word">
+                      <SheetTitle>{plan.name}</SheetTitle>
+                    </div>
+                    <SheetDescription>
+                      <span className="font-mono text-xs break-all">
+                        {plan.code}
+                      </span>
+                    </SheetDescription>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <Badge variant={plan.isActive ? "outline" : "secondary"}>
+                    <span
+                      aria-hidden="true"
+                      className={
+                        plan.isActive
+                          ? "size-1.5 rounded-full bg-emerald-500"
+                          : "size-1.5 rounded-full bg-muted-foreground"
+                      }
+                    />
+                    {plan.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+              </div>
+            </SheetHeader>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-muted/15 px-5 py-6 sm:px-6">
+            <div className="space-y-4">
+              <Card size="sm">
+                <CardHeader>
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                      <CreditCardIcon className="size-4" strokeWidth={2} />
+                    </span>
+                    <h3 className="text-sm font-semibold">Pricing</h3>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <CalendarDaysIcon
+                          aria-hidden="true"
+                          className="size-4"
+                          strokeWidth={1.5}
+                        />
+                        Monthly
+                      </div>
+                      <p className="mt-2 text-2xl font-semibold tracking-tight break-all tabular-nums">
+                        {currency.format(plan.priceMonthly)}
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          / month
+                        </span>
+                      </p>
+                    </div>
+                    <div className="min-w-0 border-t pt-4 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <CalendarRangeIcon
+                          aria-hidden="true"
+                          className="size-4"
+                          strokeWidth={1.5}
+                        />
+                        Yearly
+                      </div>
+                      <p className="mt-2 text-2xl font-semibold tracking-tight break-all tabular-nums">
+                        {currency.format(plan.priceYearly)}
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          / year
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <section className="space-y-3 pt-2">
+                <h3 className="px-1 text-sm font-semibold">Usage limits</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {limits.map(({ label, value, icon: Icon }) => (
+                    <Card key={label} size="sm">
+                      <CardContent className="flex-row items-center">
+                        <span className="flex size-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                          <Icon
+                            aria-hidden="true"
+                            className="size-4"
+                            strokeWidth={1.5}
+                          />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-xl font-semibold tracking-tight break-all tabular-nums sm:text-2xl">
+                            {value}
+                          </p>
+                          <p className="mt-0.5 text-xs text-muted-foreground">
+                            {label}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
             </div>
-          </div>
-          <div className="pt-4">
-            <Badge
-              variant="outline"
-              className={cn(
-                "gap-1.5 font-normal",
-                plan.isActive
-                  ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-400"
-                  : "bg-muted/50 text-muted-foreground"
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "size-1.5 rounded-full",
-                  plan.isActive ? "bg-emerald-500" : "bg-muted-foreground"
-                )}
-              />
-              {plan.isActive ? "Active" : "Inactive"}
-            </Badge>
-          </div>
-        </SheetHeader>
-
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-7">
-          <div className="space-y-8">
-            <section>
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <UsersRoundIcon className="size-4" strokeWidth={1.75} />
-                </span>
-                <h3 className="text-sm font-semibold">Usage limits</h3>
-              </div>
-              <dl className="mt-4 divide-y divide-border">
-                <DetailRow label="Students">
-                  {plan.maxStudents.toLocaleString()}
-                </DetailRow>
-                <DetailRow label="Mentors">
-                  {plan.maxMentors.toLocaleString()}
-                </DetailRow>
-                <DetailRow label="Courses">
-                  {plan.maxCourses.toLocaleString()}
-                </DetailRow>
-                <DetailRow label="Storage">
-                  {plan.storageGB.toLocaleString()} GB
-                </DetailRow>
-              </dl>
-            </section>
-
-            <section>
-              <div className="flex items-center gap-2.5">
-                <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <CreditCardIcon className="size-4" strokeWidth={1.75} />
-                </span>
-                <h3 className="text-sm font-semibold">Pricing</h3>
-              </div>
-              <dl className="mt-4 divide-y divide-border">
-                <DetailRow label="Monthly">
-                  {currency.format(plan.priceMonthly)}
-                </DetailRow>
-                <DetailRow label="Yearly">
-                  {currency.format(plan.priceYearly)}
-                </DetailRow>
-              </dl>
-            </section>
-
-            <section className="border-t pt-6">
-              <h3 className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                Record details
-              </h3>
-              <dl className="mt-4 divide-y divide-border">
-                <DetailRow label="ID">
-                  <span className="font-mono text-xs break-all">{plan.id}</span>
-                </DetailRow>
-              </dl>
-            </section>
           </div>
         </div>
       </SheetContent>

@@ -1,6 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table"
 import { PackageIcon } from "lucide-react"
 
+import { currency } from "@/lib/helper"
 import { cn } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
@@ -11,10 +12,6 @@ import type { Plan } from "../schema"
 import { PlanActions } from "./actions"
 
 const columnHelper = createColumnHelper<DataTableFeatures, Plan>()
-const currency = new Intl.NumberFormat(undefined, {
-  style: "currency",
-  currency: "USD",
-})
 
 export const planColumns = columnHelper.columns([
   columnHelper.accessor((plan) => `${plan.name} ${plan.code}`, {
