@@ -58,7 +58,7 @@ export const data = {
           icon: <Building2Icon />,
         },
         {
-          title: "Add Domain",
+          title: "Domains",
           url: "/superadmin/domain",
           icon: <GlobeIcon />,
         },

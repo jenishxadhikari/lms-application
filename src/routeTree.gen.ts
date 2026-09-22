@@ -19,6 +19,7 @@ import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authVerifyOtpRouteImport } from './routes/(auth)/verify-otp'
 import { Route as SuperadminIndexRouteImport } from './routes/superadmin/index'
 import { Route as SuperadminDashboardRouteImport } from './routes/superadmin/dashboard'
+import { Route as SuperadminDomainRouteImport } from './routes/superadmin/domain'
 import { Route as SuperadminOrganizationRouteImport } from './routes/superadmin/organization'
 import { Route as SuperadminPlanRouteImport } from './routes/superadmin/plan'
 
@@ -71,6 +72,11 @@ const SuperadminDashboardRoute = SuperadminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => SuperadminRouteRoute,
 } as any)
+const SuperadminDomainRoute = SuperadminDomainRouteImport.update({
+  id: '/domain',
+  path: '/domain',
+  getParentRoute: () => SuperadminRouteRoute,
+} as any)
 const SuperadminOrganizationRoute = SuperadminOrganizationRouteImport.update({
   id: '/organization',
   path: '/organization',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof authSignUpRoute
   '/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/domain': typeof SuperadminDomainRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
   '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin/': typeof SuperadminIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof authSignUpRoute
   '/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/domain': typeof SuperadminDomainRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
   '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin': typeof SuperadminIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(auth)/verify-otp': typeof authVerifyOtpRoute
   '/superadmin/dashboard': typeof SuperadminDashboardRoute
+  '/superadmin/domain': typeof SuperadminDomainRoute
   '/superadmin/organization': typeof SuperadminOrganizationRoute
   '/superadmin/plan': typeof SuperadminPlanRoute
   '/superadmin/': typeof SuperadminIndexRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/verify-otp'
     | '/superadmin/dashboard'
+    | '/superadmin/domain'
     | '/superadmin/organization'
     | '/superadmin/plan'
     | '/superadmin/'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/verify-otp'
     | '/superadmin/dashboard'
+    | '/superadmin/domain'
     | '/superadmin/organization'
     | '/superadmin/plan'
     | '/superadmin'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/(auth)/sign-up'
     | '/(auth)/verify-otp'
     | '/superadmin/dashboard'
+    | '/superadmin/domain'
     | '/superadmin/organization'
     | '/superadmin/plan'
     | '/superadmin/'
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SuperadminDashboardRouteImport
       parentRoute: typeof SuperadminRouteRoute
     }
+    '/superadmin/domain': {
+      id: '/superadmin/domain'
+      path: '/domain'
+      fullPath: '/superadmin/domain'
+      preLoaderRoute: typeof SuperadminDomainRouteImport
+      parentRoute: typeof SuperadminRouteRoute
+    }
     '/superadmin/organization': {
       id: '/superadmin/organization'
       path: '/organization'
@@ -281,6 +300,7 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 
 interface SuperadminRouteRouteChildren {
   SuperadminDashboardRoute: typeof SuperadminDashboardRoute
+  SuperadminDomainRoute: typeof SuperadminDomainRoute
   SuperadminOrganizationRoute: typeof SuperadminOrganizationRoute
   SuperadminPlanRoute: typeof SuperadminPlanRoute
   SuperadminIndexRoute: typeof SuperadminIndexRoute
@@ -288,6 +308,7 @@ interface SuperadminRouteRouteChildren {
 
 const SuperadminRouteRouteChildren: SuperadminRouteRouteChildren = {
   SuperadminDashboardRoute: SuperadminDashboardRoute,
+  SuperadminDomainRoute: SuperadminDomainRoute,
   SuperadminOrganizationRoute: SuperadminOrganizationRoute,
   SuperadminPlanRoute: SuperadminPlanRoute,
   SuperadminIndexRoute: SuperadminIndexRoute,
