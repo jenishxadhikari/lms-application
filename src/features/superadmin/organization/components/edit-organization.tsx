@@ -19,8 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
+import { SubmitButton } from "@/components/submit-button"
 import { TimezoneSelect } from "@/components/timezone"
 
 import {
@@ -66,15 +67,21 @@ export function EditOrganization({
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
       title="Edit organization"
       description="Edit a workspace and set its regional and brand defaults."
       icon={Building2Icon}
       isPending={isPending}
-      buttonLabel="Update organization"
-      formId="edit-organization-form"
+      primaryAction={
+        <SubmitButton
+          label="Save organization"
+          pending={isPending}
+          className="sm:w-fit"
+          form="edit-organization-form"
+        />
+      }
     >
       <form id="edit-organization-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup className="gap-8">
@@ -335,6 +342,6 @@ export function EditOrganization({
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }

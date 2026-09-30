@@ -19,8 +19,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
+import { SubmitButton } from "@/components/submit-button"
 
 import { createPlan } from "../api"
 import { createPlanSchema, type CreatePlanInput } from "../schema"
@@ -59,20 +60,26 @@ export function AddPlan() {
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Add plan"
-      description="Set the plan details, limits, and pricing."
-      icon={PackageIcon}
-      formId="add-plan-form"
-      buttonLabel="Add Plan"
-      isPending={isPending}
       trigger={
         <Button type="button">
           <PlusIcon />
           Add Plan
         </Button>
+      }
+      title="Add plan"
+      description="Set the plan details, limits, and pricing."
+      icon={PackageIcon}
+      isPending={isPending}
+      primaryAction={
+        <SubmitButton
+          label="Create plan"
+          pending={isPending}
+          className="sm:w-fit"
+          form="add-plan-form"
+        />
       }
     >
       <form id="add-plan-form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -298,6 +305,6 @@ export function AddPlan() {
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }

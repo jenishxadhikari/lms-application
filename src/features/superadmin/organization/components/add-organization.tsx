@@ -22,8 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
+import { SubmitButton } from "@/components/submit-button"
 import { TimezoneSelect } from "@/components/timezone"
 
 import {
@@ -72,7 +73,7 @@ export function AddOrganization() {
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
       trigger={
@@ -85,8 +86,14 @@ export function AddOrganization() {
       icon={Building2Icon}
       title="Add organization"
       description="Create a workspace and set its regional and brand defaults."
-      buttonLabel="Add Organization"
-      formId="add-organization-form"
+      primaryAction={
+        <SubmitButton
+          label="Create organization"
+          pending={isPending}
+          className="sm:w-fit"
+          form="add-organization-form"
+        />
+      }
     >
       <form id="add-organization-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup className="gap-8">
@@ -347,6 +354,6 @@ export function AddOrganization() {
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }

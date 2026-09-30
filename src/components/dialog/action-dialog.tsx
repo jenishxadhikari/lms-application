@@ -11,9 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { SubmitButton } from "@/components/submit-button"
 
-interface FormDialogProps {
+interface ActionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   trigger?: React.ReactElement
@@ -22,11 +21,10 @@ interface FormDialogProps {
   icon: LucideIcon
   title: string
   description: string
-  buttonLabel: string
-  formId: string
+  primaryAction: React.ReactElement
 }
 
-export function FormDialog({
+export function ActionDialog({
   open,
   onOpenChange,
   trigger,
@@ -35,9 +33,8 @@ export function FormDialog({
   icon: Icon,
   title,
   description,
-  buttonLabel,
-  formId,
-}: FormDialogProps) {
+  primaryAction,
+}: ActionDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger render={trigger} />}
@@ -65,12 +62,7 @@ export function FormDialog({
                 </Button>
               }
             />
-            <SubmitButton
-              label={buttonLabel}
-              pending={isPending}
-              className="sm:w-fit"
-              form={formId}
-            />
+            {primaryAction}
           </DialogFooter>
         </div>
       </DialogContent>

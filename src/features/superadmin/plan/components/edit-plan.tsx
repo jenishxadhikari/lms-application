@@ -11,8 +11,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
+import { SubmitButton } from "@/components/submit-button"
 
 import { updatePlan } from "../api"
 import { updatePlanSchema, type UpdatePlanInput } from "../schema"
@@ -46,15 +47,21 @@ export function EditPlan({ data, open, onOpenChange }: EditPlanProps) {
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
       title="Edit plan"
       description="Update the plan details, limits, and pricing."
       icon={PackageIcon}
-      formId="edit-plan-form"
-      buttonLabel="Update Plan"
       isPending={isPending}
+      primaryAction={
+        <SubmitButton
+          label="Save plan"
+          pending={isPending}
+          className="sm:w-fit"
+          form="edit-plan-form"
+        />
+      }
     >
       <form id="edit-plan-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup className="gap-8">
@@ -279,6 +286,6 @@ export function EditPlan({ data, open, onOpenChange }: EditPlanProps) {
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }

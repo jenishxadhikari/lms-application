@@ -22,9 +22,10 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
 import { SelectOrganization } from "@/components/select-organization"
+import { SubmitButton } from "@/components/submit-button"
 
 import { updateDomain } from "../api"
 import {
@@ -84,15 +85,21 @@ export function EditDomain({
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
       isPending={isPending}
       icon={Globe2Icon}
       title="Edit domain"
       description="Update the address and organization for this domain."
-      buttonLabel="Save Domain"
-      formId="edit-domain-form"
+      primaryAction={
+        <SubmitButton
+          label="Save domain"
+          pending={isPending}
+          className="sm:w-fit"
+          form="edit-domain-form"
+        />
+      }
     >
       <form id="edit-domain-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
@@ -259,6 +266,6 @@ export function EditDomain({
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }

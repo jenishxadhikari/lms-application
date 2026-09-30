@@ -25,9 +25,10 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { FormDialog } from "@/components/dialog/form-dialog"
+import { ActionDialog } from "@/components/dialog/action-dialog"
 import { FormSection } from "@/components/form-section"
 import { SelectOrganization } from "@/components/select-organization"
+import { SubmitButton } from "@/components/submit-button"
 
 import { createDomain } from "../api"
 import {
@@ -83,7 +84,7 @@ export function AddDomain() {
   }
 
   return (
-    <FormDialog
+    <ActionDialog
       open={open}
       onOpenChange={onOpenChange}
       trigger={
@@ -96,8 +97,14 @@ export function AddDomain() {
       icon={Globe2Icon}
       title="Add domain"
       description="Use a Nepali Mentor address or connect your own domain."
-      buttonLabel="Add Domain"
-      formId="add-domain-form"
+      primaryAction={
+        <SubmitButton
+          label="Add domain"
+          pending={isPending}
+          className="sm:w-fit"
+          form="add-domain-form"
+        />
+      }
     >
       <form id="add-domain-form" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
@@ -263,6 +270,6 @@ export function AddDomain() {
           </FormSection>
         </FieldGroup>
       </form>
-    </FormDialog>
+    </ActionDialog>
   )
 }
