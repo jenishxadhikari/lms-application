@@ -5,6 +5,7 @@ import {
   MoreHorizontalIcon,
   PencilIcon,
   Trash2Icon,
+  UserPlusIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -20,6 +21,7 @@ import {
 
 import { DeleteOrganization } from "../components/delete-organization"
 import { EditOrganization } from "../components/edit-organization"
+import { InviteUser } from "../components/invite-user"
 import { ViewDetails } from "../components/view-details"
 import type { Organization } from "../schema"
 
@@ -28,7 +30,9 @@ export function OrganizationActions({
 }: {
   organization: Organization
 }) {
-  const [action, setAction] = useState<"view" | "edit" | "delete" | null>(null)
+  const [action, setAction] = useState<
+    "invite" | "view" | "edit" | "delete" | null
+  >(null)
 
   return (
     <>
@@ -58,6 +62,10 @@ export function OrganizationActions({
                 <EyeIcon />
                 View details
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setAction("invite")}>
+                <UserPlusIcon />
+                Invite user
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setAction("edit")}>
                 <PencilIcon />
                 Edit organization
@@ -68,7 +76,7 @@ export function OrganizationActions({
                 variant="destructive"
               >
                 <Trash2Icon />
-                Delete Organization
+                Delete organization
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
@@ -78,6 +86,11 @@ export function OrganizationActions({
         organization={organization}
         open={action === "view"}
         onOpenChange={(open) => setAction(open ? "view" : null)}
+      />
+      <InviteUser
+        id={organization.id}
+        open={action === "invite"}
+        onOpenChange={(open) => setAction(open ? "invite" : null)}
       />
       <EditOrganization
         data={{

@@ -2,6 +2,7 @@ import { api, getApiErrorMessage } from "@/lib/api"
 
 import type {
   CreateOrganizationInput,
+  InviteUserInput,
   OrganizationsResponse,
   UpdateOrganizationInput,
 } from "./schema"
@@ -103,5 +104,15 @@ export async function deleteOrganization(organizationId: string) {
     return
   } catch (error) {
     throw new Error(getApiErrorMessage(error, "Failed to delete organization"))
+  }
+}
+
+export async function inviteUser(data: InviteUserInput) {
+  console.log("inviteUser data", data)
+  try {
+    await api.post("/admin/invites", data)
+    return
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, "Failed to invite user"))
   }
 }

@@ -36,6 +36,14 @@ export const updateOrganizationSchema = createOrganizationSchema.extend({
 
 export type UpdateOrganizationInput = z.infer<typeof updateOrganizationSchema>
 
+export const inviteUserSchema = z.object({
+  email: z.email({ error: "Please enter a valid email." }),
+  role: z.enum(["OWNER"], "Invalid role"),
+  tenantId: z.uuid("Invalid organization ID"),
+})
+
+export type InviteUserInput = z.infer<typeof inviteUserSchema>
+
 export type PaginationInfo = {
   total: number
   pageNo: number
